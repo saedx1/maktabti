@@ -12,28 +12,38 @@ const theme = extendTheme({
     body: "'Markazi Text', serif",
   },
   layerStyles: {
-    navBar: {
-      bg: "yellow.400",
-      color: "gray.600",
-    },
   },
   textStyles: {
     nav_item: {
-      fontSize: "30px",
-      fontWeight: "bold",
-      lineHeight: "110%",
-      letterSpacing: "-2%",
-      pm: "10",
-      ms: "2",
-      bg: "transparent",
-      borderColor: "black",
-      _hover: {
-        bg: "yellow.500",
-      },
-      _active: {
-        bg: "yellow.600",
-      },
+      fontSize: "2xl",
+      textColor: "white"
     },
   },
+  colors: {
+    primary: {
+      100: "#FEEBC8",
+      200: "#FBD38D",
+      300: "#F6AD55",
+      400: "#ED8936",
+      500: "#ED8936",
+      600: "#ED8936",
+      700: "#ED8936",
+      800: "#7B341E",
+      900: "#652B19",
+      "white":"white"
+    },
+    secondary: {
+      100: "#E6FFFA",
+      200: "#B2F5EA",
+      300: "#81E6D9",
+      400: "#4FD1C5",
+      500: "#38B2AC",
+      600: "#2C7A7B",
+      700: "#285E61",
+      800: "#234E52",
+      900: "#1D4044",
+      "white":"white"
+    }
+  }
 });
 export default theme;
