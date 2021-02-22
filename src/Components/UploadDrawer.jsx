@@ -15,16 +15,11 @@ import {
 } from "@chakra-ui/react";
 
 export const UploadDrawer = ({ isOpen, onClose }) => {
-  console.log("Type:", typeof onClose);
   return (
     <Drawer isOpen={isOpen} placement="right" onClose={onClose}>
       <DrawerOverlay>
         <DrawerContent>
-          {/* <DrawerCloseButton /> */}
-
-          <DrawerHeader borderBottomWidth="1px">
-            رفع ملف جديد
-          </DrawerHeader>
+          <DrawerHeader borderBottomWidth="1px">رفع ملف جديد</DrawerHeader>
 
           <DrawerBody>
             <Stack spacing="24px">
@@ -32,24 +27,15 @@ export const UploadDrawer = ({ isOpen, onClose }) => {
                 <MyDropzone />
               </Box>
               <Box>
-                <Input
-                  id="filname"
-                  placeholder="أدخل اسماً للملف"
-                />
+                <Input id="filname" placeholder="أدخل اسماً للملف" />
               </Box>
 
               <Box>
-                <Select
-                  id="university"
-                  placeholder="الجامعة"
-                ></Select>
+                <Select id="university" placeholder="الجامعة"></Select>
               </Box>
 
               <Box>
-                <Select
-                  id="college"
-                  placeholder="الكلية"
-                ></Select>
+                <Select id="college" placeholder="الكلية"></Select>
               </Box>
 
               <Box>
@@ -57,10 +43,7 @@ export const UploadDrawer = ({ isOpen, onClose }) => {
               </Box>
 
               <Box>
-                <Select
-                  id="Course"
-                  placeholder="المساق"
-                ></Select>
+                <Select id="Course" placeholder="المساق"></Select>
               </Box>
             </Stack>
           </DrawerBody>
@@ -83,11 +66,7 @@ function MyDropzone() {
   const onDrop = useCallback((acceptedFiles) => {
     // Do something with the files
   }, []);
-  const {
-    getRootProps,
-    getInputProps,
-    isDragActive,
-  } = useDropzone({ onDrop });
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
 
   return (
     <Box {...getRootProps()} borderColor="black" borderWidth={3}>

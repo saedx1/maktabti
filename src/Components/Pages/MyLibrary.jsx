@@ -7,6 +7,7 @@ import {
   Grid,
   SimpleGrid,
   Stack,
+  Text,
 } from "@chakra-ui/react";
 
 const MyLibrary = () => {
@@ -22,33 +23,12 @@ const MyLibrary = () => {
       <Stack bg="primary.100" fontSize="2xl" pt={5}>
         <Center bg="primary.200">مكتبتك الخاصة</Center>
         <Center>
-          <SimpleGrid
-            columns={6}
-            bg="primary.200"
-            width="70%"
-            rowGap={2}
-          >
+          <SimpleGrid columns={6} bg="primary.200" width="70%" rowGap={2}>
             <TableRow></TableRow>
-            <TableRow
-              bg="primary.100"
-              download
-              data={data}
-            ></TableRow>
-            <TableRow
-              bg="primary.100"
-              download
-              data={data}
-            ></TableRow>
-            <TableRow
-              bg="primary.100"
-              download
-              data={data}
-            ></TableRow>
-            <TableRow
-              bg="primary.100"
-              download
-              data={data}
-            ></TableRow>
+            <TableRow bg="primary.100" download data={data}></TableRow>
+            <TableRow bg="primary.100" download data={data}></TableRow>
+            <TableRow bg="primary.100" download data={data}></TableRow>
+            <TableRow bg="primary.100" download data={data}></TableRow>
           </SimpleGrid>
         </Center>
       </Stack>
@@ -61,19 +41,19 @@ const TableRow = (props) => {
   return (
     <>
       <Box bg={props.bg || "primary.300"} textAlign="center">
-        {props.data ? props.data[0] : "اسم الملف"}
+        <Text noOfLines="1">{props.data ? props.data[0] : "اسم الملف"}</Text>
       </Box>
       <Box bg={props.bg || "primary.300"} textAlign="center">
-        {props.data ? props.data[1] : "المساق"}
+        <Text noOfLines="1">{props.data ? props.data[1] : "المساق"}</Text>
       </Box>
       <Box bg={props.bg || "primary.300"} textAlign="center">
-        {props.data ? props.data[2] : "التخصص"}
+        <Text noOfLines="1">{props.data ? props.data[2] : "التخصص"}</Text>
       </Box>
       <Box bg={props.bg || "primary.300"} textAlign="center">
-        {props.data ? props.data[3] : "الجامعة"}
+        <Text noOfLines="1">{props.data ? props.data[3] : "الجامعة"}</Text>
       </Box>
       <Box bg={props.bg || "primary.300"} textAlign="center">
-        {props.data ? props.data[4] : "بواسطة"}
+        <Text noOfLines="1">{props.data ? props.data[4] : "بواسطة"}</Text>
       </Box>
       <Box bg={props.bg || "primary.300"} textAlign="center">
         {props.download && (

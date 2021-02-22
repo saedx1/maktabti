@@ -1,9 +1,17 @@
 import { CognitoUserAttribute } from "amazon-cognito-identity-js";
-import { Box, Center, Input, Button } from "@chakra-ui/react";
+import {
+  Box,
+  Center,
+  Input,
+  Button,
+  Select,
+  FormLabel,
+} from "@chakra-ui/react";
 import React, { useState } from "react";
 import UserPool from "../User/UserPool";
 
 const Signup = () => {
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [university, setUnviersity] = useState("");
@@ -13,41 +21,73 @@ const Signup = () => {
     const attrs = [
       new CognitoUserAttribute({
         Name: "name",
-        Value: "سعد السيد احمد",
+        Value: name,
       }),
       new CognitoUserAttribute({
         Name: "custom:university",
-        Value: "جامعة بوليتكنيك فلسطين",
+        Value: university,
       }),
     ];
-    UserPool.signUp(
-      email,
-      password,
-      attrs,
-      null,
-      (err, data) => {
-        if (err) {
-          console.error(err);
-        }
-        console.log(data);
+    UserPool.signUp(email, password, attrs, null, (err, data) => {
+      if (err) {
+        console.error(err);
       }
-    );
+      console.log(data);
+    });
   };
   return (
-    <Center>
-      <form onSubmit={onSubmit}>
-        <Input
-          placeholder="email"
-          value={email}
-          onChange={(event) => setEmail(event.target.value)}
-        ></Input>
-        <Input
-          placeholder="password"
-          value={password}
-          onChange={(event) => setPassword(event.target.value)}
-        ></Input>
-        <Button type="submit">Sign up</Button>
-      </form>
+    <Center bg="primary.100">
+      <Box>
+        <form onSubmit={onSubmit}>
+          <Input
+            bg="white"
+            placeholder="الاسم"
+            value={name}
+            onChange={(event) => setName(event.target.value)}
+            m={2}
+          ></Input>
+          <Input
+            bg="white"
+            placeholder="البريد الإلكتروني؛ يجب أن ينتهي ب edu أو edu.ps"
+            value={email}
+            onChange={(event) => setEmail(event.target.value)}
+            mb={2}
+            mr={2}
+            ml={2}
+          ></Input>
+
+          <Input
+            bg="white"
+            placeholder="كلمة المرور"
+            value={password}
+            onChange={(event) => setPassword(event.target.value)}
+            mb={2}
+            mr={2}
+            ml={2}
+          ></Input>
+          <Center>
+            <FormLabel mr={2} ml={2}>
+              الجامعة
+            </FormLabel>
+          </Center>
+          <Center mb={2} mr={2} ml={2}>
+            <Select
+              bg="white"
+              value={university}
+              onChange={(event) => setUnviersity(event.target.value)}
+            >
+              <option> جامعة بوليتكنيك فلسطين</option>
+              <option> جامعة بوليتكنيك فلسطين</option>
+              <option> جامعة بوليتكنيك فلسطين</option>
+            </Select>
+          </Center>
+          <Center>
+            <Button bg="primary.300" type="submit">
+              تسجيل
+            </Button>
+          </Center>
+        </form>
+      </Box>
     </Center>
   );
 };

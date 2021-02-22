@@ -16,7 +16,7 @@ import { Card } from "../Card";
 
 const StatComponent = (props) => {
   return (
-    <Box bg="primary.200" textAlign="center">
+    <Box bg="primary.200" textAlign="center" boxShadow={"2xl"} rounded={"md"}>
       <Stat>
         <StatLabel fontSize="xl">{props.label}</StatLabel>
         <StatNumber fontSize="xl">
@@ -48,6 +48,7 @@ const MostPopular = () => {
           label="الأكثر تحميلاً"
           item="فيزياء ١"
           university="جامعة بوليتكنيك فلسطين"
+          value="20,000"
         ></Card>
       </GridItem>
       <GridItem colStart={3}>
@@ -55,6 +56,7 @@ const MostPopular = () => {
           label="الأكثر زيارةً"
           item="فيزياء ١"
           university="جامعة بوليتكنيك فلسطين"
+          value="20,000"
         ></Card>
       </GridItem>
       <GridItem colStart={4}>
@@ -62,6 +64,7 @@ const MostPopular = () => {
           label="الأكثر بحثاً"
           item="فيزياء ١"
           university="جامعة بوليتكنيك فلسطين"
+          value="20,000"
         ></Card>
       </GridItem>
     </Grid>
@@ -72,8 +75,8 @@ const MainBody = () => {
     <Box bg="primary.100">
       <Center color="black">
         <Box fontSize="4xl" pt={10} pb={10}>
-          مبادرة تسعى لتسهيل عملية وصول الطلاب للمواد التعليمية
-          المستخدمة في الجامعات الفلسطينية
+          مبادرة تسعى لتسهيل عملية وصول الطلاب للمواد التعليمية المستخدمة في
+          الجامعات الفلسطينية
         </Box>
       </Center>
       <SearchForm />
