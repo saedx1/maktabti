@@ -1,3 +1,4 @@
+import React, { useContext, useEffect, useState } from "react";
 import {
   Box,
   Center,
@@ -8,11 +9,12 @@ import {
   StatArrow,
   Grid,
   GridItem,
-  Button,
 } from "@chakra-ui/react";
+import { AccountContext } from "./user/Account";
 
 import { SearchBox } from "./SearchBox";
 import { Card } from "./Card";
+
 const StatComponent = (props) => {
   return (
     <Box bg="primary.200" textAlign="center">
@@ -66,16 +68,26 @@ const MostPopularComponenent = (props) => {
     </Grid>
   );
 };
-export const MainBody = ({ isLoggedIn }) => {
+export const MainBody = () => {
+  const { getSession } = useContext(AccountContext);
+
+  const [loggedIn, setLoggedIn] = useState(false);
+
+  useEffect(() => {
+    getSession().then(() => {
+      setLoggedIn(true);
+    });
+  }, [getSession]);
+
   return (
     <Box bg="primary.100">
       <Center color="black">
         <Box fontSize="4xl" pt={10} pb={10}>
-          مبادرة تسعى لتسهيل عملية وصول الطلاب للمواد التعليمية المستخدمة في
-          الجامعات الفلسطينية
+          مبادرة تسعى لتسهيل عملية وصول الطلاب للمواد التعليمية
+          المستخدمة في الجامعات الفلسطينية
         </Box>
       </Center>
-      {isLoggedIn ? <SearchForm /> : null}
+      {loggedIn ? <SearchForm /> : null}
       <Grid
         templateColumns="repeat(11, 1fr)"
         spacing="40px"
@@ -93,7 +105,7 @@ export const MainBody = ({ isLoggedIn }) => {
         </GridItem>
       </Grid>
 
-      {isLoggedIn ? <MostPopularComponenent /> : null}
+      {loggedIn ? <MostPopularComponenent /> : null}
     </Box>
   );
 };

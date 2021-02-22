@@ -1,4 +1,10 @@
-import React from "react";
+import React, {
+  useState,
+  useContext,
+  useEffect,
+  useCallback,
+} from "react";
+import { useHistory } from "react-router-dom";
 import {
   Link,
   Box,
@@ -8,10 +14,16 @@ import {
   Stack,
   useDisclosure,
 } from "@chakra-ui/react";
-import { CloseIcon, HamburgerIcon, AddIcon } from "@chakra-ui/icons";
+import {
+  CloseIcon,
+  HamburgerIcon,
+  AddIcon,
+} from "@chakra-ui/icons";
 import Logo from "./Logo";
 import { UploadDrawer } from "./UploadDrawer";
-const NavBar = ({ isLoggedIn, ...props }) => {
+import { AccountContext } from "./User/Account";
+
+const NavBar = ({ loggedIn, ...props }) => {
   const [isOpen, setIsOpen] = React.useState(false);
 
   const toggle = () => setIsOpen(!isOpen);
@@ -20,14 +32,17 @@ const NavBar = ({ isLoggedIn, ...props }) => {
     <NavBarContainer {...props}>
       <Logo w="100px" color={["white"]} />
       <MenuToggle toggle={toggle} isOpen={isOpen} />
-      <MenuLinks isOpen={isOpen} isLoggedIn={isLoggedIn} />
+      <MenuLinks isOpen={isOpen} loggedIn={loggedIn} />
     </NavBarContainer>
   );
 };
 
 const MenuToggle = ({ toggle, isOpen }) => {
   return (
-    <Box display={{ base: "block", md: "none" }} onClick={toggle}>
+    <Box
+      display={{ base: "block", md: "none" }}
+      onClick={toggle}
+    >
       {isOpen ? <CloseIcon /> : <HamburgerIcon />}
     </Box>
   );
@@ -37,7 +52,10 @@ const MenuItem = ({ children, isLast, to = "/", ...rest }) => {
   return (
     <Link
       href={to}
-      _hover={{ textDecoration: "none", textColor: "primary.100" }}
+      _hover={{
+        textDecoration: "none",
+        textColor: "primary.100",
+      }}
     >
       <Text textStyle="nav_item" display="block" {...rest}>
         {children}
@@ -46,22 +64,36 @@ const MenuItem = ({ children, isLast, to = "/", ...rest }) => {
   );
 };
 
-const CurrentUserMenu = ({ isLoggedIn }) => {
+const CurrentUserMenu = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const history = useHistory();
 
-  // isLoggedIn = false;
+  const { getSession, logout } = useContext(AccountContext);
+  const [loggedIn, setLoggedIn] = useState(false);
+
+  useEffect(() => {
+    getSession().then(() => {
+      setLoggedIn(true);
+    });
+  }, [getSession, logout, history]);
+
+  const logoutToHome = useCallback(() => {
+    logout();
+    history.push("/");
+  }, [logout, history]);
 
   return (
     <>
       <MenuItem to="/">الرئيسية</MenuItem>
-      <MenuItem to="/">جامعات</MenuItem>
-      {isLoggedIn ? (
-        <MenuItem to="/">مكتبتي</MenuItem>
+      <MenuItem to="/universities">جامعات</MenuItem>
+      {loggedIn && <MenuItem to="/mylibrary">مكتبتي</MenuItem>}
+      <MenuItem to="/about">من نحن</MenuItem>
+      {loggedIn ? (
+        <MenuItem onClick={logoutToHome}>تسجيل الخروج</MenuItem>
       ) : (
-        <MenuItem to="/"> تسجيل / دخول </MenuItem>
+        <MenuItem to="/login"> تسجيل / دخول </MenuItem>
       )}
-      <MenuItem to="/">من نحن</MenuItem>
-      <MenuItem to={isLoggedIn ? null : "/login"} isLast>
+      <MenuItem to={loggedIn ? null : "/login"} isLast>
         <Button
           size="lg"
           rounded="md"
@@ -71,7 +103,7 @@ const CurrentUserMenu = ({ isLoggedIn }) => {
             bg: ["primary.100"],
           }}
           rightIcon={<AddIcon />}
-          onClick={isLoggedIn ? onOpen : null}
+          onClick={loggedIn ? onOpen : null}
         >
           ارفع ملفاً
         </Button>
@@ -81,7 +113,7 @@ const CurrentUserMenu = ({ isLoggedIn }) => {
   );
 };
 
-const MenuLinks = ({ isOpen, isLoggedIn }) => {
+const MenuLinks = ({ isOpen, loggedIn }) => {
   return (
     <Box
       display={{ base: isOpen ? "block" : "none", md: "block" }}
@@ -90,11 +122,16 @@ const MenuLinks = ({ isOpen, isLoggedIn }) => {
       <Stack
         spacing={7}
         align="center"
-        justify={["center", "space-between", "flex-end", "flex-end"]}
+        justify={[
+          "center",
+          "space-between",
+          "flex-end",
+          "flex-end",
+        ]}
         direction={["column", "row", "row", "row"]}
         pt={[4, 4, 0, 0]}
       >
-        <CurrentUserMenu isLoggedIn={isLoggedIn} />
+        <CurrentUserMenu loggedIn={loggedIn} />
       </Stack>
     </Box>
   );

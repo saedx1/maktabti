@@ -1,8 +1,13 @@
-import { Box, Text, Button, Badge, Center } from "@chakra-ui/react";
+import { Box, Text, Button, Center } from "@chakra-ui/react";
 import { DownloadIcon } from "@chakra-ui/icons";
 export const Card = (props) => {
   return (
-    <Box bg="white" borderWidth="1px" borderRadius="xl" borderColor="gray.400">
+    <Box
+      bg="white"
+      borderWidth="1px"
+      borderRadius="xl"
+      borderColor="gray.400"
+    >
       <Box borderRadius="xl" p={2}>
         <Center fontSize="2xl" pb={5}>
           {props.label}
