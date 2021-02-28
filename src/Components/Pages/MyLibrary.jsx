@@ -2,37 +2,25 @@ import { DownloadIcon } from "@chakra-ui/icons";
 import {
   Box,
   Button,
-  Center,
-  Circle,
-  Grid,
   SimpleGrid,
-  Stack,
   Text,
+  Wrap,
+  WrapItem,
+  Center,
 } from "@chakra-ui/react";
-
+import { Card } from "../Card";
 const MyLibrary = () => {
-  const data = [
-    "فيرست",
-    "فيزياء 1",
-    "هندسة حاسوب",
-    "جامعة بوليتكنيك فلسطين",
-    "سعد السيدأحمد",
-  ];
+  const data = ["فيزياء 1", "فيرست", "هندسة حاسوب", "جامعة بوليتكنيك فلسطين"];
+  const card = <TableRow data={data}></TableRow>;
   return (
-    <>
-      <Stack bg="primary.100" fontSize="2xl" pt={5}>
-        <Center bg="primary.200">مكتبتك الخاصة</Center>
-        <Center>
-          <SimpleGrid columns={6} bg="primary.200" width="70%" rowGap={2}>
-            <TableRow></TableRow>
-            <TableRow bg="primary.100" download data={data}></TableRow>
-            <TableRow bg="primary.100" download data={data}></TableRow>
-            <TableRow bg="primary.100" download data={data}></TableRow>
-            <TableRow bg="primary.100" download data={data}></TableRow>
-          </SimpleGrid>
-        </Center>
-      </Stack>
-    </>
+    <Center bg="primary.100" width="100%">
+      <SimpleGrid p={10} bg="primary.100" columns={[1, 3, 5, 6]} gap={10}>
+        <Box>{card}</Box>
+        <Box>{card}</Box>
+        <Box>{card}</Box>
+        <Box>{card}</Box>
+      </SimpleGrid>
+    </Center>
   );
 };
 
@@ -40,7 +28,13 @@ const TableRow = (props) => {
   console.log(props.data);
   return (
     <>
-      <Box bg={props.bg || "primary.300"} textAlign="center">
+      <Card
+        label={props.data[0]}
+        item={props.data[1]}
+        university={props.data[2]}
+        value={props.data[3]}
+      ></Card>
+      {/* <Box bg={props.bg || "primary.300"} textAlign="center">
         <Text noOfLines="1">{props.data ? props.data[0] : "اسم الملف"}</Text>
       </Box>
       <Box bg={props.bg || "primary.300"} textAlign="center">
@@ -66,7 +60,7 @@ const TableRow = (props) => {
             تنزيل
           </Button>
         )}
-      </Box>
+      </Box> */}
     </>
   );
 };

@@ -6,6 +6,10 @@ import {
   Button,
   Select,
   FormLabel,
+  useToast,
+  FormControl,
+  Flex,
+  Stack,
 } from "@chakra-ui/react";
 import React, { useState } from "react";
 import UserPool from "../User/UserPool";
@@ -15,6 +19,8 @@ const Signup = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [university, setUnviersity] = useState("");
+
+  const toast = useToast();
 
   const onSubmit = (event) => {
     event.preventDefault();
@@ -36,59 +42,69 @@ const Signup = () => {
     });
   };
   return (
-    <Center bg="primary.100">
-      <Box>
-        <form onSubmit={onSubmit}>
-          <Input
-            bg="white"
-            placeholder="الاسم"
-            value={name}
-            onChange={(event) => setName(event.target.value)}
-            m={2}
-          ></Input>
-          <Input
-            bg="white"
-            placeholder="البريد الإلكتروني؛ يجب أن ينتهي ب edu أو edu.ps"
-            value={email}
-            onChange={(event) => setEmail(event.target.value)}
-            mb={2}
-            mr={2}
-            ml={2}
-          ></Input>
+    <Flex align={"center"} justify={"center"} bg={"primary.100"}>
+      <Stack width="100%" spacing={8} mx={"auto"} maxW={"lg"} py={12} px={6}>
+        <Box rounded={"lg"} bg={"white"} boxShadow={"lg"} p={8}>
+          <form onSubmit={onSubmit}>
+            <Stack spacing={4}>
+              <FormControl>
+                <FormLabel>الاسم</FormLabel>
+                <Input
+                  bg="white"
+                  value={name}
+                  onChange={(event) => setName(event.target.value)}
+                ></Input>
+              </FormControl>
+              <FormControl>
+                <FormLabel>البريد الإلكتروني</FormLabel>
+                <Input
+                  bg="white"
+                  placeholder="يجب أن ينتهي ب edu أو edu.ps"
+                  value={email}
+                  onChange={(event) => setEmail(event.target.value)}
+                ></Input>
+              </FormControl>
 
-          <Input
-            bg="white"
-            placeholder="كلمة المرور"
-            value={password}
-            onChange={(event) => setPassword(event.target.value)}
-            mb={2}
-            mr={2}
-            ml={2}
-          ></Input>
-          <Center>
-            <FormLabel mr={2} ml={2}>
-              الجامعة
-            </FormLabel>
-          </Center>
-          <Center mb={2} mr={2} ml={2}>
-            <Select
-              bg="white"
-              value={university}
-              onChange={(event) => setUnviersity(event.target.value)}
-            >
-              <option> جامعة بوليتكنيك فلسطين</option>
-              <option> جامعة بوليتكنيك فلسطين</option>
-              <option> جامعة بوليتكنيك فلسطين</option>
-            </Select>
-          </Center>
-          <Center>
-            <Button bg="primary.300" type="submit">
-              تسجيل
-            </Button>
-          </Center>
-        </form>
-      </Box>
-    </Center>
+              <FormControl>
+                <FormLabel>كلمة المرور</FormLabel>
+                <Input
+                  bg="white"
+                  placeholder="تتكون من 8 رموز من أحرف وأرقام"
+                  value={password}
+                  onChange={(event) => setPassword(event.target.value)}
+                ></Input>
+              </FormControl>
+              <FormControl>
+                <FormLabel>الجامعة</FormLabel>
+                <Select
+                  bg="white"
+                  value={university}
+                  onChange={(event) => setUnviersity(event.target.value)}
+                >
+                  <option> جامعة بوليتكنيك فلسطين</option>
+                  <option> جامعة بوليتكنيك فلسطين</option>
+                  <option> جامعة بوليتكنيك فلسطين</option>
+                </Select>
+              </FormControl>
+              <Button
+                bg={"primary.400"}
+                color={"white"}
+                _hover={{
+                  bg: "primary.500",
+                }}
+                type="submit"
+                _focus={{
+                  outline: "none",
+                  border: "none",
+                }}
+              >
+                دخول
+              </Button>
+            </Stack>
+          </form>
+        </Box>
+      </Stack>
+    </Flex>
   );
 };
 

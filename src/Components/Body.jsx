@@ -83,11 +83,11 @@ export const MainBody = () => {
     <Box bg="primary.100">
       <Center color="black">
         <Box fontSize="4xl" pt={10} pb={10}>
-          مبادرة تسعى لتسهيل عملية وصول الطلاب للمواد التعليمية
-          المستخدمة في الجامعات الفلسطينية
+          مبادرة تسعى لتسهيل عملية وصول الطلاب للمواد التعليمية المستخدمة في
+          الجامعات الفلسطينية
         </Box>
       </Center>
-      {loggedIn ? <SearchForm /> : null}
+      <SearchForm />
       <Grid
         templateColumns="repeat(11, 1fr)"
         spacing="40px"

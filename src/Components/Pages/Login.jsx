@@ -59,6 +59,7 @@ import {
   Heading,
   Text,
   Center,
+  useToast,
 } from "@chakra-ui/react";
 
 export default function SimpleCard() {
@@ -66,8 +67,12 @@ export default function SimpleCard() {
   const [password, setPassword] = useState("");
   const { authenticate } = useContext(AccountContext);
   const history = useHistory();
+  const toast = useToast();
 
-  const loginToHome = () => history.push("/");
+  const loginToHome = () => {
+    history.push("/");
+    history.go();
+  };
 
   const onSubmit = (event) => {
     event.preventDefault();
@@ -76,7 +81,12 @@ export default function SimpleCard() {
         loginToHome();
       })
       .catch((err) => {
-        console.error("Failed to login", err);
+        toast({
+          title: "فشل تسجيل الدخول",
+          status: "error",
+          duration: 9000,
+          isClosable: true,
+        });
       });
   };
 
@@ -108,9 +118,20 @@ export default function SimpleCard() {
                   align={"start"}
                   justify={"space-between"}
                 >
-                  <Link color={"primary.400"}>نسيت كلمة المرور؟</Link>
                   <Link
-                    onClick={() => history.push("/signup")}
+                    color={"primary.400"}
+                    onClick={() => {
+                      history.push("/forgotpassword");
+                      history.go();
+                    }}
+                  >
+                    نسيت كلمة المرور؟
+                  </Link>
+                  <Link
+                    onClick={() => {
+                      history.push("/signup");
+                      history.go();
+                    }}
                     color={"primary.400"}
                   >
                     <Center
@@ -129,6 +150,10 @@ export default function SimpleCard() {
                     bg: "primary.500",
                   }}
                   type="submit"
+                  _focus={{
+                    outline: "none",
+                    border: "none",
+                  }}
                 >
                   دخول
                 </Button>

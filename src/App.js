@@ -1,11 +1,11 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useContext, useState } from "react";
 import { BrowserRouter, Route, Switch } from "react-router-dom";
 
 import "./App.css";
 import HomePage from "./Components/Pages/Home";
 
 import { RtlProvider } from "./Components/rtl-provider";
-import { Account } from "./Components/User/Account";
+import { Account, AccountContext } from "./Components/User/Account";
 import Login from "./Components/Pages/Login";
 import Header from "./Components/Header";
 import NotFound from "./Components/Pages/NotFound";
@@ -15,28 +15,74 @@ import About from "./Components/Pages/About";
 import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
 import Loader from "react-loader-spinner";
 import Signup from "./Components/Pages/Signup";
+import AdvancedSearch from "./Components/Pages/AdvancedSearch";
+import Settings from "./Components/Pages/Settings";
+import {
+  Center,
+  CircularProgress,
+  Spinner,
+  Box,
+  Stack,
+} from "@chakra-ui/react";
+import ForgotPassword from "./Components/Pages/ForgotPassword";
 
 function App(props) {
   useEffect(() => {}, []);
   return (
     <RtlProvider>
       <Account>
-        <BrowserRouter>
-          <Header />
+        <PageComponent />
+      </Account>
+    </RtlProvider>
+  );
+}
+function PageComponent() {
+  const { getSession, logout } = useContext(AccountContext);
+  const [loggedIn, setLoggedIn] = useState(false);
+  const [loading, setLoading] = useState(true);
+  useEffect(() => {
+    getSession().then(
+      () => {
+        setLoggedIn(true);
+        setLoading(false);
+      },
+      () => {
+        setLoading(false);
+      }
+    );
+  }, [getSession]);
+  return (
+    <BrowserRouter>
+      {loading ? (
+        <Stack
+          fontSize={["lg", "xl", "2xl", "3xl"]}
+          pt={[10, 20, 30, 40]}
+          color="primary.500"
+          direction="column"
+          textAlign="center"
+        >
+          <Box>
+            <Spinner h={70} w={70} color="primary.300" />
+          </Box>
+          <Box>الرجاء الانتظار؛ جاري تحميل الموقع ...</Box>
+        </Stack>
+      ) : (
+        <>
+          <Header loggedIn={loggedIn} logout={logout} />
           <Switch>
             <Route path="/" exact component={HomePage} />
             <Route path="/login" exact component={Login} />
             <Route path="/signup" exact component={Signup} />
             <Route path="/about" exact component={About} />
             <Route path="/mylibrary" exact component={MyLibrary} />
-            <Route path="/universities" exact component={University} />
-            <Route path="/universities/:id" exact component={University} />
+            <Route path="/advancedsearch" exact component={AdvancedSearch} />
+            <Route path="/settings" exact component={Settings} />
+            <Route path="/forgotpassword" exact component={ForgotPassword} />
             <Route path="/" component={NotFound} />
           </Switch>
-        </BrowserRouter>
-      </Account>
-    </RtlProvider>
+        </>
+      )}
+    </BrowserRouter>
   );
 }
-
 export default App;

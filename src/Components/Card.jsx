@@ -84,7 +84,7 @@ export const Card = (props) => {
           <Button
             w={"full"}
             mt={8}
-            color={"white"}
+            color={"black"}
             rounded={"md"}
             rightIcon={<DownloadIcon />}
             bg="primary.300"

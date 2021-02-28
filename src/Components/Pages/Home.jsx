@@ -9,10 +9,12 @@ import {
   StatArrow,
   Grid,
   GridItem,
+  Flex,
 } from "@chakra-ui/react";
 
 import { SearchBox } from "../SearchBox";
 import { Card } from "../Card";
+import theme from "../../theme";
 
 const StatComponent = (props) => {
   return (
@@ -38,12 +40,17 @@ const MostPopular = () => {
   return (
     <Grid
       pt={10}
-      templateColumns="repeat(5, 1fr)"
+      templateColumns={[
+        "repeat(1, 1fr)",
+        "repeat(1, 1fr)",
+        "repeat(1, 1fr)",
+        "repeat(5, 1fr)",
+      ]}
       gap={6}
       bg="primary.100"
       borderColor="black"
     >
-      <GridItem colStart={2}>
+      <GridItem colStart={[1, 1, 1, 2]}>
         <Card
           label="الأكثر تحميلاً"
           item="فيزياء ١"
@@ -51,7 +58,7 @@ const MostPopular = () => {
           value="20,000"
         ></Card>
       </GridItem>
-      <GridItem colStart={3}>
+      <GridItem colStart={[1, 1, 1, 3]}>
         <Card
           label="الأكثر زيارةً"
           item="فيزياء ١"
@@ -59,7 +66,7 @@ const MostPopular = () => {
           value="20,000"
         ></Card>
       </GridItem>
-      <GridItem colStart={4}>
+      <GridItem colStart={[1, 1, 1, 4]}>
         <Card
           label="الأكثر بحثاً"
           item="فيزياء ١"
@@ -72,9 +79,9 @@ const MostPopular = () => {
 };
 const MainBody = () => {
   return (
-    <Box bg="primary.100">
+    <Box bg="primary.500">
       <Center color="black">
-        <Box fontSize="4xl" pt={10} pb={10}>
+        <Box fontSize="4xl" pt={10} pb={10} textColor="white">
           مبادرة تسعى لتسهيل عملية وصول الطلاب للمواد التعليمية المستخدمة في
           الجامعات الفلسطينية
         </Box>
@@ -83,9 +90,16 @@ const MainBody = () => {
       <Grid
         templateColumns="repeat(11, 1fr)"
         spacing="40px"
-        bg="primary.100"
+        bg={`linear-gradient(180deg, ${theme.colors.primary["500"]} 50%, ${theme.colors.primary["100"]} 50%)`}
         columnGap={2}
       >
+        {/* <Box
+          float="right"
+          bg="primary.500"
+          height="50%"
+          roundedBottomStart="xl"
+          roundedBottomEnd="xl"
+        ></Box> */}
         <GridItem colStart={5}>
           <StatComponent label="المساقات" number="25" />
         </GridItem>

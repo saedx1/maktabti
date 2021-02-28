@@ -45,11 +45,26 @@ export const UploadDrawer = ({ isOpen, onClose }) => {
               <Box>
                 <Select id="Course" placeholder="المساق"></Select>
               </Box>
+              <Box>
+                <Select id="Course" placeholder="النوع"></Select>
+              </Box>
             </Stack>
           </DrawerBody>
 
           <DrawerFooter borderTopWidth="1px">
-            <Button bg="primary.400" mr={3}>
+            <Button
+              bg={"primary.400"}
+              color={"white"}
+              _hover={{
+                bg: "primary.500",
+              }}
+              type="submit"
+              _focus={{
+                outline: "none",
+                border: "none",
+              }}
+              mx={3}
+            >
               تأكيد
             </Button>
             <Button variant="outline" onClick={onClose}>
