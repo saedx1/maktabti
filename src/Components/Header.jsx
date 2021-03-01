@@ -182,8 +182,17 @@ import {
   Stack,
   Icon,
 } from "@chakra-ui/react";
-import { HamburgerIcon, CloseIcon, AddIcon } from "@chakra-ui/icons";
-import { useContext, useState, useEffect, useCallback } from "react";
+import {
+  HamburgerIcon,
+  CloseIcon,
+  AddIcon,
+} from "@chakra-ui/icons";
+import {
+  useContext,
+  useState,
+  useEffect,
+  useCallback,
+} from "react";
 import { useHistory } from "react-router-dom";
 
 import Logo from "./Logo";
@@ -211,8 +220,9 @@ const NavLink = ({ text, to }) => (
   </Link>
 );
 
-const WithAction = ({ loggedIn, logout }) => {
-  document.body.style.backgroundColor = theme.colors.primary["100"];
+const WithAction = ({ loggedIn, logout, idToken }) => {
+  document.body.style.backgroundColor =
+    theme.colors.primary["100"];
 
   const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -237,7 +247,12 @@ const WithAction = ({ loggedIn, logout }) => {
           h={16}
           alignItems={"center"}
           justifyContent={"space-between"}
-          justify={["center", "space-between", "flex-end", "flex-end"]}
+          justify={[
+            "center",
+            "space-between",
+            "flex-end",
+            "flex-end",
+          ]}
           direction={["column", "row", "row", "row"]}
         >
           <IconButton
