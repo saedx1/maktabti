@@ -15,25 +15,7 @@ import {
 } from "@chakra-ui/react";
 import axios from "axios";
 
-function readFileDataAsBase64(file) {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-
-    reader.onload = (event) => {
-      resolve(event.target.result);
-    };
-
-    reader.onerror = (err) => {
-      reject(err);
-    };
-
-    reader.readAsDataURL(file);
-  });
-}
-
 function UploadFile({ idToken, file }) {
-  // const data = readFileDataAsBase64(file);
-
   const options = {
     headers: {
       Authorization: idToken,
@@ -42,7 +24,7 @@ function UploadFile({ idToken, file }) {
   };
   axios
     .post(
-      `https://m2ubr5mz28.execute-api.us-east-1.amazonaws.com/v1/uploadfile`,
+      `${process.env.REACT_APP_SERVER_URL}upload_file`,
       file,
       options
     )
@@ -159,9 +141,9 @@ function MyDropzone({ setFiles }) {
     <Box {...getRootProps()} borderColor="black" borderWidth={3}>
       <input {...getInputProps()} />
       {isDragActive ? (
-        <p>قم باختيار ملف لرفعه</p>
-      ) : (
         <p>اضغط هنا لاختيار ملف أو قم بحمله وإلقائه هنا لرفعه</p>
+      ) : (
+        <p>اضغط هنا لاختيار ملف</p>
       )}
     </Box>
   );
