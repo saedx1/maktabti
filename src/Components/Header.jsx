@@ -180,24 +180,13 @@ import {
   MenuDivider,
   useDisclosure,
   Stack,
-  Icon,
 } from "@chakra-ui/react";
-import {
-  HamburgerIcon,
-  CloseIcon,
-  AddIcon,
-} from "@chakra-ui/icons";
-import {
-  useContext,
-  useState,
-  useEffect,
-  useCallback,
-} from "react";
+import { HamburgerIcon, CloseIcon, AddIcon } from "@chakra-ui/icons";
+import { useCallback } from "react";
 import { useHistory } from "react-router-dom";
 
 import Logo from "./Logo";
 import theme from "../theme";
-import { AccountContext } from "./User/Account";
 import { UploadDrawer } from "./UploadDrawer";
 import { HiOutlineLogin } from "react-icons/hi";
 
@@ -221,8 +210,7 @@ const NavLink = ({ text, to }) => (
 );
 
 const WithAction = ({ loggedIn, logout, idToken }) => {
-  document.body.style.backgroundColor =
-    theme.colors.primary["100"];
+  document.body.style.backgroundColor = theme.colors.primary["100"];
 
   const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -247,12 +235,7 @@ const WithAction = ({ loggedIn, logout, idToken }) => {
           h={16}
           alignItems={"center"}
           justifyContent={"space-between"}
-          justify={[
-            "center",
-            "space-between",
-            "flex-end",
-            "flex-end",
-          ]}
+          justify={["center", "space-between", "flex-end", "flex-end"]}
           direction={["column", "row", "row", "row"]}
         >
           <IconButton

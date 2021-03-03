@@ -1,12 +1,11 @@
 import { CognitoUserAttribute } from "amazon-cognito-identity-js";
 import {
   Box,
-  Center,
   Input,
   Button,
   Select,
   FormLabel,
-  useToast,
+  // useToast,
   FormControl,
   Flex,
   Stack,
@@ -20,7 +19,7 @@ const Signup = () => {
   const [password, setPassword] = useState("");
   const [university, setUnviersity] = useState("");
 
-  const toast = useToast();
+  // const toast = useToast();
 
   const onSubmit = (event) => {
     event.preventDefault();

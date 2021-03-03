@@ -9,7 +9,6 @@ import {
   StatArrow,
   Grid,
   GridItem,
-  Flex,
 } from "@chakra-ui/react";
 
 import { SearchBox } from "../SearchBox";

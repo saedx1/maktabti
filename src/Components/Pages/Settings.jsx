@@ -1,5 +1,4 @@
 import React, { useState, useContext, useEffect } from "react";
-import { useHistory } from "react-router";
 
 import { AccountContext } from "../User/Account";
 
@@ -9,13 +8,8 @@ import {
   FormControl,
   FormLabel,
   Input,
-  Checkbox,
   Stack,
-  Link,
   Button,
-  Heading,
-  Text,
-  Center,
   useToast,
 } from "@chakra-ui/react";
 
@@ -125,7 +119,7 @@ function Settings() {
                   value={password2}
                   onChange={(event) => {
                     setPassword2(event.target.value);
-                    setMatch(password1 == event.target.value);
+                    setMatch(password1 === event.target.value);
                   }}
                   isInvalid={!match}
                   focusBorderColor="none"

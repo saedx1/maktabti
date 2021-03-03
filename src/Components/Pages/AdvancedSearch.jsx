@@ -1,23 +1,11 @@
-import react from "react";
 import {
   Box,
   Center,
   Select,
   FormLabel,
-  Stack,
   Button,
   SimpleGrid,
   Text,
-} from "@chakra-ui/react";
-import {
-  Table,
-  Thead,
-  Tbody,
-  Tfoot,
-  Tr,
-  Th,
-  Td,
-  TableCaption,
 } from "@chakra-ui/react";
 
 const AdvancedSearch = () => {

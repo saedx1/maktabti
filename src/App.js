@@ -5,28 +5,17 @@ import "./App.css";
 import HomePage from "./Components/Pages/Home";
 
 import { RtlProvider } from "./Components/rtl-provider";
-import {
-  Account,
-  AccountContext,
-} from "./Components/User/Account";
+import { Account, AccountContext } from "./Components/User/Account";
 import Login from "./Components/Pages/Login";
 import Header from "./Components/Header";
 import NotFound from "./Components/Pages/NotFound";
 import MyLibrary from "./Components/Pages/MyLibrary";
-import University from "./Components/Pages/Universities";
 import About from "./Components/Pages/About";
 import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
-import Loader from "react-loader-spinner";
 import Signup from "./Components/Pages/SignUp";
 import AdvancedSearch from "./Components/Pages/AdvancedSearch";
 import Settings from "./Components/Pages/Settings";
-import {
-  Center,
-  CircularProgress,
-  Spinner,
-  Box,
-  Stack,
-} from "@chakra-ui/react";
+import { Spinner, Box, Stack } from "@chakra-ui/react";
 import ForgotPassword from "./Components/Pages/ForgotPassword";
 
 function App(props) {
@@ -85,32 +74,16 @@ function PageComponent() {
         </Stack>
       ) : (
         <>
-          <Header
-            loggedIn={loggedIn}
-            logout={logout}
-            idToken={token}
-          />
+          <Header loggedIn={loggedIn} logout={logout} idToken={token} />
           <Switch>
             <Route path="/" exact component={HomePage} />
             <Route path="/login" exact component={Login} />
             <Route path="/signup" exact component={Signup} />
             <Route path="/about" exact component={About} />
-            <Route
-              path="/mylibrary"
-              exact
-              component={MyLibrary}
-            />
-            <Route
-              path="/advancedsearch"
-              exact
-              component={AdvancedSearch}
-            />
+            <Route path="/mylibrary" exact component={MyLibrary} />
+            <Route path="/advancedsearch" exact component={AdvancedSearch} />
             <Route path="/settings" exact component={Settings} />
-            <Route
-              path="/forgotpassword"
-              exact
-              component={ForgotPassword}
-            />
+            <Route path="/forgotpassword" exact component={ForgotPassword} />
             <Route path="/" component={NotFound} />
           </Switch>
         </>

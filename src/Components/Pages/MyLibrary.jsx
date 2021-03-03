@@ -1,13 +1,4 @@
-import { DownloadIcon } from "@chakra-ui/icons";
-import {
-  Box,
-  Button,
-  SimpleGrid,
-  Text,
-  Wrap,
-  WrapItem,
-  Center,
-} from "@chakra-ui/react";
+import { Box, SimpleGrid, Center } from "@chakra-ui/react";
 import { Card } from "../Card";
 const MyLibrary = () => {
   const data = ["فيزياء 1", "فيرست", "هندسة حاسوب", "جامعة بوليتكنيك فلسطين"];

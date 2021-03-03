@@ -90,7 +90,7 @@ function ForgotPassword() {
                   disabled={stage !== 1}
                 />
               </FormControl>
-              <FormControl id="code" display={stage == 1 ? "none" : ""}>
+              <FormControl id="code" display={stage === 1 ? "none" : ""}>
                 <FormLabel>رمز التحقق</FormLabel>
                 <Input
                   type="number"
@@ -99,7 +99,7 @@ function ForgotPassword() {
                   disabled={stage === 3}
                 />
               </FormControl>
-              <FormControl id="code" display={stage == 1 ? "none" : ""}>
+              <FormControl id="code" display={stage === 1 ? "none" : ""}>
                 <FormLabel>كلمة المرور الجديدة</FormLabel>
                 <Input
                   type="password"
@@ -115,7 +115,7 @@ function ForgotPassword() {
                   value={password2}
                   onChange={(event) => {
                     setPassword2(event.target.value);
-                    setMatch(event.target.value == password1);
+                    setMatch(event.target.value === password1);
                   }}
                   disabled={stage === 3}
                 />

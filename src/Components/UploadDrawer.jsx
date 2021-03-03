@@ -23,11 +23,7 @@ function UploadFile({ idToken, file }) {
     },
   };
   axios
-    .post(
-      `${process.env.REACT_APP_SERVER_URL}upload_file`,
-      file,
-      options
-    )
+    .post(`${process.env.REACT_APP_SERVER_URL}upload_file`, file, options)
     .then(
       (response) => {
         console.log(response);
@@ -48,9 +44,7 @@ export const UploadDrawer = ({ isOpen, onClose, idToken }) => {
       <DrawerOverlay>
         <DrawerContent>
           <form onSubmit={submitFile}>
-            <DrawerHeader borderBottomWidth="1px">
-              رفع ملف جديد
-            </DrawerHeader>
+            <DrawerHeader borderBottomWidth="1px">رفع ملف جديد</DrawerHeader>
 
             <DrawerBody>
               <Stack spacing="24px">
@@ -58,44 +52,26 @@ export const UploadDrawer = ({ isOpen, onClose, idToken }) => {
                   <MyDropzone setFiles={setFiles} />
                 </Box>
                 <Box>
-                  <Input
-                    id="filname"
-                    placeholder="أدخل اسماً للملف"
-                  />
+                  <Input id="filname" placeholder="أدخل اسماً للملف" />
                 </Box>
 
                 <Box>
-                  <Select
-                    id="university"
-                    placeholder="الجامعة"
-                  ></Select>
+                  <Select id="university" placeholder="الجامعة"></Select>
                 </Box>
 
                 <Box>
-                  <Select
-                    id="college"
-                    placeholder="الكلية"
-                  ></Select>
+                  <Select id="college" placeholder="الكلية"></Select>
                 </Box>
 
                 <Box>
-                  <Select
-                    id="major"
-                    placeholder="التخصص"
-                  ></Select>
+                  <Select id="major" placeholder="التخصص"></Select>
                 </Box>
 
                 <Box>
-                  <Select
-                    id="Course"
-                    placeholder="المساق"
-                  ></Select>
+                  <Select id="Course" placeholder="المساق"></Select>
                 </Box>
                 <Box>
-                  <Select
-                    id="Course"
-                    placeholder="النوع"
-                  ></Select>
+                  <Select id="Course" placeholder="النوع"></Select>
                 </Box>
               </Stack>
             </DrawerBody>
@@ -130,12 +106,8 @@ export const UploadDrawer = ({ isOpen, onClose, idToken }) => {
 function MyDropzone({ setFiles }) {
   const onDrop = useCallback((acceptedFiles) => {
     setFiles(acceptedFiles);
-  }, []);
-  const {
-    getRootProps,
-    getInputProps,
-    isDragActive,
-  } = useDropzone({ onDrop });
+  });
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
 
   return (
     <Box {...getRootProps()} borderColor="black" borderWidth={3}>
