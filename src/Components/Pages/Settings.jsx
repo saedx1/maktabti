@@ -23,13 +23,11 @@ function Settings() {
   const [match, setMatch] = useState(true);
 
   const { getSession, logout } = useContext(AccountContext);
-  const [loggedIn, setLoggedIn] = useState(false);
 
   const toast = useToast();
 
   useEffect(() => {
     getSession().then((result) => {
-      setLoggedIn(true);
       setName(result.name);
       setEmail(result.email);
       setUniversity(result["custom:university"]);
@@ -42,7 +40,7 @@ function Settings() {
 
     if (password1 === password2) {
       getSession().then(({ user }) => {
-        user.changePassword(password, password1, (err, result) => {
+        user.changePassword(password, password1, (err) => {
           if (err) {
             toast({
               title: "فشل تغيير كلمة السر",

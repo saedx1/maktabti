@@ -1,24 +1,23 @@
 import React, { useEffect, useContext, useState } from "react";
 import { BrowserRouter, Route, Switch } from "react-router-dom";
+import { Spinner, Box, Stack } from "@chakra-ui/react";
+import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
 
 import "./App.css";
-import HomePage from "./Components/Pages/Home";
-
-import { RtlProvider } from "./Components/rtl-provider";
 import { Account, AccountContext } from "./Components/User/Account";
-import Login from "./Components/Pages/Login";
+import { RtlProvider } from "./Components/rtl-provider";
 import Header from "./Components/Header";
+import HomePage from "./Components/Pages/Home";
+import Login from "./Components/Pages/Login";
 import NotFound from "./Components/Pages/NotFound";
 import MyLibrary from "./Components/Pages/MyLibrary";
 import About from "./Components/Pages/About";
-import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
-import Signup from "./Components/Pages/SignUp";
 import AdvancedSearch from "./Components/Pages/AdvancedSearch";
 import Settings from "./Components/Pages/Settings";
-import { Spinner, Box, Stack } from "@chakra-ui/react";
 import ForgotPassword from "./Components/Pages/ForgotPassword";
+import Signup from "./Components/Pages/Signup";
 
-function App(props) {
+function App() {
   useEffect(() => {}, []);
   return (
     <RtlProvider>

@@ -61,7 +61,7 @@ function ForgotPassword() {
             });
             setStage(3);
           },
-          onFailure: (err) => {
+          onFailure: () => {
             toast({
               title: "حصل خلل خلال تغيير كلمة المرور",
               status: "error",

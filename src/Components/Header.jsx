@@ -209,7 +209,7 @@ const NavLink = ({ text, to }) => (
   </Link>
 );
 
-const WithAction = ({ loggedIn, logout, idToken }) => {
+const WithAction = ({ loggedIn, logout }) => {
   document.body.style.backgroundColor = theme.colors.primary["100"];
 
   const { isOpen, onOpen, onClose } = useDisclosure();

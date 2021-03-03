@@ -31,10 +31,10 @@ export default function SimpleCard() {
   const onSubmit = (event) => {
     event.preventDefault();
     authenticate(email, password)
-      .then((data) => {
+      .then(() => {
         loginToHome();
       })
-      .catch((err) => {
+      .catch(() => {
         toast({
           title: "فشل تسجيل الدخول",
           status: "error",
