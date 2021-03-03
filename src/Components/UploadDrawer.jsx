@@ -104,9 +104,12 @@ export const UploadDrawer = ({ isOpen, onClose, idToken }) => {
 };
 
 function MyDropzone({ setFiles }) {
-  const onDrop = useCallback((acceptedFiles) => {
-    setFiles(acceptedFiles);
-  }, []);
+  const onDrop = useCallback(
+    (acceptedFiles) => {
+      setFiles(acceptedFiles);
+    },
+    [setFiles]
+  );
   const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
 
   return (
