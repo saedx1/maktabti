@@ -77,14 +77,15 @@ export const UploadDrawer = ({ isOpen, onClose, idToken }) => {
                 <DrawerBody>
                   <Stack spacing={4}>
                     <FormControl>
-                      <Input
+                      <Field
                         name="file"
                         type="file"
                         as={Input}
                         onChange={(event) =>
                           setFiles(event.target.files)
                         }
-                      ></Input>
+                        accept=".pdf"
+                      ></Field>
                     </FormControl>
                     <FormControl>
                       <FormLabel>الجامعة</FormLabel>
