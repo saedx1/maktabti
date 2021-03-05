@@ -21,12 +21,11 @@ function UploadFile({ idToken, file }) {
       Authorization: idToken,
     },
   };
+  const data = new FormData();
+  data.append("file", file);
+  data.append("filename", "temp.pdf");
   axios
-    .post(
-      `${process.env.REACT_APP_SERVER_URL}upload_file`,
-      { file, filename: "temp.pdf" },
-      options
-    )
+    .post(`${process.env.REACT_APP_SERVER_URL}upload_file`, data, options)
     .then(
       (response) => {
         console.log(response);
@@ -46,13 +45,8 @@ export const UploadDrawer = ({ isOpen, onClose, idToken }) => {
     <Drawer isOpen={isOpen} placement="right" onClose={onClose}>
       <DrawerOverlay>
         <DrawerContent>
-          <form
-            onSubmit={submitFile}
-            encType="multipart/form-data"
-          >
-            <DrawerHeader borderBottomWidth="1px">
-              رفع ملف جديد
-            </DrawerHeader>
+          <form onSubmit={submitFile} encType="multipart/form-data">
+            <DrawerHeader borderBottomWidth="1px">رفع ملف جديد</DrawerHeader>
 
             <DrawerBody>
               <Stack spacing="24px">
@@ -60,44 +54,29 @@ export const UploadDrawer = ({ isOpen, onClose, idToken }) => {
                   <MyDropzone setFiles={setFiles} />
                 </Box>
                 <Box>
-                  <Input
-                    id="filname"
-                    placeholder="أدخل اسماً للملف"
-                  />
+                  <Input id="file" type="file"></Input>
+                </Box>
+                <Box>
+                  <Input id="filname" placeholder="أدخل اسماً للملف" />
                 </Box>
 
                 <Box>
-                  <Select
-                    id="university"
-                    placeholder="الجامعة"
-                  ></Select>
+                  <Select id="university" placeholder="الجامعة"></Select>
                 </Box>
 
                 <Box>
-                  <Select
-                    id="college"
-                    placeholder="الكلية"
-                  ></Select>
+                  <Select id="college" placeholder="الكلية"></Select>
                 </Box>
 
                 <Box>
-                  <Select
-                    id="major"
-                    placeholder="التخصص"
-                  ></Select>
+                  <Select id="major" placeholder="التخصص"></Select>
                 </Box>
 
                 <Box>
-                  <Select
-                    id="Course"
-                    placeholder="المساق"
-                  ></Select>
+                  <Select id="Course" placeholder="المساق"></Select>
                 </Box>
                 <Box>
-                  <Select
-                    id="Course"
-                    placeholder="النوع"
-                  ></Select>
+                  <Select id="Course" placeholder="النوع"></Select>
                 </Box>
               </Stack>
             </DrawerBody>
@@ -136,11 +115,7 @@ function MyDropzone({ setFiles }) {
     },
     [setFiles]
   );
-  const {
-    getRootProps,
-    getInputProps,
-    isDragActive,
-  } = useDropzone({ onDrop });
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
 
   return (
     <Box {...getRootProps()} borderColor="black" borderWidth={3}>
