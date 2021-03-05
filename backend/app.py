@@ -21,29 +21,21 @@ ALLOWED_EXTENSIONS = set(["pdf"])
 
 @APP.route("/upload_file", methods=["POST"])
 def upload_file():
-    buff = io.BytesIO()
+    fname = f"{'_'.join([request.form[i] for i in request.form])}.pdf"
+
     file = request.files["file"]
-    file.save(buff)
+    file.save(fname)
 
-    upload_file_list = ["upload_me.pdf"]
-    for upload_file in upload_file_list:
-        gfile = DRIVE.CreateFile(
-            {
-                "name": upload_file,
-                "title": upload_file,
-                "shared": True,
-                "mimeType": "text/plain",
-            }
-        )
-        # # Read file and set it as the content of this instance.
-        gfile.SetContentString(buff.getvalue().decode("latin-1"), encoding="latin-1")
-        gfile.SetContentFile(upload_file)
-        gfile.Upload()  # Upload the file.
-        _ = gfile.InsertPermission(
-            {"type": "anyone", "value": "anyone", "role": "reader"}
-        )
+    gfile = DRIVE.CreateFile(
+        {
+            "name": fname,
+            "title": fname,
+            "shared": True,
+            "mimeType": "application/pdf",
+        }
+    )
+    gfile.SetContentFile(fname)
+    gfile.Upload()
+    gfile.InsertPermission({"type": "anyone", "value": "anyone", "role": "reader"})
 
-    return {
-        "statusCode": 200,
-        "body": json.dumps(gfile["webContentLink"]),
-    }
+    return jsonify(gfile["webContentLink"])

@@ -13,6 +13,7 @@
     "@testing-library/user-event": "^12.1.10",
     "amazon-cognito-identity-js": "^4.5.11",
     "axios": "^0.21.1",
+    "formik": "^2.2.6",
     "framer-motion": "^3.6.1",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
@@ -23,7 +24,8 @@
     "react-scripts": "4.0.2",
     "stylis": "^4.0.7",
     "stylis-plugin-rtl": "^2.0.1",
-    "web-vitals": "^1.0.1"
+    "web-vitals": "^1.0.1",
+    "yup": "^0.32.9"
   },
   "scripts": {
     "start": "react-scripts start",
