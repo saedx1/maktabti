@@ -209,7 +209,7 @@ const NavLink = ({ text, to }) => (
   </Link>
 );
 
-const WithAction = ({ loggedIn, logout }) => {
+const WithAction = ({ loggedIn, logout, schoolData }) => {
   document.body.style.backgroundColor = theme.colors.primary["100"];
 
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -230,7 +230,7 @@ const WithAction = ({ loggedIn, logout }) => {
 
   return (
     <>
-      <Box bg="primary.400" px={4}>
+      <Box bg="primary.500" px={4}>
         <Flex
           h={16}
           alignItems={"center"}
@@ -284,6 +284,7 @@ const WithAction = ({ loggedIn, logout }) => {
             <UploadDrawer
               isOpen={DrawerClosure.isOpen}
               onClose={DrawerClosure.onClose}
+              schoolData={schoolData}
             />
             {loggedIn ? (
               <Menu>

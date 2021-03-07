@@ -2,6 +2,7 @@ import json
 import base64
 import os
 import io
+import requests
 from pydrive.auth import GoogleAuth
 from pydrive.drive import GoogleDrive
 from flask import Flask, jsonify, request
@@ -17,7 +18,7 @@ DRIVE = GoogleDrive(GAUTH)
 
 UPLOAD_FOLDER = "/Users/saed.sayedahmed/maktabti"
 ALLOWED_EXTENSIONS = set(["pdf"])
-
+GRAPHQL_ENDPOINT = "http://localhost:8080/v1/graphql"
 
 @APP.route("/upload_file", methods=["POST"])
 def upload_file():
@@ -28,8 +29,8 @@ def upload_file():
 
     gfile = DRIVE.CreateFile(
         {
-            "name": fname,
-            "title": fname,
+            "name": "file.pdf",
+            "title": "file.pdf",
             "shared": True,
             "mimeType": "application/pdf",
         }
@@ -37,5 +38,44 @@ def upload_file():
     gfile.SetContentFile(fname)
     gfile.Upload()
     gfile.InsertPermission({"type": "anyone", "value": "anyone", "role": "reader"})
+    
+    link = gfile["webContentLink"]
+    # query = """
+    
+    # """
 
-    return jsonify(gfile["webContentLink"])
+    return jsonify(link)
+
+@APP.route("/get_filter_data", methods=["GET"])
+def get_filter_data():
+    query = """
+    query MyQuery {
+        universities {
+            id
+            name
+            colleges {
+                id
+                name
+                majors {
+                    id
+                    name
+                }
+            }
+        }
+        kinds {
+            id
+            name
+        }
+    }
+    """
+
+    data = execute_graphql_query(query)["data"]
+    return data
+
+
+def execute_graphql_query(query):
+    response = requests.post(GRAPHQL_ENDPOINT, data=json.dumps({"query" : query}))
+    if response.text is None:
+        return {}
+    else:
+        return json.loads(response.text)

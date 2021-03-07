@@ -16,6 +16,7 @@ import AdvancedSearch from "./Components/Pages/AdvancedSearch";
 import Settings from "./Components/Pages/Settings";
 import ForgotPassword from "./Components/Pages/ForgotPassword";
 import Signup from "./Components/Pages/Signup";
+import { getFilterData } from "./Components/Data/API";
 
 function App() {
   useEffect(() => {}, []);
@@ -32,6 +33,7 @@ function PageComponent() {
   const [loggedIn, setLoggedIn] = useState(false);
   const [loading, setLoading] = useState(true);
   const [token, setToken] = useState("");
+  const [schoolData, setSchoolData] = useState({});
   getSession().then(({ user }) => {
     user.getSession((err, session) => {
       if (err) {
@@ -46,6 +48,10 @@ function PageComponent() {
   });
 
   useEffect(() => {
+    getFilterData().then((result) => {
+      setSchoolData(result);
+    });
+
     getSession().then(
       () => {
         setLoggedIn(true);
@@ -56,6 +62,7 @@ function PageComponent() {
       }
     );
   }, [getSession]);
+
   return (
     <BrowserRouter>
       {loading ? (
@@ -73,14 +80,23 @@ function PageComponent() {
         </Stack>
       ) : (
         <>
-          <Header loggedIn={loggedIn} logout={logout} idToken={token} />
+          <Header
+            loggedIn={loggedIn}
+            logout={logout}
+            idToken={token}
+            schoolData={schoolData}
+          />
           <Switch>
             <Route path="/" exact component={HomePage} />
             <Route path="/login" exact component={Login} />
             <Route path="/signup" exact component={Signup} />
             <Route path="/about" exact component={About} />
             <Route path="/mylibrary" exact component={MyLibrary} />
-            <Route path="/advancedsearch" exact component={AdvancedSearch} />
+            <Route
+              path="/advancedsearch"
+              exact
+              render={() => <AdvancedSearch schoolData={schoolData} />}
+            />
             <Route path="/settings" exact component={Settings} />
             <Route path="/forgotpassword" exact component={ForgotPassword} />
             <Route path="/" component={NotFound} />

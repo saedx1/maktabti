@@ -92,13 +92,6 @@ const MainBody = () => {
         bg={`linear-gradient(180deg, ${theme.colors.primary["500"]} 50%, ${theme.colors.primary["100"]} 50%)`}
         columnGap={2}
       >
-        {/* <Box
-          float="right"
-          bg="primary.500"
-          height="50%"
-          roundedBottomStart="xl"
-          roundedBottomEnd="xl"
-        ></Box> */}
         <GridItem colStart={5}>
           <StatComponent label="المساقات" number="25" />
         </GridItem>

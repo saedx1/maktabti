@@ -6,70 +6,153 @@ import {
   Button,
   SimpleGrid,
   Text,
+  FormControl,
 } from "@chakra-ui/react";
+import { Field, Form, Formik, useFormikContext } from "formik";
+import { useEffect, useState } from "react";
 
-const AdvancedSearch = () => {
+const AdvancedSearch = ({ schoolData }) => {
+  const [universities, setUniversities] = useState([]);
+  const [colleges, setColleges] = useState([]);
+  const [majors, setMajors] = useState([]);
+  // const [courses, setCourses] = useState([]);
+  const [kinds, setKinds] = useState([]);
+
+  useEffect(() => {
+    setUniversities(schoolData.universities);
+    setColleges(schoolData.universities[0].colleges);
+    setMajors(schoolData.universities[0].colleges[0].majors);
+    setKinds(schoolData.kinds);
+  }, [schoolData]);
+
+  const MyOnChangeComponent = () => {
+    const { values } = useFormikContext();
+    useEffect(() => {
+      console.log(values);
+      if (universities.length === 0) return;
+      setColleges(
+        universities.filter((x) => x.id === parseInt(values.university))[0]
+          .colleges
+      );
+
+      if (colleges.length === 0) return;
+      setMajors(
+        colleges.filter((x) => x.id === parseInt(values.college))[0].majors
+      );
+    }, [values]);
+
+    return null;
+  };
+
   return (
     <>
-      <Center bg="primary.100" pt={10}>
-        <SimpleGrid>
-          <SimpleGrid columns={[1, 1, 2, 5]} gap={2}>
-            <Box margin="auto" width="100%">
-              <FormLabel fontSize="xl">الجامعة</FormLabel>
-              <Select bg="white" fontSize="xl">
-                <option>جامعة بوليتكنيك فلسطين</option>
-                <option>جامعة بوليتكنيك فلسطين</option>
-                <option>جامعة بوليتكنيك فلسطين</option>
-              </Select>
-            </Box>
-            <Box margin="auto" width="100%">
-              <FormLabel fontSize="xl">الكلية</FormLabel>
-              <Select bg="white" fontSize="xl">
-                <option>كلية الهندسة</option>
-                <option>كلية الهندسة</option>
-                <option>كلية الهندسة</option>
-              </Select>
-            </Box>
-            <Box margin="auto" width="100%">
-              <FormLabel fontSize="xl"> التخصص</FormLabel>
-              <Select bg="white" fontSize="xl">
-                <option>هندسة أنظمة الحاسوب</option>
-                <option>هندسة أنظمة الحاسوب</option>
-                <option>هندسة أنظمة الحاسوب</option>
-              </Select>
-            </Box>
-            <Box margin="auto" width="100%">
-              <FormLabel fontSize="xl">المساق</FormLabel>
-              <Select bg="white" fontSize="xl">
-                <option>فيزياء ١</option>
-                <option>تفاضل وتكامل</option>
-                <option>تفاضل وتكامل</option>
-              </Select>
-            </Box>
-            <Box margin="auto" width="100%">
-              <FormLabel fontSize="xl">النوع</FormLabel>
-              <Select bg="white" fontSize="xl">
-                <option>امتحان</option>
-                <option>كتاب</option>
-                <option>تلخيص</option>
-              </Select>
-            </Box>
-          </SimpleGrid>
-          <Center pt={5}>
-            <Button
-              bg="primary.400"
-              color="white"
-              fontSize="2xl"
-              _focus={{
-                outline: "none",
-                border: "none",
-              }}
-            >
-              بحث
-            </Button>
-          </Center>
-        </SimpleGrid>
-      </Center>
+      <Formik
+        initialValues={{
+          university: 1,
+          college: 1,
+          major: 1,
+          course: 1,
+          kind: 1,
+        }}
+      >
+        {({ values }) => {
+          return (
+            <Form>
+              <MyOnChangeComponent />
+              <Center bg="primary.100" pt={10}>
+                <SimpleGrid>
+                  <SimpleGrid columns={[1, 1, 2, 4]} gap={2}>
+                    <FormControl>
+                      <FormLabel>الجامعة</FormLabel>
+                      <Field
+                        name="university"
+                        as={Select}
+                        bg="white"
+                        fontSize="xl"
+                      >
+                        {universities.map((elem) => (
+                          <option
+                            key={elem.id}
+                            value={elem.id}
+                            label={elem.name}
+                          ></option>
+                        ))}
+                      </Field>
+                    </FormControl>
+                    <FormControl>
+                      <FormLabel>الكلية</FormLabel>
+                      <Field
+                        name="college"
+                        as={Select}
+                        bg="white"
+                        fontSize="xl"
+                      >
+                        {colleges.map((elem) => (
+                          <option
+                            key={elem.id}
+                            value={elem.id}
+                            label={elem.name}
+                          ></option>
+                        ))}
+                      </Field>
+                    </FormControl>
+                    <FormControl>
+                      <FormLabel>التخصص</FormLabel>
+                      <Field name="major" as={Select} bg="white" fontSize="xl">
+                        {majors.map((elem) => (
+                          <option
+                            key={elem.id}
+                            value={elem.id}
+                            label={elem.name}
+                          ></option>
+                        ))}
+                      </Field>
+                    </FormControl>
+                    {/* <FormControl>
+                      <FormLabel>المساق</FormLabel>
+                      <Field name="course" as={Select} bg="white" fontSize="xl">
+                        {courses.map((elem) => (
+                          <option
+                            key={elem.id}
+                            value={elem.id}
+                            label={elem.name}
+                          ></option>
+                        ))}
+                      </Field>
+                    </FormControl> */}
+                    <FormControl>
+                      <FormLabel>النوع</FormLabel>
+                      <Field name="kind" as={Select} bg="white" fontSize="xl">
+                        {kinds.map((elem) => (
+                          <option
+                            key={elem.id}
+                            value={elem.id}
+                            label={elem.name}
+                          ></option>
+                        ))}
+                      </Field>
+                    </FormControl>
+                  </SimpleGrid>
+                  <Center>
+                    <Button
+                      mt={5}
+                      bg="primary.400"
+                      color="white"
+                      fontSize="2xl"
+                      _focus={{
+                        outline: "none",
+                        border: "none",
+                      }}
+                    >
+                      بحث
+                    </Button>
+                  </Center>
+                </SimpleGrid>
+              </Center>
+            </Form>
+          );
+        }}
+      </Formik>
       <Center pt={5} bg="primary.100" fontSize="xl">
         <ResultTable></ResultTable>
       </Center>
@@ -103,14 +186,74 @@ const ResultTable = () => {
           pt={1}
           textColor="white"
         ></ResultHeader>
-        <ResultRow {...data} pb={1} pt={1}></ResultRow>
-        <ResultRow {...data} pb={1} pt={1} bg="primary.100"></ResultRow>
-        <ResultRow {...data} pb={1} pt={1}></ResultRow>
-        <ResultRow {...data} pb={1} pt={1} bg="primary.100"></ResultRow>
-        <ResultRow {...data} pb={1} pt={1}></ResultRow>
-        <ResultRow {...data} pb={1} pt={1} bg="primary.100"></ResultRow>
-        <ResultRow {...data} pb={1} pt={1}></ResultRow>
-        <ResultRow {...data} pb={1} pt={1} bg="primary.100"></ResultRow>
+        <ResultRow
+          {...data}
+          pb={1}
+          pt={1}
+          _hover={{
+            bg: "primary.200",
+          }}
+        ></ResultRow>
+        <ResultRow
+          {...data}
+          pb={1}
+          pt={1}
+          bg="primary.100"
+          _hover={{
+            bg: "primary.200",
+          }}
+        ></ResultRow>
+        <ResultRow
+          {...data}
+          pb={1}
+          pt={1}
+          _hover={{
+            bg: "primary.200",
+          }}
+        ></ResultRow>
+        <ResultRow
+          {...data}
+          pb={1}
+          pt={1}
+          bg="primary.100"
+          _hover={{
+            bg: "primary.200",
+          }}
+        ></ResultRow>
+        <ResultRow
+          {...data}
+          pb={1}
+          pt={1}
+          _hover={{
+            bg: "primary.200",
+          }}
+        ></ResultRow>
+        <ResultRow
+          {...data}
+          pb={1}
+          pt={1}
+          bg="primary.100"
+          _hover={{
+            bg: "primary.200",
+          }}
+        ></ResultRow>
+        <ResultRow
+          {...data}
+          pb={1}
+          pt={1}
+          _hover={{
+            bg: "primary.200",
+          }}
+        ></ResultRow>
+        <ResultRow
+          {...data}
+          pb={1}
+          pt={1}
+          bg="primary.100"
+          _hover={{
+            bg: "primary.200",
+          }}
+        ></ResultRow>
       </SimpleGrid>
     </Box>
   );

@@ -60,6 +60,10 @@ export const Card = (props) => {
         boxShadow={"2xl"}
         rounded={"md"}
         overflow={"hidden"}
+        transition="all 300ms ease"
+        _hover={{
+          transform: "scale(1.2)",
+        }}
       >
         <Box p={6}>
           <Stack spacing={0} align={"center"} mb={5}>
@@ -81,7 +85,7 @@ export const Card = (props) => {
           <Button
             w={"full"}
             mt={8}
-            color={"black"}
+            color="primary.700"
             rounded={"md"}
             rightIcon={<DownloadIcon />}
             bg="primary.300"
