@@ -16,14 +16,28 @@ import AdvancedSearch from "./Components/Pages/AdvancedSearch";
 import Settings from "./Components/Pages/Settings";
 import ForgotPassword from "./Components/Pages/ForgotPassword";
 import Signup from "./Components/Pages/Signup";
-import { getFilterData } from "./Components/Data/API";
+import { SWRConfig } from "swr";
+import axios from "axios";
+
+axios.defaults.baseURL = process.env.REACT_APP_SERVER_URL;
 
 function App() {
   useEffect(() => {}, []);
   return (
     <RtlProvider>
       <Account>
-        <PageComponent />
+        <SWRConfig
+          value={{
+            fetcher: (url) =>
+              axios(url).then((r) => {
+                return r.data;
+              }),
+            dedupingInterval: 10000,
+            refreshInterval: 0,
+          }}
+        >
+          <PageComponent />
+        </SWRConfig>
       </Account>
     </RtlProvider>
   );
@@ -33,7 +47,7 @@ function PageComponent() {
   const [loggedIn, setLoggedIn] = useState(false);
   const [loading, setLoading] = useState(true);
   const [token, setToken] = useState("");
-  const [schoolData, setSchoolData] = useState({});
+
   getSession().then(({ user }) => {
     user.getSession((err, session) => {
       if (err) {
@@ -48,10 +62,6 @@ function PageComponent() {
   });
 
   useEffect(() => {
-    getFilterData().then((result) => {
-      setSchoolData(result);
-    });
-
     getSession().then(
       () => {
         setLoggedIn(true);
@@ -66,26 +76,10 @@ function PageComponent() {
   return (
     <BrowserRouter>
       {loading ? (
-        <Stack
-          fontSize={["lg", "xl", "2xl", "3xl"]}
-          pt={[10, 20, 30, 40]}
-          color="primary.500"
-          direction="column"
-          textAlign="center"
-        >
-          <Box>
-            <Spinner h={70} w={70} color="primary.300" />
-          </Box>
-          <Box>الرجاء الانتظار؛ جاري تحميل الموقع ...</Box>
-        </Stack>
+        <LoadingComponent />
       ) : (
         <>
-          <Header
-            loggedIn={loggedIn}
-            logout={logout}
-            idToken={token}
-            schoolData={schoolData}
-          />
+          <Header loggedIn={loggedIn} logout={logout} idToken={token} />
           <Switch>
             <Route path="/" exact component={HomePage} />
             <Route path="/login" exact component={Login} />
@@ -95,7 +89,7 @@ function PageComponent() {
             <Route
               path="/advancedsearch"
               exact
-              render={() => <AdvancedSearch schoolData={schoolData} />}
+              render={() => <AdvancedSearch />}
             />
             <Route path="/settings" exact component={Settings} />
             <Route path="/forgotpassword" exact component={ForgotPassword} />
@@ -106,4 +100,22 @@ function PageComponent() {
     </BrowserRouter>
   );
 }
+
+function LoadingComponent() {
+  return (
+    <Stack
+      fontSize={["lg", "xl", "2xl", "3xl"]}
+      pt={[10, 20, 30, 40]}
+      color="primary.500"
+      direction="column"
+      textAlign="center"
+    >
+      <Box>
+        <Spinner h={70} w={70} color="primary.300" />
+      </Box>
+      <Box>الرجاء الانتظار؛ جاري تحميل الموقع ...</Box>
+    </Stack>
+  );
+}
+
 export default App;

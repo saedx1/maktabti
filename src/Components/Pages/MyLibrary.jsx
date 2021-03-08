@@ -16,7 +16,6 @@ const MyLibrary = () => {
 };
 
 const TableRow = (props) => {
-  console.log(props.data);
   return (
     <>
       <Card

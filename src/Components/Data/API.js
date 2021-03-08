@@ -1,15 +1,28 @@
 import axios from "axios";
 
-const BASE_URL = process.env.REACT_APP_SERVER_URL;
-export function getFilterData() {
-  return new Promise((resolve, reject) => {
-    axios
-      .get(`${BASE_URL}get_filter_data`)
-      .then((response) => {
-        resolve(response.data);
-      })
-      .catch((err) => {
-        reject(err);
-      });
-  });
+export async function GetFilterData() {
+  console.log("GETFILTERDATA");
+
+  const res = await axios.get(`/get_filter_data`);
+  return await res.data;
+}
+
+export async function UploadFile({ idToken, data }) {
+  const options = {
+    headers: {
+      Authorization: idToken,
+    },
+  };
+
+  const finalData = new FormData();
+  for (const property in data) {
+    if (property === "files") {
+      finalData.append("file", data[property][0]);
+    } else {
+      finalData.append(property, data[property]);
+    }
+  }
+  finalData.append("token", idToken);
+
+  return await axios.post(`/upload_file`, finalData, options);
 }

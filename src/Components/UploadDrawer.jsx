@@ -12,40 +12,55 @@ import {
   Select,
   FormControl,
   FormLabel,
+  useToast,
+  Center,
 } from "@chakra-ui/react";
 import { Formik, Form, Field, useFormikContext } from "formik";
 import axios from "axios";
+import useSWR from "swr";
 
-function UploadFile({ idToken, file, data }) {
+async function UploadFile({ idToken, data }) {
   const options = {
     headers: {
       Authorization: idToken,
     },
   };
   const finalData = new FormData();
-  finalData.append("file", file);
   for (const property in data) {
-    finalData.append(property, data[property]);
+    if (property === "files") {
+      finalData.append("file", data[property][0]);
+    } else {
+      finalData.append(property, data[property]);
+    }
   }
+  finalData.append("token", idToken);
 
-  axios
-    .post(`${process.env.REACT_APP_SERVER_URL}upload_file`, finalData, options)
-    .then(
-      ({ data }) => {
-        console.log(data);
-      },
-      (error) => {
-        console.log(error);
-      }
-    );
+  return await axios.post("/upload_file", finalData, options);
 }
 export const UploadDrawer = ({ isOpen, onClose, idToken, schoolData }) => {
-  const [files, setFiles] = useState([]);
-  const submitFile = (data, { setSubmitting }) => {
-    setSubmitting(true);
-    UploadFile({ idToken, file: files[0], data });
-    console.log(data);
-    setSubmitting(false);
+  const toast = useToast();
+  const submitFile = (data, actions) => {
+    actions.setSubmitting(true);
+    UploadFile({ idToken, data })
+      .then((res) => {
+        toast({
+          title: "تم رفع الملف بنجاح",
+          status: "success",
+          duration: 5000,
+          isClosable: true,
+        });
+        onClose();
+        actions.resetForm();
+      })
+      .catch((err) => {
+        toast({
+          title: "حصل خلل أثناء رفع الملف",
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+        });
+        actions.setSubmitting(false);
+      });
   };
 
   const [universities, setUniversities] = useState([]);
@@ -54,13 +69,15 @@ export const UploadDrawer = ({ isOpen, onClose, idToken, schoolData }) => {
   // const [courses, setCourses] = useState([]);
   const [kinds, setKinds] = useState([]);
 
+  const { data } = useSWR("/get_filter_data");
+
   useEffect(() => {
-    if (schoolData == null) return;
-    setUniversities(schoolData.universities);
-    setColleges(schoolData.universities[0].colleges);
-    setMajors(schoolData.universities[0].colleges[0].majors);
-    setKinds(schoolData.kinds);
-  }, [schoolData]);
+    if (!data) return;
+    setUniversities(data.universities);
+    setColleges(data.universities[0].colleges);
+    setMajors(data.universities[0].colleges[0].majors);
+    setKinds(data.kinds);
+  }, [data]);
 
   const MyOnChangeComponent = () => {
     const { values } = useFormikContext();
@@ -91,10 +108,12 @@ export const UploadDrawer = ({ isOpen, onClose, idToken, schoolData }) => {
               major: 1,
               course: "",
               kind: 1,
+              files: [],
+              year: 2020,
             }}
             onSubmit={submitFile}
           >
-            {({ isSubmitting }) => (
+            {({ values, isSubmitting, setFieldValue }) => (
               <Form encType="multipart/form-data">
                 <MyOnChangeComponent />
 
@@ -105,14 +124,29 @@ export const UploadDrawer = ({ isOpen, onClose, idToken, schoolData }) => {
                 <DrawerBody>
                   <Stack spacing={4}>
                     <FormControl>
+                      <FileUploader
+                        name="file"
+                        id="file"
+                        onChange={(event) =>
+                          setFieldValue("files", event.currentTarget.files)
+                        }
+                        accept=".pdf"
+                        filename={
+                          values.files.length === 0 ? "" : values.files[0].name
+                        }
+                      ></FileUploader>
+                    </FormControl>
+                    {/* <FormControl>
                       <Field
                         name="file"
                         type="file"
                         as={Input}
-                        onChange={(event) => setFiles(event.target.files)}
+                        onChange={(event) =>
+                          setFieldValue("files", event.currentTarget.files)
+                        }
                         accept=".pdf"
                       ></Field>
-                    </FormControl>
+                    </FormControl> */}
                     <FormControl>
                       <FormLabel>الجامعة</FormLabel>
                       <Field
@@ -173,6 +207,16 @@ export const UploadDrawer = ({ isOpen, onClose, idToken, schoolData }) => {
                       ></Field>
                     </FormControl>
                     <FormControl>
+                      <FormLabel>السنة</FormLabel>
+                      <Field
+                        name="year"
+                        as={Input}
+                        type="numeric"
+                        bg="white"
+                        fontSize="xl"
+                      ></Field>
+                    </FormControl>
+                    <FormControl>
                       <FormLabel>النوع</FormLabel>
                       <Field name="kind" as={Select} bg="white" fontSize="xl">
                         {kinds.map((elem) => (
@@ -220,6 +264,55 @@ export const UploadDrawer = ({ isOpen, onClose, idToken, schoolData }) => {
     </Drawer>
   );
 };
+
+function FileUploader(props) {
+  return (
+    <>
+      <style>
+        {`
+                .inputfile {
+                      /* visibility: hidden etc. wont work */
+                      width: 0.1px;
+                      height: 0.1px;
+                      opacity: 0;
+                      overflow: hidden;
+                      position: absolute;
+                      z-index: -1;
+                    }
+                    .inputfile:focus + label {
+                      /* keyboard navigation */
+                      outline: 1px dotted #000;
+                      outline: -webkit-focus-ring-color auto 5px;
+                    }
+                    .inputfile + label * {
+                      pointer-events: none;
+                    }
+                    `}
+      </style>
+
+      <FormLabel
+        htmlFor="file"
+        borderStyle="solid"
+        border="1px solid #ccc"
+        bg="primary.100"
+        _hover={{
+          bg: "primary.300",
+        }}
+        fontSize="xl"
+      >
+        <Center>اضغط هنا ﻹختيار ملف</Center>
+      </FormLabel>
+      <Field
+        id="file"
+        type="file"
+        {...props}
+        className="inputfile"
+        as={Input}
+      />
+      <div>{props.filename}</div>
+    </>
+  );
+}
 
 // function MyDropzone({ setFiles }) {
 //   const onDrop = useCallback(

@@ -31,7 +31,6 @@ function Settings() {
       setName(result.name);
       setEmail(result.email);
       setUniversity(result["custom:university"]);
-      console.log(result);
     });
   }, [getSession, logout]);
 

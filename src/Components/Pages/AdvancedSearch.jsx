@@ -8,42 +8,57 @@ import {
   Text,
   FormControl,
 } from "@chakra-ui/react";
+import axios from "axios";
 import { Field, Form, Formik, useFormikContext } from "formik";
 import { useEffect, useState } from "react";
+import useSWR from "swr";
+import { date } from "yup";
 
-const AdvancedSearch = ({ schoolData }) => {
+const AdvancedSearch = () => {
   const [universities, setUniversities] = useState([]);
   const [colleges, setColleges] = useState([]);
   const [majors, setMajors] = useState([]);
   // const [courses, setCourses] = useState([]);
   const [kinds, setKinds] = useState([]);
+  const [results, setResults] = useState([]);
+  const { data } = useSWR("/get_filter_data");
 
   useEffect(() => {
-    setUniversities(schoolData.universities);
-    setColleges(schoolData.universities[0].colleges);
-    setMajors(schoolData.universities[0].colleges[0].majors);
-    setKinds(schoolData.kinds);
-  }, [schoolData]);
+    if (!data) return;
+    setUniversities(data.universities);
+    setColleges(data.universities[0].colleges);
+    setMajors(data.universities[0].colleges[0].majors);
+    // setCourses(data.universities[0].colleges[0].majors[0].courses);
+    setKinds(data.kinds);
+  }, [data]);
 
   const MyOnChangeComponent = () => {
-    const { values } = useFormikContext();
+    const { values, setFieldValue } = useFormikContext();
     useEffect(() => {
-      console.log(values);
       if (universities.length === 0) return;
-      setColleges(
-        universities.filter((x) => x.id === parseInt(values.university))[0]
-          .colleges
-      );
+      const c = universities.filter(
+        (x) => x.id === parseInt(values.university)
+      )[0].colleges;
+      setColleges(c);
 
       if (colleges.length === 0) return;
-      setMajors(
-        colleges.filter((x) => x.id === parseInt(values.college))[0].majors
-      );
+      const m = colleges.filter((x) => x.id === parseInt(values.college))[0]
+        .majors;
+      setMajors(m);
+
+      if (m.filter((elem) => values.major == elem.id).length === 0)
+        setFieldValue("major", m[0].id);
     }, [values]);
 
     return null;
   };
 
+  const submitSearch = async (values, actions) => {
+    actions.setSubmitting(true);
+    const res = await axios.get("/get_search_results/" + values.major);
+    const data = await res.data;
+    setResults(data.files);
+  };
   return (
     <>
       <Formik
@@ -51,11 +66,12 @@ const AdvancedSearch = ({ schoolData }) => {
           university: 1,
           college: 1,
           major: 1,
-          course: 1,
           kind: 1,
         }}
+        enableReinitialize={false}
+        onSubmit={submitSearch}
       >
-        {({ values }) => {
+        {({ values, isSubmitting }) => {
           return (
             <Form>
               <MyOnChangeComponent />
@@ -143,6 +159,8 @@ const AdvancedSearch = ({ schoolData }) => {
                         outline: "none",
                         border: "none",
                       }}
+                      disabled={isSubmitting}
+                      type="submit"
                     >
                       بحث
                     </Button>
@@ -153,22 +171,20 @@ const AdvancedSearch = ({ schoolData }) => {
           );
         }}
       </Formik>
-      <Center pt={5} bg="primary.100" fontSize="xl">
-        <ResultTable></ResultTable>
-      </Center>
+      {data ? (
+        <Center pt={5} bg="primary.100" fontSize="xl">
+          <ResultTable data={results}></ResultTable>
+        </Center>
+      ) : null}
     </>
   );
 };
 
-const ResultTable = () => {
-  const data = {
-    course: "فيزياء 1",
-    type: "امتحان",
-    name: "فيرست",
-    major: "هندسة حاسوب",
-    university: "جامعة بوليتكنيك فلسطين",
-    by: "سعد السيد أحمد",
-  };
+const ResultTable = ({ data }) => {
+  if (data.length === 0) {
+    return <></>;
+  }
+  console.log(data);
   return (
     <Box width={["95%", "95%", "70%"]}>
       <SimpleGrid
@@ -186,74 +202,28 @@ const ResultTable = () => {
           pt={1}
           textColor="white"
         ></ResultHeader>
-        <ResultRow
-          {...data}
-          pb={1}
-          pt={1}
-          _hover={{
-            bg: "primary.200",
-          }}
-        ></ResultRow>
-        <ResultRow
-          {...data}
-          pb={1}
-          pt={1}
-          bg="primary.100"
-          _hover={{
-            bg: "primary.200",
-          }}
-        ></ResultRow>
-        <ResultRow
-          {...data}
-          pb={1}
-          pt={1}
-          _hover={{
-            bg: "primary.200",
-          }}
-        ></ResultRow>
-        <ResultRow
-          {...data}
-          pb={1}
-          pt={1}
-          bg="primary.100"
-          _hover={{
-            bg: "primary.200",
-          }}
-        ></ResultRow>
-        <ResultRow
-          {...data}
-          pb={1}
-          pt={1}
-          _hover={{
-            bg: "primary.200",
-          }}
-        ></ResultRow>
-        <ResultRow
-          {...data}
-          pb={1}
-          pt={1}
-          bg="primary.100"
-          _hover={{
-            bg: "primary.200",
-          }}
-        ></ResultRow>
-        <ResultRow
-          {...data}
-          pb={1}
-          pt={1}
-          _hover={{
-            bg: "primary.200",
-          }}
-        ></ResultRow>
-        <ResultRow
-          {...data}
-          pb={1}
-          pt={1}
-          bg="primary.100"
-          _hover={{
-            bg: "primary.200",
-          }}
-        ></ResultRow>
+        {data.map((elem, i) => (
+          <>
+            <ResultRow
+              {...elem}
+              pb={1}
+              pt={1}
+              _hover={{
+                bg: "primary.200",
+              }}
+              key={i}
+            ></ResultRow>
+            <ResultRow
+              {...elem}
+              pb={1}
+              pt={1}
+              _hover={{
+                bg: "primary.200",
+              }}
+              key={i}
+            ></ResultRow>
+          </>
+        ))}
       </SimpleGrid>
     </Box>
   );
@@ -284,26 +254,39 @@ const ResultHeader = (props) => {
   );
 };
 
-const ResultRow = ({ name, type, course, major, university, by, ...props }) => {
+const ResultRow = ({
+  universityByUniversity,
+  collegeByCollege,
+  majorByMajor,
+  courseByCourse,
+  created_by,
+  kindByKind,
+  link,
+  ...props
+}) => {
+  console.log("Hello");
+
   return (
     <>
       <Center {...props}>
-        <Text noOfLines={1}>{name}</Text>
+        <Text noOfLines={1}>
+          <a href={link}>Download me</a>
+        </Text>
       </Center>
       <Center {...props}>
-        <Text noOfLines={1}>{type}</Text>
+        <Text noOfLines={1}>{kindByKind.name}</Text>
       </Center>
       <Center {...props}>
-        <Text noOfLines={1}>{course}</Text>
+        <Text noOfLines={1}>{courseByCourse.name}</Text>
       </Center>
       <Center {...props}>
-        <Text noOfLines={1}>{major}</Text>
+        <Text noOfLines={1}>{majorByMajor.name}</Text>
       </Center>
       <Center {...props}>
-        <Text noOfLines={1}>{university}</Text>
+        <Text noOfLines={1}>{universityByUniversity.name}</Text>
       </Center>
       <Center {...props}>
-        <Text noOfLines={1}>{by}</Text>{" "}
+        <Text noOfLines={1}>{created_by}</Text>
       </Center>
     </>
   );

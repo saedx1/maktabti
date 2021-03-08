@@ -26,6 +26,7 @@
     "redux": "^4.0.5",
     "stylis": "^4.0.7",
     "stylis-plugin-rtl": "^2.0.1",
+    "swr": "^0.4.2",
     "web-vitals": "^1.0.1",
     "yup": "^0.32.9"
   },
