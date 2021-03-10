@@ -14,6 +14,7 @@ import {
 import { SearchBox } from "../SearchBox";
 import { Card } from "../Card";
 import theme from "../../theme";
+import useSWR from "swr";
 
 const StatComponent = (props) => {
   return (
@@ -77,6 +78,8 @@ const MostPopular = () => {
   );
 };
 const MainBody = () => {
+  const { data } = useSWR("/get_stats");
+
   return (
     <Box bg="primary.500">
       <Center color="black">
@@ -93,10 +96,10 @@ const MainBody = () => {
         columnGap={2}
       >
         <GridItem colStart={5}>
-          <StatComponent label="المساقات" number="25" />
+          <StatComponent label="المساقات" number={data && data.course_count} />
         </GridItem>
         <GridItem colStart={6}>
-          <StatComponent label="المستندات" number="528" />
+          <StatComponent label="المستندات" number={data && data.file_count} />
         </GridItem>
         <GridItem colStart={7}>
           <StatComponent label="الطلاب" number="12" />

@@ -1,3 +1,4 @@
+import { DownloadIcon, StarIcon } from "@chakra-ui/icons";
 import {
   Box,
   Center,
@@ -7,6 +8,7 @@ import {
   SimpleGrid,
   Text,
   FormControl,
+  IconButton,
 } from "@chakra-ui/react";
 import axios from "axios";
 import { Field, Form, Formik, useFormikContext } from "formik";
@@ -55,7 +57,9 @@ const AdvancedSearch = () => {
 
   const submitSearch = async (values, actions) => {
     actions.setSubmitting(true);
-    const res = await axios.get("/get_search_results/" + values.major);
+    const res = await axios.get(
+      "/get_search_results/" + values.major + "/" + values.kind
+    );
     const data = await res.data;
     setResults(data.files);
   };
@@ -184,11 +188,10 @@ const ResultTable = ({ data }) => {
   if (data.length === 0) {
     return <></>;
   }
-  console.log(data);
   return (
     <Box width={["95%", "95%", "70%"]}>
       <SimpleGrid
-        templateColumns="1fr 1fr 1.5fr 1.5fr 2fr 2fr"
+        templateColumns="0.5fr 1fr 1.5fr 1.5fr 2fr 2fr"
         columns={6}
         bg="white"
         rounded={10}
@@ -202,27 +205,8 @@ const ResultTable = ({ data }) => {
           pt={1}
           textColor="white"
         ></ResultHeader>
-        {data.map((elem, i) => (
-          <>
-            <ResultRow
-              {...elem}
-              pb={1}
-              pt={1}
-              _hover={{
-                bg: "primary.200",
-              }}
-              key={i}
-            ></ResultRow>
-            <ResultRow
-              {...elem}
-              pb={1}
-              pt={1}
-              _hover={{
-                bg: "primary.200",
-              }}
-              key={i}
-            ></ResultRow>
-          </>
+        {data.map((elem) => (
+          <ResultRow key={elem.name} pb={1} pt={1} {...elem}></ResultRow>
         ))}
       </SimpleGrid>
     </Box>
@@ -233,7 +217,7 @@ const ResultHeader = (props) => {
   return (
     <>
       <Center {...props}>
-        <Text noOfLines={1}>الاسم</Text>
+        <Text noOfLines={1}></Text>
       </Center>
       <Center {...props}>
         <Text noOfLines={1}>النوع</Text>
@@ -262,21 +246,22 @@ const ResultRow = ({
   created_by,
   kindByKind,
   link,
+  key,
+  id,
   ...props
 }) => {
-  console.log("Hello");
-
   return (
     <>
       <Center {...props}>
-        <Text noOfLines={1}>
-          <a href={link}>Download me</a>
-        </Text>
+        <a href={link} outline={null}>
+          <IconButton icon={<DownloadIcon />} bg="transparent" />
+        </a>
       </Center>
       <Center {...props}>
         <Text noOfLines={1}>{kindByKind.name}</Text>
       </Center>
       <Center {...props}>
+        <IconButton icon={<StarIcon />} bg="transparent" />
         <Text noOfLines={1}>{courseByCourse.name}</Text>
       </Center>
       <Center {...props}>

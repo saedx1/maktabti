@@ -26,7 +26,7 @@ GRAPHQL_ENDPOINT = "http://localhost:8080/v1/graphql"
 def upload_file():
     data = dict(request.form)
     fname = os.path.join(UPLOAD_FOLDER, f"{'_'.join([data[i] for i in data])}.pdf")
-    
+
     file = request.files["file"]
     file.save(fname)
 
@@ -40,8 +40,7 @@ def upload_file():
     )
     gfile.SetContentFile(fname)
     gfile.Upload()
-    gfile.InsertPermission(
-        {"type": "anyone", "value": "anyone", "role": "reader"})
+    gfile.InsertPermission({"type": "anyone", "value": "anyone", "role": "reader"})
 
     link = gfile["webContentLink"]
 
@@ -66,7 +65,9 @@ def upload_file():
             id
         }
     }
-    """ % (data)
+    """ % (
+        data
+    )
 
     res = execute_graphql_query(query)
     if "data" in res.keys():
@@ -106,14 +107,15 @@ def get_filter_data():
     if "data" in res.keys():
         return res["data"]
     else:
-        print(res)
         return res, 400
 
-@APP.route("/get_search_results/<major>", methods=["GET"])
-def get_search_results(major):
+
+@APP.route("/get_search_results/<major>/<kind>", methods=["GET"])
+def get_search_results(major, kind):
     query = """
     query MyQuery {
-        files(where: {majorByMajor: {id: {_eq: %s}}}) {
+        files(where: {majorByMajor: {id: {_eq: %s}}, kindByKind: {id: {_eq: %s}}}) {
+            id
             universityByUniversity {
                 name
             }
@@ -133,19 +135,48 @@ def get_search_results(major):
             created_by
         }
     }
-    """ % (major)
-    print(query)
+    """ % (
+        major,
+        kind,
+    )
+
     res = execute_graphql_query(query)
     if "data" in res.keys():
-        print(res)
         return res["data"]
     else:
-        print(res)
         return res, 400
 
+
+@APP.route("/get_stats", methods=["GET"])
+def get_stats():
+    query = """
+        query MyQuery {
+            files_aggregate {
+                aggregate {
+                count
+                }
+            }
+            courses_aggregate {
+                aggregate {
+                count
+                }
+            }
+        }
+    """
+
+    res = execute_graphql_query(query)
+    print(res)
+    if "data" in res.keys():
+        return {
+            "file_count": res["data"]["files_aggregate"]["aggregate"]["count"],
+            "course_count": res["data"]["courses_aggregate"]["aggregate"]["count"],
+        }
+    else:
+        return res, 400
+
+
 def execute_graphql_query(query):
-    response = requests.post(
-        GRAPHQL_ENDPOINT, data=json.dumps({"query": query}))
+    response = requests.post(GRAPHQL_ENDPOINT, data=json.dumps({"query": query}))
     if response.text is None:
         return response.text
     else:
