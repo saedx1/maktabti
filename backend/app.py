@@ -17,7 +17,7 @@ APP.config["CORS_HEADERS"] = "Content-Type"
 GAUTH = GoogleAuth()
 DRIVE = GoogleDrive(GAUTH)
 
-UPLOAD_FOLDER = "/home/saedx1/maktabti-data/"
+UPLOAD_FOLDER = "/root/maktabti-data/"
 ALLOWED_EXTENSIONS = set(["pdf"])
 GRAPHQL_ENDPOINT = "http://localhost:8080/v1/graphql"
 
