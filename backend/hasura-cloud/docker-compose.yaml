@@ -6,7 +6,7 @@ services:
     volumes:
     - db_data:/var/lib/postgresql/data
     environment:
-      POSTGRES_PASSWORD: postgrespassword
+      POSTGRES_PASSWORD: $POSTGRESPASSWORD
     ports:
     - "5432:5432"
   graphql-engine:
@@ -17,7 +17,7 @@ services:
     - "postgres"
     restart: always
     environment:
-      HASURA_GRAPHQL_DATABASE_URL: postgres://postgres:postgrespassword@postgres:5432/postgres
+      HASURA_GRAPHQL_DATABASE_URL: "postgres://postgres:${POSTGRESPASSWORD}@postgres:5432/postgres"
       ## enable the console served by server
       HASURA_GRAPHQL_ENABLE_CONSOLE: "true" # set to "false" to disable console
       ## enable debugging mode. It is recommended to disable this in production
@@ -25,17 +25,5 @@ services:
       HASURA_GRAPHQL_ENABLED_LOG_TYPES: startup, http-log, webhook-log, websocket-log, query-log
       ## uncomment next line to set an admin secret
       # HASURA_GRAPHQL_ADMIN_SECRET: myadminsecretkey
-  msgq:
-    image: rabbitmq:management
-    ports:
-    - "5672:5672"
-    - "15672:15672"
-    restart: always
-    volumes:
-    - rabbit_data:/var/lib/rabbitmq/
-    - rabbit_data:/var/log/rabbitmq
-    
 volumes:
   db_data:
-  rabbit_data:
-

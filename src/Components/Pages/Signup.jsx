@@ -5,102 +5,163 @@ import {
   Button,
   Select,
   FormLabel,
-  // useToast,
   FormControl,
   Flex,
   Stack,
+  useToast,
 } from "@chakra-ui/react";
 import React, { useState } from "react";
 import UserPool from "../User/UserPool";
+import { Field, Form, Formik } from "formik";
+import * as Yup from "yup";
+
+const SignupSchema = Yup.object().shape({
+  name: Yup.string()
+    .min(4, "اﻹسم قصير جداً")
+    .required("يرجى إدخال الاسم الشخصي"),
+  email: Yup.string()
+    .email("البريد المدخل غير صحيح!")
+    .required("يرجى إدخال البريد اﻹلكتروني"),
+  password: Yup.string()
+    .min(8, "يجب أن تتكون كلمة المرور من 8 رموز على اﻷقل")
+    .required("يرجى إدخال كلمة المرور"),
+});
+
+const onSubmit = (data, actions, toast) => {
+  actions.setSubmitting(true);
+  const attrs = [
+    new CognitoUserAttribute({
+      Name: "name",
+      Value: data.name,
+    }),
+    new CognitoUserAttribute({
+      Name: "custom:university",
+      Value: `${data.university}`,
+    }),
+  ];
+  UserPool.signUp(data.email, data.password, attrs, null, (err, data) => {
+    if (err) {
+      toast({
+        title: "حصل خلل أثناء التسجيل",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
+      actions.setSubmitting(false);
+    } else {
+      toast({
+        title: "تم التسجيل بنجاح، يرجى تفقد البريد اﻹلكتروني لتأكيد التسجيل",
+        status: "success",
+        duration: 5000,
+        isClosable: true,
+      });
+    }
+  });
+};
 
 const Signup = () => {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [university, setUnviersity] = useState("");
+  const toast = useToast();
 
-  // const toast = useToast();
+  const universities = [{ id: 1, name: "جامعة بوليتكنك فلسطين" }];
 
-  const onSubmit = (event) => {
-    event.preventDefault();
-    const attrs = [
-      new CognitoUserAttribute({
-        Name: "name",
-        Value: name,
-      }),
-      new CognitoUserAttribute({
-        Name: "custom:university",
-        Value: university,
-      }),
-    ];
-    UserPool.signUp(email, password, attrs, null, (err, data) => {
-      if (err) {
-        console.error(err);
-      }
-      console.log(data);
-    });
-  };
   return (
     <Flex align={"center"} justify={"center"} bg={"primary.100"}>
       <Stack width="100%" spacing={8} mx={"auto"} maxW={"lg"} py={12} px={6}>
         <Box rounded={"lg"} bg={"white"} boxShadow={"lg"} p={8}>
-          <form onSubmit={onSubmit}>
-            <Stack spacing={4}>
-              <FormControl>
-                <FormLabel>الاسم</FormLabel>
-                <Input
-                  bg="white"
-                  value={name}
-                  onChange={(event) => setName(event.target.value)}
-                ></Input>
-              </FormControl>
-              <FormControl>
-                <FormLabel>البريد الإلكتروني</FormLabel>
-                <Input
-                  bg="white"
-                  placeholder="يجب أن ينتهي ب edu أو edu.ps"
-                  value={email}
-                  onChange={(event) => setEmail(event.target.value)}
-                ></Input>
-              </FormControl>
+          <Formik
+            initialValues={{
+              name: "",
+              email: "",
+              password: "",
+              university: 1,
+            }}
+            onSubmit={(data, actions) => onSubmit(data, actions, toast)}
+            validationSchema={SignupSchema}
+          >
+            {({ isSubmitting, errors, touched }) => (
+              <Form>
+                <Stack spacing={4}>
+                  <FormControl>
+                    <FormLabel fontSize="xl">الاسم</FormLabel>
+                    <Field
+                      name="name"
+                      as={Input}
+                      type="text"
+                      bg="white"
+                      fontSize="xl"
+                      disabled={isSubmitting}
+                    ></Field>
+                    {errors.name && touched.name ? (
+                      <Box color="red">{errors.name}</Box>
+                    ) : null}
+                  </FormControl>
+                  <FormControl>
+                    <FormLabel fontSize="xl">البريد الإلكتروني</FormLabel>
+                    <Field
+                      name="email"
+                      as={Input}
+                      type="text"
+                      bg="white"
+                      fontSize="xl"
+                      disabled={isSubmitting}
+                    ></Field>
+                    {errors.email && touched.email ? (
+                      <Box color="red">{errors.email}</Box>
+                    ) : null}
+                  </FormControl>
 
-              <FormControl>
-                <FormLabel>كلمة المرور</FormLabel>
-                <Input
-                  bg="white"
-                  placeholder="تتكون من 8 رموز من أحرف وأرقام"
-                  value={password}
-                  onChange={(event) => setPassword(event.target.value)}
-                ></Input>
-              </FormControl>
-              <FormControl>
-                <FormLabel>الجامعة</FormLabel>
-                <Select
-                  bg="white"
-                  value={university}
-                  onChange={(event) => setUnviersity(event.target.value)}
-                >
-                  <option> جامعة بوليتكنيك فلسطين</option>
-                  <option> جامعة بوليتكنيك فلسطين</option>
-                  <option> جامعة بوليتكنيك فلسطين</option>
-                </Select>
-              </FormControl>
-              <Button
-                bg={"primary.400"}
-                color={"white"}
-                _hover={{
-                  bg: "primary.500",
-                }}
-                type="submit"
-                _focus={{
-                  outline: "none",
-                  border: "none",
-                }}
-              >
-                دخول
-              </Button>
-            </Stack>
-          </form>
+                  <FormControl>
+                    <FormLabel fontSize="xl">كلمة المرور</FormLabel>
+                    <Field
+                      name="password"
+                      as={Input}
+                      type="password"
+                      bg="white"
+                      fontSize="xl"
+                      disabled={isSubmitting}
+                    ></Field>
+                    {errors.password && touched.password ? (
+                      <Box color="red">{errors.password}</Box>
+                    ) : null}
+                  </FormControl>
+                  <FormControl>
+                    <FormLabel fontSize="xl">الجامعة</FormLabel>
+                    <Select
+                      bg="white"
+                      as={Select}
+                      bg="white"
+                      fontSize="xl"
+                      disabled={isSubmitting}
+                    >
+                      {universities.map((elem) => (
+                        <option
+                          key={elem.id}
+                          value={elem.id}
+                          label={elem.name}
+                        ></option>
+                      ))}
+                    </Select>
+                  </FormControl>
+                  <Button
+                    bg={"primary.400"}
+                    color={"white"}
+                    _hover={{
+                      bg: "primary.500",
+                    }}
+                    type="submit"
+                    _focus={{
+                      outline: "none",
+                      border: "none",
+                    }}
+                    fontSize="xl"
+                    disabled={isSubmitting}
+                  >
+                    تسجيل
+                  </Button>
+                </Stack>
+              </Form>
+            )}
+          </Formik>
         </Box>
       </Stack>
     </Flex>

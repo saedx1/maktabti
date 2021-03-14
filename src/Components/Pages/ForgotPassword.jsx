@@ -81,14 +81,7 @@ function ForgotPassword() {
             <Stack spacing={4}>
               <FormControl id="email">
                 <FormLabel>البريد الإلكتروني (@edu أو @edu.ps)</FormLabel>
-                <Input
-                  type="email"
-                  value={email}
-                  onChange={
-                    stage === 1 ? (event) => setEmail(event.target.value) : null
-                  }
-                  disabled={stage !== 1}
-                />
+                <Input type="email" value={email} disabled={stage !== 1} />
               </FormControl>
               <FormControl id="code" display={stage === 1 ? "none" : ""}>
                 <FormLabel>رمز التحقق</FormLabel>

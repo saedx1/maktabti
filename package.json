@@ -16,6 +16,7 @@
     "axios": "^0.21.1",
     "formik": "^2.2.6",
     "framer-motion": "^3.6.1",
+    "history": "^4.10.1",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-dropzone": "^11.3.1",

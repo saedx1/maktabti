@@ -9,15 +9,20 @@ from pydrive.drive import GoogleDrive
 from flask import Flask, jsonify, request, flash
 from werkzeug.utils import secure_filename
 from flask_cors import CORS
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
+
 
 APP = Flask("maktabti")
 CORS(APP)
 APP.config["CORS_HEADERS"] = "Content-Type"
+limiter = Limiter(APP, key_func=get_remote_address, default_limits=["10 per minute"])
 
 GAUTH = GoogleAuth()
 DRIVE = GoogleDrive(GAUTH)
 
-UPLOAD_FOLDER = "/root/maktabti-data/"
+# UPLOAD_FOLDER = "/root/maktabti-data/"
+UPLOAD_FOLDER = "/home/saedx1/projects/maktabti-data/"
 ALLOWED_EXTENSIONS = set(["pdf"])
 GRAPHQL_ENDPOINT = "http://localhost:8080/v1/graphql"
 
@@ -28,6 +33,7 @@ def upload_file():
     fname = os.path.join(UPLOAD_FOLDER, f"{'_'.join([data[i] for i in data])}.pdf")
 
     file = request.files["file"]
+    print(request.headers)
     file.save(fname)
 
     gfile = DRIVE.CreateFile(
@@ -44,7 +50,7 @@ def upload_file():
 
     link = gfile["webContentLink"]
 
-    data["created_by"] = data["token"]
+    data["created_by"] = data["name"]
     data["link"] = link
 
     query = """

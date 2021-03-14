@@ -57,9 +57,7 @@ const WithAction = ({ loggedIn, logout }) => {
 
   const logoutToHome = useCallback(() => {
     logout();
-    history.push("/");
-    history.go();
-    window.location.reload(true);
+    window.location.href = "/";
   }, [logout, history]);
 
   return (
@@ -135,18 +133,20 @@ const WithAction = ({ loggedIn, logout }) => {
                 <MenuList>
                   <MenuItem
                     as="button"
-                    onClick={() => history.push("/mylibrary")}
+                    onClick={() => (window.location.href = "/mylibrary")}
+                    fontSize="xl"
                   >
                     مكتبتي
                   </MenuItem>
                   <MenuItem
                     as="button"
-                    onClick={() => history.push("/settings")}
+                    onClick={() => (window.location.href = "/settings")}
+                    fontSize="xl"
                   >
                     اعداداتي
                   </MenuItem>
                   <MenuDivider />
-                  <MenuItem as="button" onClick={logoutToHome}>
+                  <MenuItem as="button" onClick={logoutToHome} fontSize="xl">
                     تسجيل الخروج
                   </MenuItem>
                 </MenuList>

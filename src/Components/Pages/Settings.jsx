@@ -67,50 +67,57 @@ function Settings() {
           <form onSubmit={onSubmit}>
             <Stack spacing={4}>
               <FormControl id="name">
-                <FormLabel>الاسم</FormLabel>
+                <FormLabel fontSize="xl">الاسم</FormLabel>
                 <Input
                   isDisabled="true"
                   type="text"
                   value={name}
                   onChange={(event) => setName(event.target.value)}
+                  fontSize="xl"
                 />
               </FormControl>
               <FormControl id="email">
-                <FormLabel>البريد الإلكتروني</FormLabel>
+                <FormLabel fontSize="xl">البريد الإلكتروني</FormLabel>
                 <Input
                   isDisabled="true"
                   type="email"
                   value={email}
                   onChange={(event) => setEmail(event.target.value)}
+                  fontSize="xl"
                 />
               </FormControl>
-              <FormControl id="university">
-                <FormLabel>الجامعة</FormLabel>
+              <FormControl id="university" fontSize="xl">
+                <FormLabel fontSize="xl">الجامعة</FormLabel>
                 <Input
                   isDisabled="true"
                   type="text"
                   value={university}
                   onChange={(event) => setUniversity(event.target.value)}
+                  fontSize="xl"
                 />
               </FormControl>
               <FormControl id="password">
-                <FormLabel>كلمة المرور الحالية</FormLabel>
+                <FormLabel fontSize="xl">كلمة المرور الحالية</FormLabel>
                 <Input
                   type="password"
                   value={password}
                   onChange={(event) => setPassword(event.target.value)}
+                  fontSize="xl"
                 />
               </FormControl>
               <FormControl id="newpassword">
-                <FormLabel>كلمة المرور الجديدة</FormLabel>
+                <FormLabel fontSize="xl">كلمة المرور الجديدة</FormLabel>
                 <Input
                   type="password"
                   value={password1}
                   onChange={(event) => setPassword1(event.target.value)}
+                  fontSize="xl"
                 />
               </FormControl>
               <FormControl id="newpassword2">
-                <FormLabel>كلمة المرور الجديدة - مرة أخرى</FormLabel>
+                <FormLabel fontSize="xl">
+                  كلمة المرور الجديدة - مرة أخرى
+                </FormLabel>
                 <Input
                   type="password"
                   value={password2}
@@ -120,6 +127,7 @@ function Settings() {
                   }}
                   isInvalid={!match}
                   focusBorderColor="none"
+                  fontSize="xl"
                 />
               </FormControl>
               <Stack spacing={10}>
@@ -134,6 +142,7 @@ function Settings() {
                     outline: "none",
                     border: "none",
                   }}
+                  fontSize="xl"
                 >
                   تأكيد
                 </Button>

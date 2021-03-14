@@ -1,5 +1,6 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import {
+  Box,
   Drawer,
   DrawerOverlay,
   DrawerBody,
@@ -18,8 +19,21 @@ import {
 import { Formik, Form, Field, useFormikContext } from "formik";
 import axios from "axios";
 import useSWR from "swr";
+import * as Yup from "yup";
+import { AccountContext } from "./User/Account";
 
-async function UploadFile({ idToken, data }) {
+const UploadFileSchema = Yup.object().shape({
+  course: Yup.string()
+    .min(6, "اسم المساق يجب أن يكون 6 رموز على اﻷقل")
+    .max(50, "اسم المساق يجب أن لا يتعدى 50 رمزاً")
+    .required("يرجى ادخال اسم المساق"),
+  year: Yup.number()
+    .min(1990, "السنة يجب أن لا تقل عن 1990")
+    .max(new Date().getFullYear(), "السنة يجب أن لا تتعدى السنة الحالية")
+    .required("يرجى ادخال سنة لهذا المحتوى"),
+});
+
+async function UploadFile({ idToken, data, name }) {
   const options = {
     headers: {
       Authorization: idToken,
@@ -33,15 +47,21 @@ async function UploadFile({ idToken, data }) {
       finalData.append(property, data[property]);
     }
   }
-  finalData.append("token", idToken);
+  finalData.append("name", name);
 
   return await axios.post("/upload_file", finalData, options);
 }
-export const UploadDrawer = ({ isOpen, onClose, idToken, schoolData }) => {
+
+export const UploadDrawer = ({ isOpen, onClose, idToken, anme }) => {
   const toast = useToast();
+
   const submitFile = (data, actions) => {
-    actions.setSubmitting(true);
-    UploadFile({ idToken, data })
+    if (!fileState.selected) {
+      setFileState({ selected: false, touched: true });
+      actions.setSubmitting(false);
+      return;
+    }
+    UploadFile({ idToken, data, name })
       .then((res) => {
         toast({
           title: "تم رفع الملف بنجاح",
@@ -50,6 +70,7 @@ export const UploadDrawer = ({ isOpen, onClose, idToken, schoolData }) => {
           isClosable: true,
         });
         onClose();
+        setFileState({ selected: false, touched: false });
         actions.resetForm();
       })
       .catch((err) => {
@@ -59,10 +80,14 @@ export const UploadDrawer = ({ isOpen, onClose, idToken, schoolData }) => {
           duration: 5000,
           isClosable: true,
         });
-        actions.setSubmitting(false);
       });
   };
 
+  const [fileState, setFileState] = useState({
+    selected: false,
+    touched: false,
+  });
+  const [name, setName] = useState("");
   const [universities, setUniversities] = useState([]);
   const [colleges, setColleges] = useState([]);
   const [majors, setMajors] = useState([]);
@@ -70,6 +95,13 @@ export const UploadDrawer = ({ isOpen, onClose, idToken, schoolData }) => {
   const [kinds, setKinds] = useState([]);
 
   const { data } = useSWR("/get_filter_data");
+
+  const { getSession } = useContext(AccountContext);
+  useEffect(() => {
+    getSession().then((result) => {
+      setName(result.name);
+    });
+  }, [getSession]);
 
   useEffect(() => {
     if (!data) return;
@@ -112,8 +144,9 @@ export const UploadDrawer = ({ isOpen, onClose, idToken, schoolData }) => {
               year: 2020,
             }}
             onSubmit={submitFile}
+            validationSchema={UploadFileSchema}
           >
-            {({ values, isSubmitting, setFieldValue }) => (
+            {({ values, isSubmitting, setFieldValue, errors, touched }) => (
               <Form encType="multipart/form-data">
                 <MyOnChangeComponent />
 
@@ -127,14 +160,23 @@ export const UploadDrawer = ({ isOpen, onClose, idToken, schoolData }) => {
                       <FileUploader
                         name="file"
                         id="file"
-                        onChange={(event) =>
-                          setFieldValue("files", event.currentTarget.files)
-                        }
+                        onChange={(event) => {
+                          setFieldValue("files", event.currentTarget.files);
+                          const newFileState = {
+                            selected: event.currentTarget.files.length != 0,
+                            touched: true,
+                          };
+                          setFileState(newFileState);
+                        }}
                         accept=".pdf"
                         filename={
                           values.files.length === 0 ? "" : values.files[0].name
                         }
+                        fontSize="xl"
                       ></FileUploader>
+                      {!fileState.selected && fileState.touched ? (
+                        <Box color="red">الرجاء اختيار ملف</Box>
+                      ) : null}
                     </FormControl>
                     {/* <FormControl>
                       <Field
@@ -148,7 +190,7 @@ export const UploadDrawer = ({ isOpen, onClose, idToken, schoolData }) => {
                       ></Field>
                     </FormControl> */}
                     <FormControl>
-                      <FormLabel>الجامعة</FormLabel>
+                      <FormLabel fontSize="xl">الجامعة</FormLabel>
                       <Field
                         name="university"
                         as={Select}
@@ -166,7 +208,7 @@ export const UploadDrawer = ({ isOpen, onClose, idToken, schoolData }) => {
                     </FormControl>
 
                     <FormControl>
-                      <FormLabel>الكلية</FormLabel>
+                      <FormLabel fontSize="xl">الكلية</FormLabel>
                       <Field
                         name="college"
                         as={Select}
@@ -184,7 +226,7 @@ export const UploadDrawer = ({ isOpen, onClose, idToken, schoolData }) => {
                     </FormControl>
 
                     <FormControl>
-                      <FormLabel>التخصص</FormLabel>
+                      <FormLabel fontSize="xl">التخصص</FormLabel>
                       <Field name="major" as={Select} bg="white" fontSize="xl">
                         {majors.map((elem) => (
                           <option
@@ -197,7 +239,7 @@ export const UploadDrawer = ({ isOpen, onClose, idToken, schoolData }) => {
                     </FormControl>
 
                     <FormControl>
-                      <FormLabel>المساق</FormLabel>
+                      <FormLabel fontSize="xl">المساق</FormLabel>
                       <Field
                         name="course"
                         as={Input}
@@ -205,8 +247,11 @@ export const UploadDrawer = ({ isOpen, onClose, idToken, schoolData }) => {
                         bg="white"
                         fontSize="xl"
                       ></Field>
+                      {errors.course && touched.course ? (
+                        <Box color="red">{errors.course}</Box>
+                      ) : null}
                     </FormControl>
-                    <FormControl>
+                    <FormControl fontSize="xl">
                       <FormLabel>السنة</FormLabel>
                       <Field
                         name="year"
@@ -215,9 +260,12 @@ export const UploadDrawer = ({ isOpen, onClose, idToken, schoolData }) => {
                         bg="white"
                         fontSize="xl"
                       ></Field>
+                      {errors.year && touched.year ? (
+                        <Box color="red">{errors.year}</Box>
+                      ) : null}
                     </FormControl>
                     <FormControl>
-                      <FormLabel>النوع</FormLabel>
+                      <FormLabel fontSize="xl">النوع</FormLabel>
                       <Field name="kind" as={Select} bg="white" fontSize="xl">
                         {kinds.map((elem) => (
                           <option
@@ -245,6 +293,7 @@ export const UploadDrawer = ({ isOpen, onClose, idToken, schoolData }) => {
                     }}
                     mx={3}
                     disabled={isSubmitting}
+                    fontSize="xl"
                   >
                     تأكيد
                   </Button>
