@@ -9,14 +9,33 @@ import {
   Text,
   FormControl,
   IconButton,
+  Icon,
 } from "@chakra-ui/react";
 import axios from "axios";
 import { Field, Form, Formik, useFormikContext } from "formik";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import useSWR from "swr";
-import { date } from "yup";
+import { AccountContext } from "../User/Account";
 
 const AdvancedSearch = () => {
+  const { getSession } = useContext(AccountContext);
+  const [token, setToken] = useState("");
+
+  getSession()
+    .then(({ user }) => {
+      user.getSession((err, session) => {
+        if (err) {
+          console.log(err);
+        } else if (!session.isValid()) {
+          console.log("Invalid session.");
+        } else {
+          const t = session.getIdToken().getJwtToken();
+          setToken(t);
+        }
+      });
+    })
+    .catch(() => {});
+
   const [universities, setUniversities] = useState([]);
   const [colleges, setColleges] = useState([]);
   const [majors, setMajors] = useState([]);
@@ -177,19 +196,19 @@ const AdvancedSearch = () => {
       </Formik>
       {data ? (
         <Center pt={5} bg="primary.100" fontSize="xl">
-          <ResultTable data={results}></ResultTable>
+          <ResultTable data={results} token={token}></ResultTable>
         </Center>
       ) : null}
     </>
   );
 };
 
-const ResultTable = ({ data }) => {
+const ResultTable = ({ data, token }) => {
   if (data.length === 0) {
     return <></>;
   }
   return (
-    <Box width={["95%", "95%", "70%"]}>
+    <Box width={["95%", "95%", "70%"]} mb="10">
       <SimpleGrid
         templateColumns="0.5fr 1fr 1.5fr 1.5fr 2fr 2fr"
         columns={6}
@@ -206,7 +225,13 @@ const ResultTable = ({ data }) => {
           textColor="white"
         ></ResultHeader>
         {data.map((elem) => (
-          <ResultRow key={elem.name} pb={1} pt={1} {...elem}></ResultRow>
+          <ResultRow
+            key={elem.name}
+            pb={1}
+            pt={1}
+            token={token}
+            {...elem}
+          ></ResultRow>
         ))}
       </SimpleGrid>
     </Box>
@@ -243,25 +268,36 @@ const ResultRow = ({
   collegeByCollege,
   majorByMajor,
   courseByCourse,
-  created_by,
+  username,
   kindByKind,
   link,
   key,
   id,
+  token,
   ...props
 }) => {
+  const [submitting, setSubmitting] = useState(false);
   return (
     <>
       <Center {...props}>
-        <a href={link} outline={null}>
-          <IconButton icon={<DownloadIcon />} bg="transparent" />
-        </a>
+        <Button
+          bg="transparent"
+          onClick={() => {
+            setSubmitting(true);
+            DownloadFile({ id, token, setSubmitting });
+          }}
+          disabled={submitting}
+        >
+          <a href={link} target="_blank" rel="noopener noreferrer">
+            <DownloadIcon />
+          </a>
+        </Button>
       </Center>
       <Center {...props}>
         <Text noOfLines={1}>{kindByKind.name}</Text>
       </Center>
       <Center {...props}>
-        <IconButton icon={<StarIcon />} bg="transparent" />
+        {/* <IconButton icon={<StarIcon />} bg="transparent" /> */}
         <Text noOfLines={1}>{courseByCourse.name}</Text>
       </Center>
       <Center {...props}>
@@ -271,10 +307,16 @@ const ResultRow = ({
         <Text noOfLines={1}>{universityByUniversity.name}</Text>
       </Center>
       <Center {...props}>
-        <Text noOfLines={1}>{created_by}</Text>
+        <Text noOfLines={1}>{username}</Text>
       </Center>
     </>
   );
 };
 
+function DownloadFile({ id, token, link, setSubmitting }) {
+  const data = new FormData();
+  data.append("file_id", id);
+  data.append("token", token);
+  axios.post("/set_download", data);
+}
 export default AdvancedSearch;

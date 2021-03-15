@@ -33,12 +33,7 @@ const UploadFileSchema = Yup.object().shape({
     .required("يرجى ادخال سنة لهذا المحتوى"),
 });
 
-async function UploadFile({ idToken, data, name }) {
-  const options = {
-    headers: {
-      Authorization: idToken,
-    },
-  };
+async function UploadFile({ token, data, name }) {
   const finalData = new FormData();
   for (const property in data) {
     if (property === "files") {
@@ -47,12 +42,12 @@ async function UploadFile({ idToken, data, name }) {
       finalData.append(property, data[property]);
     }
   }
-  finalData.append("name", name);
+  finalData.append("token", token);
 
-  return await axios.post("/upload_file", finalData, options);
+  return await axios.post("/upload_file", finalData);
 }
 
-export const UploadDrawer = ({ isOpen, onClose, idToken, anme }) => {
+export const UploadDrawer = ({ isOpen, onClose }) => {
   const toast = useToast();
 
   const submitFile = (data, actions) => {
@@ -61,7 +56,7 @@ export const UploadDrawer = ({ isOpen, onClose, idToken, anme }) => {
       actions.setSubmitting(false);
       return;
     }
-    UploadFile({ idToken, data, name })
+    UploadFile({ token, data, name })
       .then((res) => {
         toast({
           title: "تم رفع الملف بنجاح",
@@ -72,6 +67,7 @@ export const UploadDrawer = ({ isOpen, onClose, idToken, anme }) => {
         onClose();
         setFileState({ selected: false, touched: false });
         actions.resetForm();
+        actions.setSubmitting(false);
       })
       .catch((err) => {
         toast({
@@ -80,6 +76,7 @@ export const UploadDrawer = ({ isOpen, onClose, idToken, anme }) => {
           duration: 5000,
           isClosable: true,
         });
+        actions.setSubmitting(false);
       });
   };
 
@@ -88,6 +85,7 @@ export const UploadDrawer = ({ isOpen, onClose, idToken, anme }) => {
     touched: false,
   });
   const [name, setName] = useState("");
+  const [token, setToken] = useState("");
   const [universities, setUniversities] = useState([]);
   const [colleges, setColleges] = useState([]);
   const [majors, setMajors] = useState([]);
@@ -98,9 +96,21 @@ export const UploadDrawer = ({ isOpen, onClose, idToken, anme }) => {
 
   const { getSession } = useContext(AccountContext);
   useEffect(() => {
-    getSession().then((result) => {
-      setName(result.name);
-    });
+    getSession()
+      .then(({ user, ...result }) => {
+        setName(result.name);
+        user.getSession((err, session) => {
+          if (err) {
+            console.log(err);
+          } else if (!session.isValid()) {
+            console.log("Invalid session.");
+          } else {
+            const t = session.getIdToken().getJwtToken();
+            setToken(t);
+          }
+        });
+      })
+      .catch(() => {});
   }, [getSession]);
 
   useEffect(() => {

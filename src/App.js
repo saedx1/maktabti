@@ -46,20 +46,6 @@ function PageComponent() {
   const { getSession, logout } = useContext(AccountContext);
   const [loggedIn, setLoggedIn] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [token, setToken] = useState("");
-
-  getSession().then(({ user }) => {
-    user.getSession((err, session) => {
-      if (err) {
-        console.log(err);
-      } else if (!session.isValid()) {
-        console.log("Invalid session.");
-      } else {
-        const tt = session.getIdToken().getJwtToken();
-        setToken(tt);
-      }
-    });
-  });
 
   useEffect(() => {
     getSession().then(
@@ -79,7 +65,7 @@ function PageComponent() {
         <LoadingComponent />
       ) : (
         <>
-          <Header loggedIn={loggedIn} logout={logout} idToken={token} />
+          <Header loggedIn={loggedIn} logout={logout} />
           <Switch>
             <Route path="/" exact component={HomePage} />
             <Route path="/login" exact component={Login} />

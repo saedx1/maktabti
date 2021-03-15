@@ -12,6 +12,8 @@ from flask_cors import CORS
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 
+from .security import verify_token
+
 
 APP = Flask("maktabti")
 CORS(APP)
@@ -30,28 +32,15 @@ GRAPHQL_ENDPOINT = "http://localhost:8080/v1/graphql"
 @APP.route("/upload_file", methods=["POST"])
 def upload_file():
     data = dict(request.form)
-    fname = os.path.join(UPLOAD_FOLDER, f"{'_'.join([data[i] for i in data])}.pdf")
 
-    file = request.files["file"]
-    print(request.headers)
-    file.save(fname)
+    id_token = data["token"]
 
-    gfile = DRIVE.CreateFile(
-        {
-            "name": "file.pdf",
-            "title": "file.pdf",
-            "shared": True,
-            "mimeType": "application/pdf",
-        }
-    )
-    gfile.SetContentFile(fname)
-    gfile.Upload()
-    gfile.InsertPermission({"type": "anyone", "value": "anyone", "role": "reader"})
+    claims = verify_token(id_token)
+    if claims is None:
+        return "f", 401
 
-    link = gfile["webContentLink"]
-
-    data["created_by"] = data["name"]
-    data["link"] = link
+    data["created_by"] = claims["sub"]
+    data["username"] = claims["name"]
 
     query = """
     mutation MyMutation {
@@ -62,7 +51,7 @@ def upload_file():
                     major: %(major)s,
                     courseByCourse: {data: {major: %(major)s, name: "%(course)s"}},
                     created_by: "%(created_by)s",
-                    link: "%(link)s",
+                    username: "%(username)s",
                     kind: %(kind)s,
                     year: %(year)s
             }
@@ -76,10 +65,49 @@ def upload_file():
     )
 
     res = execute_graphql_query(query)
-    if "data" in res.keys():
-        return jsonify(link)
-    else:
+
+    if "data" not in res.keys():
         return res, 400
+
+    id_ = res["data"]["insert_files_one"]["id"]
+    file_name = f"{id_}.pdf"
+    full_path = os.path.join(UPLOAD_FOLDER, file_name)
+    file = request.files["file"]
+    file.save(full_path)
+
+    gfile = DRIVE.CreateFile(
+        {
+            "name": file_name,
+            "title": file_name,
+            "shared": True,
+            "mimeType": "application/pdf",
+        }
+    )
+    gfile.SetContentFile(full_path)
+    gfile.Upload()
+    gfile.InsertPermission({"type": "anyone", "value": "anyone", "role": "reader"})
+
+    link = gfile["webContentLink"]
+
+    query = """
+    mutation MyMutation {
+        update_files_by_pk(pk_columns: {id: %s}, _set: {link: "%s"}) {
+            link
+        }
+    }
+
+
+    """ % (
+        id_,
+        link,
+    )
+
+    res = execute_graphql_query(query)
+
+    if "data" not in res.keys():
+        return res, 400
+
+    return "s", 200
 
 
 @APP.route("/get_filter_data", methods=["GET"])
@@ -138,7 +166,7 @@ def get_search_results(major, kind):
                 name
             }
             link
-            created_by
+            username
         }
     }
     """ % (
@@ -171,14 +199,49 @@ def get_stats():
     """
 
     res = execute_graphql_query(query)
-    print(res)
+
     if "data" in res.keys():
         return {
             "file_count": res["data"]["files_aggregate"]["aggregate"]["count"],
             "course_count": res["data"]["courses_aggregate"]["aggregate"]["count"],
-        }
+        }, 200
     else:
-        return res, 400
+        return "f", 400
+
+
+@APP.route("/set_download", methods=["POST"])
+def set_download():
+    data = dict(request.form)
+    file_id = data["file_id"]
+
+    id_token = data["token"]
+
+    if id_token:
+        claims = verify_token(id_token)
+        if claims is None:
+            return "f", 401
+        user = claims["sub"]
+        name = claims["name"]
+    else:
+        user = request.remote_addr
+
+    query = """
+        mutation MyMutation {
+            insert_downloads_one(object: {file: %s, user: "%s"}){
+                id
+            }
+        }
+    """ % (
+        file_id,
+        user,
+    )
+
+    res = execute_graphql_query(query)
+
+    if "data" in res.keys():
+        return "s", 200
+    else:
+        return "f", 400
 
 
 def execute_graphql_query(query):
