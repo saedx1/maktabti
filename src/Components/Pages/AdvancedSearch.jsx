@@ -196,7 +196,7 @@ const AdvancedSearch = () => {
       </Formik>
       {data ? (
         <Center pt={5} bg="primary.100" fontSize="xl">
-          <ResultTable data={results} token={token}></ResultTable>
+          <ResultTable data={results.slice(0, 10)} token={token}></ResultTable>
         </Center>
       ) : null}
     </>
@@ -210,8 +210,8 @@ const ResultTable = ({ data, token }) => {
   return (
     <Box width={["95%", "95%", "70%"]} mb="10">
       <SimpleGrid
-        templateColumns="0.5fr 1fr 1.5fr 1.5fr 2fr 2fr"
-        columns={6}
+        templateColumns="0.5fr 2fr 1fr 1.5fr 2fr"
+        columns={5}
         bg="white"
         rounded={10}
         p={2}
@@ -245,16 +245,13 @@ const ResultHeader = (props) => {
         <Text noOfLines={1}></Text>
       </Center>
       <Center {...props}>
+        <Text noOfLines={1}>الاسم</Text>
+      </Center>
+      <Center {...props}>
         <Text noOfLines={1}>النوع</Text>
       </Center>
       <Center {...props}>
         <Text noOfLines={1}>المساق</Text>
-      </Center>
-      <Center {...props}>
-        <Text noOfLines={1}>التخصص</Text>
-      </Center>
-      <Center {...props}>
-        <Text noOfLines={1}>الجامعة</Text>
       </Center>
       <Center {...props}>
         <Text noOfLines={1}>بواسطة</Text>
@@ -264,11 +261,9 @@ const ResultHeader = (props) => {
 };
 
 const ResultRow = ({
-  universityByUniversity,
-  collegeByCollege,
-  majorByMajor,
-  courseByCourse,
+  name,
   username,
+  courseByCourse,
   kindByKind,
   link,
   key,
@@ -294,17 +289,14 @@ const ResultRow = ({
         </Button>
       </Center>
       <Center {...props}>
+        {/* <IconButton icon={<StarIcon />} bg="transparent" /> */}
+        <Text noOfLines={1}>{name}</Text>
+      </Center>
+      <Center {...props}>
         <Text noOfLines={1}>{kindByKind.name}</Text>
       </Center>
       <Center {...props}>
-        {/* <IconButton icon={<StarIcon />} bg="transparent" /> */}
         <Text noOfLines={1}>{courseByCourse.name}</Text>
-      </Center>
-      <Center {...props}>
-        <Text noOfLines={1}>{majorByMajor.name}</Text>
-      </Center>
-      <Center {...props}>
-        <Text noOfLines={1}>{universityByUniversity.name}</Text>
       </Center>
       <Center {...props}>
         <Text noOfLines={1}>{username}</Text>

@@ -18,7 +18,7 @@ from .security import verify_token
 APP = Flask("maktabti")
 CORS(APP)
 APP.config["CORS_HEADERS"] = "Content-Type"
-limiter = Limiter(APP, key_func=get_remote_address, default_limits=["10 per minute"])
+limiter = Limiter(APP, key_func=get_remote_address, default_limits=["10000 per minute"])
 
 GAUTH = GoogleAuth()
 DRIVE = GoogleDrive(GAUTH)
@@ -150,15 +150,7 @@ def get_search_results(major, kind):
     query MyQuery {
         files(where: {majorByMajor: {id: {_eq: %s}}, kindByKind: {id: {_eq: %s}}}) {
             id
-            universityByUniversity {
-                name
-            }
-            collegeByCollege {
-                name
-            }
-            majorByMajor {
-                name
-            }
+            name
             courseByCourse {
                 name
             }
