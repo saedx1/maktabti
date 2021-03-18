@@ -26,7 +26,7 @@ DRIVE = GoogleDrive(GAUTH)
 # UPLOAD_FOLDER = "/root/maktabti-data/"
 UPLOAD_FOLDER = "/home/saedx1/projects/maktabti-data/"
 ALLOWED_EXTENSIONS = set(["pdf"])
-GRAPHQL_ENDPOINT = "http://localhost:8080/v1/graphql"
+GRAPHQL_ENDPOINT = "http://maktabti.xyz:8080/v1/graphql"
 
 
 @APP.route("/upload_file", methods=["POST"])
