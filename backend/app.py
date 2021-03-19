@@ -26,7 +26,7 @@ DRIVE = GoogleDrive(GAUTH)
 # UPLOAD_FOLDER = "/root/maktabti-data/"
 UPLOAD_FOLDER = "/home/saedx1/projects/maktabti-data/"
 ALLOWED_EXTENSIONS = set(["pdf"])
-GRAPHQL_ENDPOINT = "http://localhost:8080/v1/graphql"
+GRAPHQL_ENDPOINT = "http://maktabti.xyz:8080/v1/graphql"
 
 
 @APP.route("/upload_file", methods=["POST"])
@@ -179,12 +179,33 @@ def get_stats():
         query MyQuery {
             files_aggregate {
                 aggregate {
-                count
+                    count
                 }
             }
             courses_aggregate {
                 aggregate {
+                    count
+                }
+            }
+            files(order_by: {downloads_aggregate: {count: desc_nulls_last}}, limit: 1) {
+                name
+                university : universityByUniversity{
+                    name
+                }
+                downloads : downloads_aggregate{
+                    aggregate {
+                        count
+                    }
+                }
+
+            }
+            top_majors(limit: 1) {
+                name
                 count
+                College {
+                    university : universityByUniversity {
+                        name
+                    }
                 }
             }
         }
@@ -193,11 +214,20 @@ def get_stats():
     res = execute_graphql_query(query)
 
     if "data" in res.keys():
+        md_file = res["data"]["files"][0]
+        md_file = {"name" : md_file["name"] , "university" : md_file["university"]["name"], "count" : md_file["downloads"]["aggregate"]["count"]}
+
+        md_major = res["data"]["top_majors"][0]
+        md_major = {"name" : md_major["name"] , "university" : md_major["College"]["university"]["name"], "count" : md_major["count"]}
         return {
             "file_count": res["data"]["files_aggregate"]["aggregate"]["count"],
             "course_count": res["data"]["courses_aggregate"]["aggregate"]["count"],
+            "student_count": 15,
+            "most_downloaded": md_file,
+            "top_majors":md_major,
         }, 200
     else:
+        print(res)
         return "f", 400
 
 

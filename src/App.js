@@ -34,6 +34,8 @@ function App() {
               }),
             dedupingInterval: 10000,
             refreshInterval: 0,
+            revalidateOnFocus: false,
+            revalidateOnReconnect: false,
           }}
         >
           <PageComponent />

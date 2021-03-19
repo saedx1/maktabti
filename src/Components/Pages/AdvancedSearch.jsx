@@ -14,7 +14,7 @@ import {
 import axios from "axios";
 import { Field, Form, Formik, useFormikContext } from "formik";
 import { useContext, useEffect, useState } from "react";
-import useSWR from "swr";
+import useSWR, { cache } from "swr";
 import { AccountContext } from "../User/Account";
 
 const AdvancedSearch = () => {
@@ -43,7 +43,6 @@ const AdvancedSearch = () => {
   const [kinds, setKinds] = useState([]);
   const [results, setResults] = useState([]);
   const { data } = useSWR("/get_filter_data");
-
   useEffect(() => {
     if (!data) return;
     setUniversities(data.universities);

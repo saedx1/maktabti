@@ -36,7 +36,8 @@ const SearchForm = () => {
     </>
   );
 };
-const MostPopular = () => {
+const MostPopular = ({ data }) => {
+  console.log(data);
   return (
     <Grid
       pt={10}
@@ -102,11 +103,11 @@ const MainBody = () => {
           <StatComponent label="المستندات" number={data && data.file_count} />
         </GridItem>
         <GridItem colStart={7}>
-          <StatComponent label="الطلاب" number="12" />
+          <StatComponent label="الطلاب" number={data && data.student_count} />
         </GridItem>
       </Grid>
 
-      <MostPopular />
+      <MostPopular data={data} />
     </Box>
   );
 };
