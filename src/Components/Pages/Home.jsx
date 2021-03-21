@@ -37,7 +37,6 @@ const SearchForm = () => {
   );
 };
 const MostPopular = ({ data }) => {
-  console.log(data);
   return (
     <Grid
       pt={10}
@@ -53,15 +52,15 @@ const MostPopular = ({ data }) => {
     >
       <GridItem colStart={[1, 1, 1, 2]}>
         <Card
-          label="الأكثر تحميلاً"
-          item="فيزياء ١"
-          university="جامعة بوليتكنيك فلسطين"
-          value="20,000"
+          label="أشهر مساق"
+          item={data && data.most_downloaded.name}
+          university={data && data.most_downloaded.university}
+          value={data && ("عدد مرات التحميل: " + data.most_downloaded.count)}
         ></Card>
       </GridItem>
       <GridItem colStart={[1, 1, 1, 3]}>
         <Card
-          label="الأكثر زيارةً"
+          label="أشهر ملف"
           item="فيزياء ١"
           university="جامعة بوليتكنيك فلسطين"
           value="20,000"
@@ -69,10 +68,10 @@ const MostPopular = ({ data }) => {
       </GridItem>
       <GridItem colStart={[1, 1, 1, 4]}>
         <Card
-          label="الأكثر بحثاً"
-          item="فيزياء ١"
-          university="جامعة بوليتكنيك فلسطين"
-          value="20,000"
+          label="أشهر تخصص"
+          item={data && data.top_majors.name}
+          university={data && data.top_majors.university}
+          value={data && data.top_majors.count}
         ></Card>
       </GridItem>
     </Grid>
