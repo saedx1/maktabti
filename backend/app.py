@@ -144,11 +144,12 @@ def get_filter_data():
         return res, 400
 
 
-@APP.route("/get_search_results/<major>/<kind>", methods=["GET"])
-def get_search_results(major, kind):
+@APP.route("/get_search_results/<major>/<kind>/<page>", methods=["GET"])
+def get_search_results(major, kind, page):
+    page = int(page)
     query = """
-    query MyQuery {
-        files(where: {majorByMajor: {id: {_eq: %s}}, kindByKind: {id: {_eq: %s}}}) {
+    query MyQuery($major: Int, $kind: Int) {
+        files(where: {majorByMajor: {id: {_eq: $major}}, kindByKind: {id: {_eq: $kind}}}, limit: 10, offset: %d) {
             id
             name
             courseByCourse {
@@ -160,13 +161,18 @@ def get_search_results(major, kind):
             link
             username
         }
+        files_aggregate(where: {majorByMajor: {id: {_eq: $major}}, kindByKind: {id: {_eq: $kind}}}) {
+            aggregate {
+                totalCount: count
+            }
+        }
     }
     """ % (
-        major,
-        kind,
+        (page - 1) * 10,
     )
+    variables = {"major": int(major), "kind": int(kind)}
 
-    res = execute_graphql_query(query)
+    res = execute_graphql_query(query, variables)
     if "data" in res.keys():
         return res["data"]
     else:
@@ -197,6 +203,7 @@ def get_stats():
                         count
                     }
                 }
+                link
 
             }
             top_majors(limit: 1) {
@@ -208,6 +215,19 @@ def get_stats():
                     }
                 }
             }
+            top_courses(limit: 1) {
+                count
+                name
+                course {
+                    majorByMajor {
+                        collegeByCollege {
+                            universityByUniversity {
+                                name
+                            }
+                        }
+                    }
+                }
+            }
         }
     """
 
@@ -215,16 +235,35 @@ def get_stats():
 
     if "data" in res.keys():
         md_file = res["data"]["files"][0]
-        md_file = {"name" : md_file["name"] , "university" : md_file["university"]["name"], "count" : md_file["downloads"]["aggregate"]["count"]}
+        md_file = {
+            "name": md_file["name"],
+            "university": md_file["university"]["name"],
+            "count": md_file["downloads"]["aggregate"]["count"],
+            "link": md_file["link"],
+        }
 
         md_major = res["data"]["top_majors"][0]
-        md_major = {"name" : md_major["name"] , "university" : md_major["College"]["university"]["name"], "count" : md_major["count"]}
+        md_major = {
+            "name": md_major["name"],
+            "university": md_major["College"]["university"]["name"],
+            "count": md_major["count"],
+        }
+
+        md_course = res["data"]["top_courses"][0]
+        md_course = {
+            "name": md_course["name"],
+            "university": md_course["course"]["majorByMajor"]["collegeByCollege"][
+                "universityByUniversity"
+            ]["name"],
+            "count": md_course["count"],
+        }
         return {
             "file_count": res["data"]["files_aggregate"]["aggregate"]["count"],
             "course_count": res["data"]["courses_aggregate"]["aggregate"]["count"],
             "student_count": 15,
-            "most_downloaded": md_file,
-            "top_majors":md_major,
+            "top_file": md_file,
+            "top_major": md_major,
+            "top_course": md_course,
         }, 200
     else:
         print(res)
@@ -266,8 +305,49 @@ def set_download():
         return "f", 400
 
 
-def execute_graphql_query(query):
-    response = requests.post(GRAPHQL_ENDPOINT, data=json.dumps({"query": query}))
+@APP.route("/get_details/<file_id>", methods=["GET"])
+def get_details(file_id):
+    query = """
+    query MyQuery {
+    files(where: {id: {_eq: %s}}) {
+            year
+            username
+            link
+            name
+            courseByCourse {
+                name
+            }
+            collegeByCollege {
+                name
+            }
+            majorByMajor {
+                name
+            }
+            universityByUniversity {
+                name
+            }
+            kindByKind {
+                name
+            }
+            created_at
+        }
+    }
+    """ % (
+        file_id
+    )
+
+    res = execute_graphql_query(query)
+
+    if "data" in res.keys():
+        return res["data"], 200
+    else:
+        return "f", 400
+
+
+def execute_graphql_query(query, variables=None):
+    response = requests.post(
+        GRAPHQL_ENDPOINT, data=json.dumps({"query": query, "variables": variables})
+    )
     if response.text is None:
         return response.text
     else:

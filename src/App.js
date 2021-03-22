@@ -16,6 +16,7 @@ import AdvancedSearch from "./Components/Pages/AdvancedSearch";
 import Settings from "./Components/Pages/Settings";
 import ForgotPassword from "./Components/Pages/ForgotPassword";
 import Signup from "./Components/Pages/Signup";
+import FileDetails from "./Components/Pages/FileDetails";
 import { SWRConfig } from "swr";
 import axios from "axios";
 
@@ -81,6 +82,7 @@ function PageComponent() {
             />
             <Route path="/settings" exact component={Settings} />
             <Route path="/forgotpassword" exact component={ForgotPassword} />
+            <Route path="/file/:file_id" component={FileDetails} />
             <Route path="/" component={NotFound} />
           </Switch>
         </>
@@ -89,7 +91,7 @@ function PageComponent() {
   );
 }
 
-function LoadingComponent() {
+export function LoadingComponent({ text }) {
   return (
     <Stack
       fontSize={["lg", "xl", "2xl", "3xl"]}
@@ -101,7 +103,7 @@ function LoadingComponent() {
       <Box>
         <Spinner h={70} w={70} color="primary.300" />
       </Box>
-      <Box>الرجاء الانتظار؛ جاري تحميل الموقع ...</Box>
+      <Box>{text ? text : "الرجاء الانتظار؛ جاري تحميل الموقع ..."}</Box>
     </Stack>
   );
 }

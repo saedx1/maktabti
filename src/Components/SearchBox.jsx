@@ -4,9 +4,17 @@ import { Link } from "react-router-dom";
 export const SearchBox = (props) => {
   return (
     <Box textAlign="center" mt={5} mb={3} {...props}>
-      <Input placeholder="بحث..." bg="white" w="50%" size="lg" me={2}></Input>
+      <Input
+        placeholder="بحث..."
+        bg="white"
+        w="50%"
+        size="lg"
+        me={2}
+        rounded={"full"}
+      ></Input>
       <Button
         size="lg"
+        fontSize="xl"
         rounded="md"
         color={["primary.500"]}
         bg={["primary.white"]}
@@ -18,12 +26,14 @@ export const SearchBox = (props) => {
           outline: "none",
           border: "none",
         }}
+        rounded={"full"}
       >
         انطلق
       </Button>
       <Link to="/advancedsearch">
         <Button
           size="lg"
+          fontSize="xl"
           rounded="md"
           color={["primary.500"]}
           bg={["primary.white"]}
@@ -34,6 +44,7 @@ export const SearchBox = (props) => {
             outline: "none",
             border: "none",
           }}
+          rounded={"full"}
         >
           بحث متقدم
         </Button>

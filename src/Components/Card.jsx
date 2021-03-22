@@ -50,7 +50,7 @@ import {
 } from "@chakra-ui/react";
 import { DownloadIcon } from "@chakra-ui/icons";
 
-export const Card = (props) => {
+export const Card = ({ isDownload, link, ...props }) => {
   return (
     <Center py={6}>
       <Box
@@ -82,18 +82,23 @@ export const Card = (props) => {
             </Stack>
           </Stack>
 
-          <Button
-            w={"full"}
-            mt={8}
-            color="primary.700"
-            rounded={"md"}
-            rightIcon={<DownloadIcon />}
-            bg="primary.300"
-            fontSize="xl"
-            fontWeight="normal"
-          >
-            تنزيل
-          </Button>
+          {isDownload && (
+            <a href={link}>
+              <Button
+                w={"full"}
+                mt={8}
+                color="primary.700"
+                rounded={"md"}
+                rightIcon={<DownloadIcon />}
+                bg="primary.300"
+                fontSize="xl"
+                fontWeight="normal"
+                rounded={"full"}
+              >
+                تنزيل
+              </Button>
+            </a>
+          )}
         </Box>
       </Box>
     </Center>

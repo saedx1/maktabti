@@ -44,34 +44,38 @@ const MostPopular = ({ data }) => {
         "repeat(1, 1fr)",
         "repeat(1, 1fr)",
         "repeat(1, 1fr)",
-        "repeat(5, 1fr)",
+        "repeat(7, 1fr)",
       ]}
-      gap={6}
+      gap={7}
       bg="primary.100"
       borderColor="black"
     >
-      <GridItem colStart={[1, 1, 1, 2]}>
+      <GridItem colStart={[1, 1, 2, 3]}>
         <Card
           label="أشهر مساق"
-          item={data && data.most_downloaded.name}
-          university={data && data.most_downloaded.university}
-          value={data && ("عدد مرات التحميل: " + data.most_downloaded.count)}
-        ></Card>
-      </GridItem>
-      <GridItem colStart={[1, 1, 1, 3]}>
-        <Card
-          label="أشهر ملف"
-          item="فيزياء ١"
-          university="جامعة بوليتكنيك فلسطين"
-          value="20,000"
+          item={data && data.top_course.name}
+          university={data && data.top_course.university}
+          value={data && data.top_course.count + " تنزيلاً"}
+          isDownload={false}
         ></Card>
       </GridItem>
       <GridItem colStart={[1, 1, 1, 4]}>
         <Card
+          label="أشهر ملف"
+          item={data && data.top_file.name}
+          university={data && data.top_file.university}
+          value={data && data.top_file.count + " تنزيلاً"}
+          link={data && data.top_file.link}
+          isDownload={true}
+        ></Card>
+      </GridItem>
+      <GridItem colStart={[1, 1, 1, 5]}>
+        <Card
           label="أشهر تخصص"
-          item={data && data.top_majors.name}
-          university={data && data.top_majors.university}
-          value={data && data.top_majors.count}
+          item={data && data.top_major.name}
+          university={data && data.top_major.university}
+          value={data && data.top_major.count + " تنزيلاً"}
+          isDownload={false}
         ></Card>
       </GridItem>
     </Grid>
