@@ -304,6 +304,7 @@ export const UploadDrawer = ({ isOpen, onClose }) => {
                     mx={3}
                     disabled={isSubmitting}
                     fontSize="xl"
+                    rounded="full"
                   >
                     تأكيد
                   </Button>
@@ -311,6 +312,8 @@ export const UploadDrawer = ({ isOpen, onClose }) => {
                     variant="outline"
                     onClick={onClose}
                     disabled={isSubmitting}
+                    fontSize="xl"
+                    rounded="full"
                   >
                     إلغاء
                   </Button>

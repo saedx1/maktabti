@@ -11,22 +11,26 @@ export const SearchBox = (props) => {
         size="lg"
         me={2}
         rounded={"full"}
+        zIndex={3}
       ></Input>
       <Button
         size="lg"
         fontSize="xl"
         rounded="md"
-        color={["primary.500"]}
-        bg={["primary.white"]}
+        textColor="white"
+        bg={["primary.700"]}
         _hover={{
-          bg: ["primary.100"],
+          bg: ["primary.400"],
         }}
-        me={2}
+        me={5}
+        ml="-4.5em"
+        mb={0.5}
         _focus={{
           outline: "none",
           border: "none",
         }}
         rounded={"full"}
+        zIndex={4}
       >
         انطلق
       </Button>

@@ -304,7 +304,7 @@ const ResultTable = ({ data, token }) => {
   }
   return (
     <Box width={["95%", "95%", "70%"]}>
-      <Table rounded={10} bg="white" borderColor="primary.500" borderWidth={2}>
+      <Table bg="white" borderColor="primary.500" borderWidth={2}>
         <Tbody>
           <ResultHeader bg="primary.400" textColor="black"></ResultHeader>
           {data.map((elem) => (
