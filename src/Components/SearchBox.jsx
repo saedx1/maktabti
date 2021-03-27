@@ -22,7 +22,7 @@ export const SearchBox = (props) => {
         _hover={{
           bg: ["primary.400"],
         }}
-        me={5}
+        me={3}
         ml="-4.5em"
         mb={0.5}
         _focus={{

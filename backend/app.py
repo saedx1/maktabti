@@ -310,6 +310,7 @@ def get_details(file_id):
     query = """
     query MyQuery {
     files(where: {id: {_eq: %s}}) {
+            id
             year
             username
             link
@@ -342,6 +343,13 @@ def get_details(file_id):
         return res["data"], 200
     else:
         return "f", 400
+
+
+@APP.route("/report_file", methods=["POST"])
+def report_file():
+    data = dict(request.form)
+    print(data)
+    return "s", 200
 
 
 def execute_graphql_query(query, variables=None):

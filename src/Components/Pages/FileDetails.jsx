@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext, useState } from "react";
 import { useParams } from "react-router";
 import useSWR from "swr";
 import {
@@ -26,8 +26,10 @@ import {
 } from "@chakra-ui/react";
 
 import { LoadingComponent } from "../../App";
-import { CopyIcon, DownloadIcon } from "@chakra-ui/icons";
+import { CopyIcon, DownloadIcon, WarningIcon } from "@chakra-ui/icons";
 import { CopyToClipboard } from "react-copy-to-clipboard";
+import axios from "axios";
+import { AccountContext } from "../User/Account";
 
 export default function FileDetails() {
   let { file_id } = useParams();
@@ -45,6 +47,7 @@ export default function FileDetails() {
 }
 
 function SocialProfileSimple({
+  id,
   name,
   courseByCourse,
   majorByMajor,
@@ -56,14 +59,35 @@ function SocialProfileSimple({
   year,
   link,
 }) {
-  // const { isOpen, onOpen, onClose } = useDisclosure();
   const toast = useToast();
+  const [token, setToken] = useState("");
+  const { getSession } = useContext(AccountContext);
+
+  getSession()
+    .then(({ user }) => {
+      user.getSession((err, session) => {
+        if (err) {
+          console.log(err);
+        } else if (!session.isValid()) {
+          console.log("Invalid session.");
+        } else {
+          const t = session.getIdToken().getJwtToken();
+          setToken(t);
+        }
+      });
+    })
+    .catch(() => {});
+
+  function ReportFile({ id, token }) {
+    const data = new FormData();
+    data.append("file_id", id);
+    data.append("token", token);
+    axios.post("/report_file", data);
+  }
 
   return (
-    <Center py={6}>
+    <Center py={6} position="relative">
       <Box
-        maxW={"320px"}
-        w={"full"}
         bg={useColorModeValue("white", "gray.900")}
         boxShadow={"2xl"}
         rounded={"lg"}
@@ -128,14 +152,9 @@ function SocialProfileSimple({
             <Button
               flex={1}
               rounded={"full"}
-              _focus={{
-                bg: "gray.200",
-              }}
-              _hover={{
-                bg: "gray.200",
-              }}
               fontSize={"xl"}
-              rightIcon={<CopyIcon />}
+              leftIcon={<CopyIcon />}
+              colorScheme="blue"
             >
               مشاركة
             </Button>
@@ -153,66 +172,37 @@ function SocialProfileSimple({
               bg: "primary.500",
             }}
             fontSize={"xl"}
-            rightIcon={<DownloadIcon />}
+            leftIcon={<DownloadIcon />}
             onClick={() => {
-              window.location = link;
+              DownloadFile({ id, token, link });
             }}
           >
             تنزيل
           </Button>
         </Stack>
+        <Button
+          rounded={"full"}
+          width="full"
+          leftIcon={<WarningIcon />}
+          colorScheme="red"
+          variant="solid"
+          mt={2}
+          fontSize={"xl"}
+          onClick={() => {
+            ReportFile({ id, token });
+          }}
+        >
+          تبليغ
+        </Button>
       </Box>
-      {/* <ShareModal isOpen={isOpen} onClose={onClose} /> */}
     </Center>
   );
 }
 
-function ShareModal({ isOpen, onClose }) {
-  const toast = useToast();
-  return (
-    <>
-      <Modal isOpen={isOpen} onClose={onClose} dir="rtl">
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>مشاركة الملف</ModalHeader>
-          <ModalBody pb={6}>
-            <FormControl>
-              <FormLabel>رابط الملف</FormLabel>
-              <Input disabled={true} value={window.location} />
-            </FormControl>
-          </ModalBody>
-
-          <ModalFooter textAlign="center">
-            <CopyToClipboard
-              text={window.location}
-              onCopy={() => {
-                toast({
-                  title: "تم نسخ الرابط بنجاح",
-                  status: "success",
-                  duration: 5000,
-                  isClosable: true,
-                });
-              }}
-            >
-              <Button
-                flex={1}
-                rounded={"full"}
-                bg={"primary.400"}
-                color={"white"}
-                _hover={{
-                  bg: "primary.500",
-                }}
-                _focus={{
-                  bg: "primary.500",
-                }}
-                fontSize={"xl"}
-              >
-                تنزيل
-              </Button>
-            </CopyToClipboard>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
-    </>
-  );
+function DownloadFile({ id, token, link }) {
+  const data = new FormData();
+  data.append("file_id", id);
+  data.append("token", token);
+  axios.post("/set_download", data);
+  window.location = link;
 }
