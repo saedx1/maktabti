@@ -13,7 +13,7 @@ from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 
 from .security import verify_token
-
+from .aws_operations import backup_file_to_s3
 
 APP = Flask("maktabti")
 CORS(APP)
@@ -42,10 +42,16 @@ def upload_file():
     data["created_by"] = claims["sub"]
     data["username"] = claims["name"]
 
+    if data["college"] == "0":
+        data["college"] = data["major"] = "null"
+    elif data["major"] == "0":
+        data["major"] = "null"
+
     query = """
     mutation MyMutation {
         insert_files_one(
             object: {
+                    name: "%(name)s",
                     university: %(university)s,
                     college: %(college)s,
                     major: %(major)s,
@@ -74,6 +80,8 @@ def upload_file():
     full_path = os.path.join(UPLOAD_FOLDER, file_name)
     file = request.files["file"]
     file.save(full_path)
+
+    backup_file_to_s3(full_path, file_name)
 
     gfile = DRIVE.CreateFile(
         {
@@ -144,12 +152,20 @@ def get_filter_data():
         return res, 400
 
 
-@APP.route("/get_search_results/<major>/<kind>/<page>", methods=["GET"])
-def get_search_results(major, kind, page):
+@APP.route("/get_search_results/<college>/<major>/<kind>/<page>", methods=["GET"])
+def get_search_results(college, major, kind, page):
+    where = "majorByMajor: {id: {_eq: %s}}, kindByKind: {id: {_eq: $kind}}" % major
+    if college == "0":
+        where = "college: {_is_null: true}, kindByKind: {id: {_eq: $kind}}"
+    elif major == "0":
+        where = (
+            "college: {_eq: %s}, major: {_is_null: true}, kindByKind: {id: {_eq: $kind}}"
+            % college
+        )
     page = int(page)
     query = """
-    query MyQuery($major: Int, $kind: Int) {
-        files(where: {majorByMajor: {id: {_eq: $major}}, kindByKind: {id: {_eq: $kind}}}, limit: 10, offset: %d) {
+    query MyQuery($kind: Int) {
+        files(where: {%s}, limit: 10, offset: %d) {
             id
             name
             courseByCourse {
@@ -161,16 +177,19 @@ def get_search_results(major, kind, page):
             link
             username
         }
-        files_aggregate(where: {majorByMajor: {id: {_eq: $major}}, kindByKind: {id: {_eq: $kind}}}) {
+        files_aggregate(where: {%s}) {
             aggregate {
                 totalCount: count
             }
         }
     }
     """ % (
+        where,
         (page - 1) * 10,
+        where,
     )
-    variables = {"major": int(major), "kind": int(kind)}
+
+    variables = {"kind": int(kind)}
 
     res = execute_graphql_query(query, variables)
     if "data" in res.keys():
@@ -266,7 +285,7 @@ def get_stats():
             "top_course": md_course,
         }, 200
     else:
-        print(res)
+
         return "f", 400
 
 
@@ -348,8 +367,35 @@ def get_details(file_id):
 @APP.route("/report_file", methods=["POST"])
 def report_file():
     data = dict(request.form)
-    print(data)
-    return "s", 200
+    file_id = data["file_id"]
+    id_token = data["token"]
+
+    if id_token:
+        claims = verify_token(id_token)
+        if claims is None:
+            return "f", 401
+        user = claims["sub"]
+        name = claims["name"]
+    else:
+        user = request.remote_addr
+
+    query = """
+    mutation MyMutation {
+        insert_reports_one(object: {file: %s, created_by: "%s"}) {
+            id
+        }
+    }
+    """ % (
+        file_id,
+        user,
+    )
+
+    res = execute_graphql_query(query)
+
+    if "data" in res.keys():
+        return res["data"], 200
+    else:
+        return "f", 400
 
 
 def execute_graphql_query(query, variables=None):

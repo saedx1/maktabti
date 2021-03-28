@@ -61,6 +61,7 @@ function SocialProfileSimple({
 }) {
   const toast = useToast();
   const [token, setToken] = useState("");
+  const [submitting, setSubmitting] = useState(false);
   const { getSession } = useContext(AccountContext);
 
   getSession()
@@ -79,10 +80,28 @@ function SocialProfileSimple({
     .catch(() => {});
 
   function ReportFile({ id, token }) {
+    setSubmitting(true);
     const data = new FormData();
     data.append("file_id", id);
     data.append("token", token);
-    axios.post("/report_file", data);
+    axios
+      .post("/report_file", data)
+      .then(() => {
+        toast({
+          title: "تم التبليغ بنجاح، ستتم المتابعة قريباً",
+          status: "success",
+          duration: 5000,
+          isClosable: true,
+        });
+      })
+      .catch(() => {
+        toast({
+          title: "حصل خلل أثناء تقديم التبليغ",
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+        });
+      });
   }
 
   return (
@@ -191,6 +210,7 @@ function SocialProfileSimple({
           onClick={() => {
             ReportFile({ id, token });
           }}
+          disabled={submitting}
         >
           تبليغ
         </Button>

@@ -75,14 +75,17 @@ const AdvancedSearch = () => {
       )[0].colleges;
       setColleges(c);
 
-      if (colleges.length === 0) return;
+      if (colleges.length === 0 || parseInt(values.college) === 0) return;
       const m = colleges.filter((x) => x.id === parseInt(values.college))[0]
         .majors;
       setMajors(m);
 
-      if (m.filter((elem) => values.major == elem.id).length === 0)
+      if (
+        m.filter((elem) => values.major == elem.id).length === 0 &&
+        parseInt(values.major) !== 0
+      )
         setFieldValue("major", m[0].id);
-    }, [values]);
+    }, [values.university, values.college]);
 
     return null;
   };
@@ -91,6 +94,8 @@ const AdvancedSearch = () => {
     actions.setSubmitting(true);
     const res = await axios.get(
       "/get_search_results/" +
+        values.college +
+        "/" +
         values.major +
         "/" +
         values.kind +
@@ -103,7 +108,6 @@ const AdvancedSearch = () => {
       ...prevValues,
       count: data.files_aggregate.aggregate.totalCount,
     }));
-    console.log(values);
   };
   return (
     <>
@@ -151,6 +155,7 @@ const AdvancedSearch = () => {
                         bg="white"
                         fontSize="xl"
                       >
+                        <option value={0}>عام</option>
                         {colleges.map((elem) => (
                           <option
                             key={elem.id}
@@ -162,7 +167,14 @@ const AdvancedSearch = () => {
                     </FormControl>
                     <FormControl>
                       <FormLabel>التخصص</FormLabel>
-                      <Field name="major" as={Select} bg="white" fontSize="xl">
+                      <Field
+                        name="major"
+                        as={Select}
+                        bg="white"
+                        fontSize="xl"
+                        disabled={parseInt(values.college) === 0}
+                      >
+                        <option value={0}>عام</option>
                         {majors.map((elem) => (
                           <option
                             key={elem.id}
@@ -367,17 +379,16 @@ const ResultRow = ({
       }}
     >
       <Td {...props} width="5%">
-        <a href={link} target="_blank" rel="noopener noreferrer">
-          <IconButton
-            bg="transparent"
-            onClick={() => {
-              setSubmitting(true);
-              DownloadFile({ id, token, setSubmitting, link });
-            }}
-            disabled={submitting}
-            icon={<DownloadIcon />}
-          ></IconButton>
-        </a>
+        <IconButton
+          bg="transparent"
+          onClick={() => {
+            setSubmitting(true);
+            DownloadFile({ id, token, setSubmitting, link });
+            window.location = link;
+          }}
+          disabled={submitting}
+          icon={<DownloadIcon />}
+        ></IconButton>
       </Td>
       <Td
         {...props}

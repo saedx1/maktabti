@@ -23,6 +23,10 @@ import * as Yup from "yup";
 import { AccountContext } from "./User/Account";
 
 const UploadFileSchema = Yup.object().shape({
+  name: Yup.string()
+    .min(6, "اسم المحتوى يجب أن يكون 6 رموز على اﻷقل")
+    .max(50, "اسم المحتوى يجب أن لا يتعدى 50 رمزاً")
+    .required("يرجى ادخال اسم المحتوى (الشابتر اﻷول، امتحان أول ...)"),
   course: Yup.string()
     .min(6, "اسم المساق يجب أن يكون 6 رموز على اﻷقل")
     .max(50, "اسم المساق يجب أن لا يتعدى 50 رمزاً")
@@ -122,18 +126,24 @@ export const UploadDrawer = ({ isOpen, onClose }) => {
   }, [data]);
 
   const MyOnChangeComponent = () => {
-    const { values } = useFormikContext();
+    const { values, setFieldValue } = useFormikContext();
     useEffect(() => {
       if (universities.length === 0) return;
-      setColleges(
-        universities.filter((x) => x.id === parseInt(values.university))[0]
-          .colleges
-      );
+      const c = universities.filter(
+        (x) => x.id === parseInt(values.university)
+      )[0].colleges;
+      setColleges(c);
 
-      if (colleges.length === 0) return;
-      setMajors(
-        colleges.filter((x) => x.id === parseInt(values.college))[0].majors
-      );
+      if (colleges.length === 0 || parseInt(values.college) === 0) return;
+      const m = colleges.filter((x) => x.id === parseInt(values.college))[0]
+        .majors;
+      setMajors(m);
+
+      if (
+        m.filter((elem) => values.major == elem.id).length === 0 &&
+        parseInt(values.major) !== 0
+      )
+        setFieldValue("major", m[0].id);
     }, [values.university, values.college]);
 
     return null;
@@ -145,6 +155,7 @@ export const UploadDrawer = ({ isOpen, onClose }) => {
         <DrawerContent>
           <Formik
             initialValues={{
+              name: "",
               university: 1,
               college: 1,
               major: 1,
@@ -200,52 +211,17 @@ export const UploadDrawer = ({ isOpen, onClose }) => {
                       ></Field>
                     </FormControl> */}
                     <FormControl>
-                      <FormLabel fontSize="xl">الجامعة</FormLabel>
+                      <FormLabel fontSize="xl">اسم المحتوى</FormLabel>
                       <Field
-                        name="university"
-                        as={Select}
+                        name="name"
+                        as={Input}
+                        type="text"
                         bg="white"
                         fontSize="xl"
-                      >
-                        {universities.map((elem) => (
-                          <option
-                            key={elem.id}
-                            value={elem.id}
-                            label={elem.name}
-                          ></option>
-                        ))}
-                      </Field>
-                    </FormControl>
-
-                    <FormControl>
-                      <FormLabel fontSize="xl">الكلية</FormLabel>
-                      <Field
-                        name="college"
-                        as={Select}
-                        bg="white"
-                        fontSize="xl"
-                      >
-                        {colleges.map((elem) => (
-                          <option
-                            key={elem.id}
-                            value={elem.id}
-                            label={elem.name}
-                          ></option>
-                        ))}
-                      </Field>
-                    </FormControl>
-
-                    <FormControl>
-                      <FormLabel fontSize="xl">التخصص</FormLabel>
-                      <Field name="major" as={Select} bg="white" fontSize="xl">
-                        {majors.map((elem) => (
-                          <option
-                            key={elem.id}
-                            value={elem.id}
-                            label={elem.name}
-                          ></option>
-                        ))}
-                      </Field>
+                      ></Field>
+                      {errors.name && touched.name ? (
+                        <Box color="red">{errors.name}</Box>
+                      ) : null}
                     </FormControl>
 
                     <FormControl>
@@ -278,6 +254,61 @@ export const UploadDrawer = ({ isOpen, onClose }) => {
                       <FormLabel fontSize="xl">النوع</FormLabel>
                       <Field name="kind" as={Select} bg="white" fontSize="xl">
                         {kinds.map((elem) => (
+                          <option
+                            key={elem.id}
+                            value={elem.id}
+                            label={elem.name}
+                          ></option>
+                        ))}
+                      </Field>
+                    </FormControl>
+
+                    <FormControl>
+                      <FormLabel fontSize="xl">الجامعة</FormLabel>
+                      <Field
+                        name="university"
+                        as={Select}
+                        bg="white"
+                        fontSize="xl"
+                      >
+                        {universities.map((elem) => (
+                          <option
+                            key={elem.id}
+                            value={elem.id}
+                            label={elem.name}
+                          ></option>
+                        ))}
+                      </Field>
+                    </FormControl>
+                    <FormControl>
+                      <FormLabel fontSize="xl">الكلية</FormLabel>
+                      <Field
+                        name="college"
+                        as={Select}
+                        bg="white"
+                        fontSize="xl"
+                      >
+                        <option value={0}>عام</option>
+                        {colleges.map((elem) => (
+                          <option
+                            key={elem.id}
+                            value={elem.id}
+                            label={elem.name}
+                          ></option>
+                        ))}
+                      </Field>
+                    </FormControl>
+                    <FormControl>
+                      <FormLabel fontSize="xl">التخصص</FormLabel>
+                      <Field
+                        name="major"
+                        as={Select}
+                        bg="white"
+                        fontSize="xl"
+                        disabled={parseInt(values.college) === 0}
+                      >
+                        <option value={0}>عام</option>
+                        {majors.map((elem) => (
                           <option
                             key={elem.id}
                             value={elem.id}
