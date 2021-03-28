@@ -44,13 +44,13 @@ const MostPopular = ({ data }) => {
         "repeat(1, 1fr)",
         "repeat(1, 1fr)",
         "repeat(1, 1fr)",
-        "repeat(7, 1fr)",
+        "repeat(5, 1fr)",
       ]}
       gap={7}
       bg="primary.100"
       borderColor="black"
     >
-      <GridItem colStart={[1, 1, 2, 3]}>
+      <GridItem colStart={[1, 1, 1, 2]}>
         <Card
           label="أشهر مساق"
           item={data && data.top_course.name}
@@ -59,7 +59,7 @@ const MostPopular = ({ data }) => {
           isDownload={false}
         ></Card>
       </GridItem>
-      <GridItem colStart={[1, 1, 1, 4]}>
+      <GridItem colStart={[1, 1, 1, 3]}>
         <Card
           label="أشهر ملف"
           item={data && data.top_file.name}
@@ -69,7 +69,7 @@ const MostPopular = ({ data }) => {
           isDownload={true}
         ></Card>
       </GridItem>
-      <GridItem colStart={[1, 1, 1, 5]}>
+      <GridItem colStart={[1, 1, 1, 4]}>
         <Card
           label="أشهر تخصص"
           item={data && data.top_major.name}
