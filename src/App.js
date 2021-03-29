@@ -17,6 +17,7 @@ import Settings from "./Components/Pages/Settings";
 import ForgotPassword from "./Components/Pages/ForgotPassword";
 import Signup from "./Components/Pages/Signup";
 import FileDetails from "./Components/Pages/FileDetails";
+import NormalSearch from "./Components/Pages/NormalSearch";
 import { SWRConfig } from "swr";
 import axios from "axios";
 
@@ -81,6 +82,7 @@ function PageComponent() {
               render={() => <AdvancedSearch />}
             />
             <Route path="/settings" exact component={Settings} />
+            <Route path="/search" exact component={NormalSearch} />
             <Route path="/forgotpassword" exact component={ForgotPassword} />
             <Route path="/file/:file_id" component={FileDetails} />
             <Route path="/" component={NotFound} />

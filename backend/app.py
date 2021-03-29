@@ -398,6 +398,44 @@ def report_file():
         return "f", 400
 
 
+@APP.route("/search", methods=["POST"])
+def search_text():
+    data = dict(request.form)
+    page = int(data["page"])
+    text = data["query"]
+    query = """
+    query MyQuery {
+        search_files(args: {pattern: "%s"}, limit: 10, offset: %d) {
+            id
+            name
+            courseByCourse {
+                name
+            }
+            kindByKind {
+                name
+            }
+            link
+            username
+        }
+        search_files_aggregate(args: {pattern: "%s"}) {
+            aggregate {
+                count
+            }
+        }
+    }
+    """ % (
+        text,
+        (page - 1) * 10,
+        text,
+    )
+
+    res = execute_graphql_query(query)
+    if "data" in res.keys():
+        return res["data"]
+    else:
+        return res, 400
+
+
 def execute_graphql_query(query, variables=None):
     response = requests.post(
         GRAPHQL_ENDPOINT, data=json.dumps({"query": query, "variables": variables})

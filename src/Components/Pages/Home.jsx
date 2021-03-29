@@ -32,7 +32,7 @@ const StatComponent = (props) => {
 const SearchForm = () => {
   return (
     <>
-      <SearchBox pb={10} />
+      <SearchBox pb={10} hideadvancedbtn={false} />
     </>
   );
 };
@@ -86,11 +86,14 @@ const MainBody = () => {
 
   return (
     <Box bg="primary.500">
-      <Center color="black">
-        <Box fontSize="4xl" pt={10} pb={10} textColor="white">
-          مبادرة تسعى لتسهيل عملية وصول الطلاب للمواد التعليمية المستخدمة في
-          الجامعات الفلسطينية
-        </Box>
+      <Center
+        color="black"
+        fontSize={{ base: "2xl", lg: "4xl" }}
+        p={10}
+        textColor="white"
+      >
+        مبادرة تسعى لتسهيل عملية وصول الطلاب للمواد التعليمية المستخدمة في
+        الجامعات الفلسطينية
       </Center>
       <SearchForm />
       <Grid

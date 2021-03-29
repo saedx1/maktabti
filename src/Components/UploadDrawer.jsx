@@ -151,26 +151,25 @@ export const UploadDrawer = ({ isOpen, onClose }) => {
 
   return (
     <Drawer isOpen={isOpen} placement="right" onClose={onClose}>
-      <DrawerOverlay>
-        <DrawerContent>
-          <Formik
-            initialValues={{
-              name: "",
-              university: 1,
-              college: 1,
-              major: 1,
-              course: "",
-              kind: 1,
-              files: [],
-              year: 2020,
-            }}
-            onSubmit={submitFile}
-            validationSchema={UploadFileSchema}
-          >
-            {({ values, isSubmitting, setFieldValue, errors, touched }) => (
-              <Form encType="multipart/form-data">
-                <MyOnChangeComponent />
-
+      <Formik
+        initialValues={{
+          name: "",
+          university: 1,
+          college: 1,
+          major: 1,
+          course: "",
+          kind: 1,
+          files: [],
+          year: 2020,
+        }}
+        onSubmit={submitFile}
+        validationSchema={UploadFileSchema}
+      >
+        {({ values, isSubmitting, setFieldValue, errors, touched }) => (
+          <Form encType="multipart/form-data">
+            <MyOnChangeComponent />
+            <DrawerOverlay>
+              <DrawerContent>
                 <DrawerHeader borderBottomWidth="1px">
                   رفع ملف جديد
                 </DrawerHeader>
@@ -349,11 +348,11 @@ export const UploadDrawer = ({ isOpen, onClose }) => {
                     إلغاء
                   </Button>
                 </DrawerFooter>
-              </Form>
-            )}
-          </Formik>
-        </DrawerContent>
-      </DrawerOverlay>
+              </DrawerContent>
+            </DrawerOverlay>
+          </Form>
+        )}
+      </Formik>
     </Drawer>
   );
 };

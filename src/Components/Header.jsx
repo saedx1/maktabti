@@ -29,16 +29,17 @@ const Links = [
   { text: "فريق العمل", to: "/about" },
 ];
 
-const NavLink = ({ text, to }) => (
+const NavLink = ({ children, ...props }) => (
   <Link
     px={2}
     py={1}
     textStyle="nav_item"
     rounded="md"
     _hover={{ textDecoration: "none", bg: "gray.200" }}
-    href={to}
+    href={children.to}
+    {...props}
   >
-    {text}
+    {children.text}
   </Link>
 );
 
@@ -63,13 +64,7 @@ const WithAction = ({ loggedIn, logout }) => {
   return (
     <>
       <Box bg="primary.500" px={4}>
-        <Flex
-          h={16}
-          alignItems={"center"}
-          justifyContent={"space-between"}
-          justify={["center", "space-between", "flex-end", "flex-end"]}
-          direction={["column", "row", "row", "row"]}
-        >
+        <Flex h={16} alignItems={"center"} justifyContent={"space-between"}>
           <IconButton
             size={"md"}
             icon={isOpen ? <CloseIcon /> : <HamburgerIcon />}
@@ -84,8 +79,8 @@ const WithAction = ({ loggedIn, logout }) => {
               spacing={4}
               display={{ base: "none", md: "flex" }}
             >
-              {Links.map((link) => (
-                <NavLink key={link.to} {...link}></NavLink>
+              {Links.map((link, i) => (
+                <NavLink key={link + "_" + i}>{link}</NavLink>
               ))}
             </HStack>
           </HStack>
@@ -131,13 +126,13 @@ const WithAction = ({ loggedIn, logout }) => {
                   <Avatar size={"sm"} />
                 </MenuButton>
                 <MenuList>
-                  <MenuItem
+                  {/* <MenuItem
                     as="button"
                     onClick={() => (window.location.href = "/mylibrary")}
                     fontSize="xl"
                   >
                     مكتبتي
-                  </MenuItem>
+                  </MenuItem> */}
                   <MenuItem
                     as="button"
                     onClick={() => (window.location.href = "/settings")}
@@ -174,9 +169,15 @@ const WithAction = ({ loggedIn, logout }) => {
 
         {isOpen ? (
           <Box pb={4}>
-            <Stack as={"nav"} spacing={4}>
+            <Stack
+              as={"nav"}
+              borderBottomColor="black"
+              borderBottomStyle="solid"
+            >
               {Links.map((link) => (
-                <NavLink key={link}>{link}</NavLink>
+                <NavLink key={link + "_2"} textColor="black">
+                  {link}
+                </NavLink>
               ))}
             </Stack>
           </Box>

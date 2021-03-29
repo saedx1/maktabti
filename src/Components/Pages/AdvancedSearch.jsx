@@ -30,6 +30,7 @@ import {
   Td,
   TableCaption,
 } from "@chakra-ui/react";
+import { array } from "yup/lib/locale";
 
 const AdvancedSearch = () => {
   const { getSession } = useContext(AccountContext);
@@ -53,7 +54,7 @@ const AdvancedSearch = () => {
   const [universities, setUniversities] = useState([]);
   const [colleges, setColleges] = useState([]);
   const [majors, setMajors] = useState([]);
-  // const [courses, setCourses] = useState([]);
+  // const [courses, setCourses] = useState([])
   const [kinds, setKinds] = useState([]);
   const [results, setResults] = useState();
   const { data } = useSWR("/get_filter_data");
@@ -62,7 +63,7 @@ const AdvancedSearch = () => {
     setUniversities(data.universities);
     setColleges(data.universities[0].colleges);
     setMajors(data.universities[0].colleges[0].majors);
-    // setCourses(data.universities[0].colleges[0].majors[0].courses);
+    // setCourses(data.universities[0].colleges[0].majors[0].courses)
     setKinds(data.kinds);
   }, [data]);
 
@@ -310,13 +311,21 @@ const AdvancedSearch = () => {
   );
 };
 
-const ResultTable = ({ data, token }) => {
+export const ResultTable = ({ data, token }) => {
   if (data.length === 0) {
     return <></>;
   }
   return (
-    <Box width={["95%", "95%", "70%"]}>
-      <Table bg="white" borderColor="primary.500" borderWidth={2}>
+    <Box width={["95%", "95%", "50%"]}>
+      <Table
+        bg="white"
+        borderColor="primary.500"
+        borderWidth={2}
+        fontSize={{ base: "sm", lg: "xl" }}
+        style={{
+          tableLayout: "fixed",
+        }}
+      >
         <Tbody>
           <ResultHeader bg="primary.400" textColor="black"></ResultHeader>
           {data.map((elem) => (
@@ -338,17 +347,17 @@ const ResultTable = ({ data, token }) => {
 const ResultHeader = (props) => {
   return (
     <Tr {...props}>
-      <Td>
+      <Td width="20px">
         <Text noOfLines={1}></Text>
       </Td>
       <Td>
         <Text noOfLines={1}>الاسم</Text>
       </Td>
-      <Td>
-        <Text noOfLines={1} lineHeight="normal">
+      {/* <Td>
+        <Text noOfLines={1} lineHeight="normal" >
           النوع
         </Text>
-      </Td>
+      </Td> */}
       <Td>
         <Text noOfLines={1}>المساق</Text>
       </Td>
@@ -357,6 +366,11 @@ const ResultHeader = (props) => {
       </Td>
     </Tr>
   );
+};
+
+const truncateText = (text) => {
+  // return text.length >= 10 ? text.substring(0, 10) + "..." : text;
+  return text;
 };
 
 const ResultRow = ({
@@ -378,54 +392,53 @@ const ResultRow = ({
         bg: "primary.200",
       }}
     >
-      <Td {...props} width="5%">
-        <IconButton
-          bg="transparent"
-          onClick={() => {
-            setSubmitting(true);
-            DownloadFile({ id, token, setSubmitting, link });
-            window.location = link;
-          }}
-          disabled={submitting}
-          icon={<DownloadIcon />}
-        ></IconButton>
+      <Td width="20px" {...props}>
+        <Center>
+          <IconButton
+            bg="transparent"
+            onClick={() => {
+              setSubmitting(true);
+              DownloadFile({ id, token, setSubmitting, link });
+              window.location = link;
+            }}
+            disabled={submitting}
+            icon={<DownloadIcon />}
+          ></IconButton>
+        </Center>
       </Td>
       <Td
         {...props}
         onClick={() => {
           window.location = "/file/" + id;
         }}
-        width="25%"
       >
         {/* <IconButton icon={<StarIcon />} bg="transparent" /> */}
-        <Text noOfLines={1}>{name}</Text>
+        <Text noOfLines={1}>{truncateText(name)}</Text>
       </Td>
-      <Td
+      {/* <Td
         {...props}
         onClick={() => {
-          window.location = "/file/" + id;
+          window.location = "/file/" + id
         }}
         width="25%"
       >
         <Text noOfLines={1}>{kindByKind.name}</Text>
+      </Td> */}
+      <Td
+        {...props}
+        onClick={() => {
+          window.location = "/file/" + id;
+        }}
+      >
+        <Text noOfLines={1}>{truncateText(courseByCourse.name)}</Text>
       </Td>
       <Td
         {...props}
         onClick={() => {
           window.location = "/file/" + id;
         }}
-        width="20%"
       >
-        <Text noOfLines={1}>{courseByCourse.name}</Text>
-      </Td>
-      <Td
-        {...props}
-        onClick={() => {
-          window.location = "/file/" + id;
-        }}
-        width="25%"
-      >
-        <Text noOfLines={1}>{username}</Text>
+        <Text noOfLines={1}>{truncateText(username)}</Text>
       </Td>
     </Tr>
   );
