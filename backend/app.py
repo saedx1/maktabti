@@ -4,6 +4,7 @@ import os
 import time
 import io
 import requests
+from pathlib import Path
 from pydrive.auth import GoogleAuth
 from pydrive.drive import GoogleDrive
 from flask import Flask, jsonify, request, flash
@@ -55,7 +56,7 @@ def upload_file():
                     university: %(university)s,
                     college: %(college)s,
                     major: %(major)s,
-                    courseByCourse: {data: {major: %(major)s, name: "%(course)s"}},
+                    courseByCourse: {data: {major: %(major)s, name: "%(course)s"}, on_conflict: {constraint: courses_name_major_key, update_columns: major}},
                     created_by: "%(created_by)s",
                     username: "%(username)s",
                     kind: %(kind)s,
@@ -74,9 +75,9 @@ def upload_file():
 
     if "data" not in res.keys():
         return res, 400
-
+    original_filename = Path(data["filename"])
     id_ = res["data"]["insert_files_one"]["id"]
-    file_name = f"{id_}.pdf"
+    file_name = f"{id_}{original_filename.suffix}"
     full_path = os.path.join(UPLOAD_FOLDER, file_name)
     file = request.files["file"]
     file.save(full_path)

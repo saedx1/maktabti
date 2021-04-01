@@ -75,13 +75,15 @@ function PageComponent() {
             <Route path="/login" exact component={Login} />
             <Route path="/signup" exact component={Signup} />
             <Route path="/about" exact component={About} />
-            <Route path="/mylibrary" exact component={MyLibrary} />
+            {loggedIn && (
+              <Route path="/mylibrary" exact component={MyLibrary} />
+            )}
             <Route
               path="/advancedsearch"
               exact
               render={() => <AdvancedSearch />}
             />
-            <Route path="/settings" exact component={Settings} />
+            {loggedIn && <Route path="/settings" exact component={Settings} />}
             <Route path="/search" exact component={NormalSearch} />
             <Route path="/forgotpassword" exact component={ForgotPassword} />
             <Route path="/file/:file_id" component={FileDetails} />

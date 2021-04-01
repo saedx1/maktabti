@@ -37,7 +37,7 @@ const UploadFileSchema = Yup.object().shape({
     .required("يرجى ادخال سنة لهذا المحتوى"),
 });
 
-async function UploadFile({ token, data, name }) {
+async function UploadFile({ token, data }) {
   const finalData = new FormData();
   for (const property in data) {
     if (property === "files") {
@@ -46,6 +46,7 @@ async function UploadFile({ token, data, name }) {
       finalData.append(property, data[property]);
     }
   }
+  finalData.append("filename", data["files"][0].name);
   finalData.append("token", token);
 
   return await axios.post("/upload_file", finalData);
@@ -60,7 +61,7 @@ export const UploadDrawer = ({ isOpen, onClose }) => {
       actions.setSubmitting(false);
       return;
     }
-    UploadFile({ token, data, name })
+    UploadFile({ token, data })
       .then((res) => {
         toast({
           title: "تم رفع الملف بنجاح",
@@ -188,7 +189,7 @@ export const UploadDrawer = ({ isOpen, onClose }) => {
                           };
                           setFileState(newFileState);
                         }}
-                        accept=".pdf"
+                        accept=".pdf,.zip,.rar"
                         filename={
                           values.files.length === 0 ? "" : values.files[0].name
                         }
