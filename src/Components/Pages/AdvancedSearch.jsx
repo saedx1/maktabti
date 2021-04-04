@@ -413,7 +413,9 @@ const ResultRow = ({
         }}
       >
         {/* <IconButton icon={<StarIcon />} bg="transparent" /> */}
-        <Text noOfLines={1}>{truncateText(name)}</Text>
+        <Text noOfLines={1} lineHeight="normal">
+          {truncateText(name)}
+        </Text>
       </Td>
       {/* <Td
         {...props}
@@ -430,7 +432,9 @@ const ResultRow = ({
           window.location = "/file/" + id;
         }}
       >
-        <Text noOfLines={1}>{truncateText(courseByCourse.name)}</Text>
+        <Text noOfLines={1} lineHeight="normal">
+          {truncateText(courseByCourse.name)}
+        </Text>
       </Td>
       <Td
         {...props}
@@ -438,7 +442,9 @@ const ResultRow = ({
           window.location = "/file/" + id;
         }}
       >
-        <Text noOfLines={1}>{truncateText(username)}</Text>
+        <Text noOfLines={1} lineHeight="normal">
+          {truncateText(username)}
+        </Text>
       </Td>
     </Tr>
   );
