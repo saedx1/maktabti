@@ -12,7 +12,7 @@ from werkzeug.utils import secure_filename
 from flask_cors import CORS
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
-
+from functools import lru_cache
 from .security import verify_token
 from .aws_operations import backup_file_to_s3
 
@@ -43,6 +43,8 @@ def upload_file():
     data["created_by"] = claims["sub"]
     data["username"] = claims["name"]
 
+    print(data)
+
     if data["college"] == "0":
         data["college"] = data["major"] = "null"
     elif data["major"] == "0":
@@ -53,10 +55,7 @@ def upload_file():
         insert_files_one(
             object: {
                     name: "%(name)s",
-                    university: %(university)s,
-                    college: %(college)s,
-                    major: %(major)s,
-                    courseByCourse: {data: {major: %(major)s, name: "%(course)s"}, on_conflict: {constraint: courses_name_major_key, update_columns: major}},
+                    courseByCourse: {data: {name: "%(course)s", university: %(university)s, college: %(college)s, major: %(major)s}, on_conflict: {constraint: courses_name_major_college_university_key, update_columns: major}},
                     created_by: "%(created_by)s",
                     username: "%(username)s",
                     kind: %(kind)s,
@@ -70,7 +69,7 @@ def upload_file():
     """ % (
         data
     )
-
+    print(query)
     res = execute_graphql_query(query)
 
     if "data" not in res.keys():
@@ -121,6 +120,13 @@ def upload_file():
 
 @APP.route("/get_filter_data", methods=["GET"])
 def get_filter_data():
+    store_id(
+        request.headers["X-Random"],
+        request.headers["X-Random-2"]
+        if "X-Random-2" in request.headers
+        else get_remote_address(),
+    )
+
     query = """
     query MyQuery {
         universities {
@@ -153,19 +159,21 @@ def get_filter_data():
         return res, 400
 
 
-@APP.route("/get_search_results/<college>/<major>/<kind>/<page>", methods=["GET"])
-def get_search_results(college, major, kind, page):
-    where = "majorByMajor: {id: {_eq: %s}}, kindByKind: {id: {_eq: $kind}}" % major
-    if college == "0":
-        where = "college: {_is_null: true}, kindByKind: {id: {_eq: $kind}}"
-    elif major == "0":
-        where = (
-            "college: {_eq: %s}, major: {_is_null: true}, kindByKind: {id: {_eq: $kind}}"
-            % college
-        )
+@APP.route("/get_search_results/<course>/<page>", methods=["GET"])
+def get_search_results(course, page):
+    # where = "majorByMajor: {id: {_eq: %s}}, kindByKind: {id: {_eq: $kind}}" % major
+    # if college == "0":
+    #     where = "college: {_is_null: true}, kindByKind: {id: {_eq: $kind}}"
+    # elif major == "0":
+    #     where = (
+    #         "college: {_eq: %s}, major: {_is_null: true}, kindByKind: {id: {_eq: $kind}}"
+    #         % college
+    #     )
+    where = "course: {_eq: %s}" % course
     page = int(page)
+
     query = """
-    query MyQuery($kind: Int) {
+    query MyQuery {
         files(where: {%s}, limit: 10, offset: %d) {
             id
             name
@@ -189,10 +197,10 @@ def get_search_results(college, major, kind, page):
         (page - 1) * 10,
         where,
     )
+    # variables = {"kind": int(kind)}
 
-    variables = {"kind": int(kind)}
-
-    res = execute_graphql_query(query, variables)
+    res = execute_graphql_query(query)
+    print(query)
     if "data" in res.keys():
         return res["data"]
     else:
@@ -203,6 +211,12 @@ def get_search_results(college, major, kind, page):
 def get_stats():
     query = """
         query MyQuery {
+            users_aggregate {
+                aggregate {
+                    count(distinct: false, columns: identifier)
+                }
+            }
+            
             files_aggregate {
                 aggregate {
                     count
@@ -215,14 +229,19 @@ def get_stats():
             }
             files(order_by: {downloads_aggregate: {count: desc_nulls_last}}, limit: 1) {
                 name
-                university : universityByUniversity{
+                course : courseByCourse{
                     name
+                    university : universityByUniversity{
+                        name
+                    }
                 }
+                
                 downloads : downloads_aggregate{
                     aggregate {
                         count
                     }
                 }
+                id
                 link
 
             }
@@ -257,9 +276,11 @@ def get_stats():
         md_file = res["data"]["files"][0]
         md_file = {
             "name": md_file["name"],
-            "university": md_file["university"]["name"],
+            "course_name": md_file["course"]["name"],
+            "university": md_file["course"]["university"]["name"],
             "count": md_file["downloads"]["aggregate"]["count"],
             "link": md_file["link"],
+            "id": md_file["id"],
         }
 
         md_major = res["data"]["top_majors"][0]
@@ -280,7 +301,7 @@ def get_stats():
         return {
             "file_count": res["data"]["files_aggregate"]["aggregate"]["count"],
             "course_count": res["data"]["courses_aggregate"]["aggregate"]["count"],
-            "student_count": 15,
+            "student_count": res["data"]["users_aggregate"]["aggregate"]["count"],
             "top_file": md_file,
             "top_major": md_major,
             "top_course": md_course,
@@ -305,6 +326,8 @@ def set_download():
         name = claims["name"]
     else:
         user = request.remote_addr
+
+    user = request.headers["X-Random"]
 
     query = """
         mutation MyMutation {
@@ -337,16 +360,17 @@ def get_details(file_id):
             name
             courseByCourse {
                 name
+                collegeByCollege {
+                    name
+                }
+                majorByMajor {
+                    name
+                }
+                universityByUniversity {
+                    name
+                }
             }
-            collegeByCollege {
-                name
-            }
-            majorByMajor {
-                name
-            }
-            universityByUniversity {
-                name
-            }
+            
             kindByKind {
                 name
             }
@@ -375,10 +399,9 @@ def report_file():
         claims = verify_token(id_token)
         if claims is None:
             return "f", 401
-        user = claims["sub"]
         name = claims["name"]
-    else:
-        user = request.remote_addr
+
+    user = request.headers["X-Random"]
 
     query = """
     mutation MyMutation {
@@ -445,3 +468,20 @@ def execute_graphql_query(query, variables=None):
         return response.text
     else:
         return json.loads(response.text)
+
+
+@lru_cache()
+def store_id(uuid, _id):
+    query = """
+    mutation MyMutation {
+        insert_users_one(object: {token: "%s", identifier: "%s"}, on_conflict: {update_columns: identifier, constraint: users_pkey}) {
+            identifier
+        }
+    }
+
+    """ % (
+        uuid,
+        _id,
+    )
+
+    res = execute_graphql_query(query)

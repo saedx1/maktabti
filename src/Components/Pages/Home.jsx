@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   Box,
   Center,
@@ -15,6 +15,8 @@ import { SearchBox } from "../SearchBox";
 import { Card } from "../Card";
 import theme from "../../theme";
 import useSWR from "swr";
+import { useCookies } from "react-cookie";
+import { AccountContext } from "../User/Account";
 
 const StatComponent = (props) => {
   return (
@@ -37,6 +39,24 @@ const SearchForm = () => {
   );
 };
 const MostPopular = ({ data }) => {
+  const [token, setToken] = useState("");
+  const { getSession } = useContext(AccountContext);
+  useEffect(() => {
+    getSession()
+      .then(({ user }) => {
+        user.getSession((err, session) => {
+          if (err) {
+            console.log(err);
+          } else if (!session.isValid()) {
+            console.log("Invalid session.");
+          } else {
+            const t = session.getIdToken().getJwtToken();
+            setToken(t);
+          }
+        });
+      })
+      .catch(() => {});
+  }, [getSession]);
   return (
     <Grid
       pt={10}
@@ -63,9 +83,12 @@ const MostPopular = ({ data }) => {
         <Card
           label="أشهر ملف"
           item={data && data.top_file.name}
+          otheritem={data && data.top_file.course_name}
           university={data && data.top_file.university}
           value={data && data.top_file.count + " تنزيلاً"}
           link={data && data.top_file.link}
+          id={data && data.top_file.id}
+          token={token}
           isDownload={true}
         ></Card>
       </GridItem>
@@ -91,24 +114,24 @@ const MainBody = () => {
         fontSize={{ base: "2xl", lg: "4xl" }}
         p={10}
         textColor="white"
+        textAlign="center"
       >
         مبادرة تسعى لتسهيل عملية وصول الطلاب للمواد التعليمية المستخدمة في
         الجامعات الفلسطينية
       </Center>
       <SearchForm />
       <Grid
-        templateColumns="repeat(11, 1fr)"
-        spacing="40px"
+        templateColumns={["repeat(5, 1fr)", "repeat(11, 1fr)"]}
         bg={`linear-gradient(180deg, ${theme.colors.primary["500"]} 50%, ${theme.colors.primary["100"]} 50%)`}
         columnGap={2}
       >
-        <GridItem colStart={5}>
+        <GridItem colStart={[2, 5]}>
           <StatComponent label="المساقات" number={data && data.course_count} />
         </GridItem>
-        <GridItem colStart={6}>
+        <GridItem colStart={[3, 6]}>
           <StatComponent label="المستندات" number={data && data.file_count} />
         </GridItem>
-        <GridItem colStart={7}>
+        <GridItem colStart={[4, 7]}>
           <StatComponent label="الطلاب" number={data && data.student_count} />
         </GridItem>
       </Grid>

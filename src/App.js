@@ -20,42 +20,61 @@ import FileDetails from "./Components/Pages/FileDetails";
 import NormalSearch from "./Components/Pages/NormalSearch";
 import { SWRConfig } from "swr";
 import axios from "axios";
+import { CookiesProvider, useCookies } from "react-cookie";
+import uuid from "react-uuid";
 
 axios.defaults.baseURL = process.env.REACT_APP_SERVER_URL;
 
 function App() {
   useEffect(() => {}, []);
   return (
-    <RtlProvider>
-      <Account>
-        <SWRConfig
-          value={{
-            fetcher: (url) =>
-              axios(url).then((r) => {
-                return r.data;
-              }),
-            dedupingInterval: 10000,
-            refreshInterval: 0,
-            revalidateOnFocus: false,
-            revalidateOnReconnect: false,
-          }}
-        >
-          <PageComponent />
-        </SWRConfig>
-      </Account>
-    </RtlProvider>
+    <CookiesProvider>
+      <RtlProvider>
+        <Account>
+          <SWRConfig
+            value={{
+              fetcher: (url) =>
+                axios(url).then((r) => {
+                  return r.data;
+                }),
+              dedupingInterval: 10000,
+              refreshInterval: 0,
+              revalidateOnFocus: false,
+              revalidateOnReconnect: false,
+            }}
+          >
+            <PageComponent />
+          </SWRConfig>
+        </Account>
+      </RtlProvider>
+    </CookiesProvider>
   );
 }
 function PageComponent() {
   const { getSession, logout } = useContext(AccountContext);
   const [loggedIn, setLoggedIn] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [cookies, setCookie, removeCookie] = useCookies();
+  !cookies["X-Random"] && setCookie("X-Random", uuid(), { path: "/" });
+  axios.defaults.headers.common["X-Random"] = cookies["X-Random"];
+  axios.defaults.headers.common["X-Random-2"] =
+    cookies["X-Random-2"] || "X-Random-2";
 
   useEffect(() => {
     getSession().then(
-      () => {
+      ({ user }) => {
         setLoggedIn(true);
         setLoading(false);
+        user.getSession((err, session) => {
+          if (err) {
+            console.log(err);
+          } else if (!session.isValid()) {
+            console.log("Invalid session.");
+          } else {
+            const t = session.getIdToken().getJwtToken();
+            setCookie("X-Random-2", t, { path: "/" });
+          }
+        });
       },
       () => {
         setLoading(false);

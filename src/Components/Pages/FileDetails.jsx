@@ -50,9 +50,6 @@ function SocialProfileSimple({
   id,
   name,
   courseByCourse,
-  majorByMajor,
-  collegeByCollege,
-  universityByUniversity,
   download,
   username,
   created_at,
@@ -120,7 +117,7 @@ function SocialProfileSimple({
           {courseByCourse.name} - {year}
         </Text>
         <Text textAlign={"center"} px={3} fontSize={"xl"}>
-          {majorByMajor.name}
+          {courseByCourse.majorByMajor.name}
         </Text>
 
         <Stack align={"center"} justify={"center"} direction={"column"} mt={6}>
@@ -151,7 +148,8 @@ function SocialProfileSimple({
             fontWeight={"400"}
             fontSize={"xl"}
           >
-            {collegeByCollege.name} - {universityByUniversity.name}
+            {courseByCourse.collegeByCollege.name} <br></br>{" "}
+            {courseByCourse.universityByUniversity.name}
           </Badge>
         </Stack>
 
@@ -219,7 +217,7 @@ function SocialProfileSimple({
   );
 }
 
-function DownloadFile({ id, token, link }) {
+export function DownloadFile({ id, token, link }) {
   const data = new FormData();
   data.append("file_id", id);
   data.append("token", token);

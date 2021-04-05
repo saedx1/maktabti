@@ -17,7 +17,7 @@ import {
 } from "@chakra-ui/react";
 import axios from "axios";
 import { Field, Form, Formik, useFormikContext } from "formik";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
 import useSWR, { cache } from "swr";
 import { LoadingComponent } from "../../App";
 import { AccountContext } from "../User/Account";
@@ -35,26 +35,32 @@ import { array } from "yup/lib/locale";
 const AdvancedSearch = () => {
   const { getSession } = useContext(AccountContext);
   const [token, setToken] = useState("");
-
-  getSession()
-    .then(({ user }) => {
-      user.getSession((err, session) => {
-        if (err) {
-          console.log(err);
-        } else if (!session.isValid()) {
-          console.log("Invalid session.");
-        } else {
-          const t = session.getIdToken().getJwtToken();
-          setToken(t);
-        }
-      });
-    })
-    .catch(() => {});
+  useMemo(
+    () =>
+      getSession()
+        .then(({ user }) => {
+          user.getSession((err, session) => {
+            if (err) {
+              console.log(err);
+            } else if (!session.isValid()) {
+              console.log("Invalid session.");
+            } else {
+              const t = session.getIdToken().getJwtToken();
+              setToken(t);
+            }
+          });
+        })
+        .catch(() => {}),
+    [false]
+  );
 
   const [universities, setUniversities] = useState([]);
   const [colleges, setColleges] = useState([]);
   const [majors, setMajors] = useState([]);
-  // const [courses, setCourses] = useState([])
+  const [courses, setCourses] = useState([]);
+  const [selectedUniversity, setSelectedU] = useState("1");
+  const [selectedCollege, setSelectedC] = useState("1");
+  const [selectedMajor, setSelectedM] = useState("1");
   const [kinds, setKinds] = useState([]);
   const [results, setResults] = useState();
   const { data } = useSWR("/get_filter_data");
@@ -63,45 +69,15 @@ const AdvancedSearch = () => {
     setUniversities(data.universities);
     setColleges(data.universities[0].colleges);
     setMajors(data.universities[0].colleges[0].majors);
-    // setCourses(data.universities[0].colleges[0].majors[0].courses)
+    setCourses(data.universities[0].colleges[0].majors[0].courses);
     setKinds(data.kinds);
+    console.log(data);
   }, [data]);
-
-  const MyOnChangeComponent = () => {
-    const { values, setFieldValue } = useFormikContext();
-    useEffect(() => {
-      if (universities.length === 0) return;
-      const c = universities.filter(
-        (x) => x.id === parseInt(values.university)
-      )[0].colleges;
-      setColleges(c);
-
-      if (colleges.length === 0 || parseInt(values.college) === 0) return;
-      const m = colleges.filter((x) => x.id === parseInt(values.college))[0]
-        .majors;
-      setMajors(m);
-
-      if (
-        m.filter((elem) => values.major == elem.id).length === 0 &&
-        parseInt(values.major) !== 0
-      )
-        setFieldValue("major", m[0].id);
-    }, [values.university, values.college]);
-
-    return null;
-  };
 
   const submitSearch = async (values, actions) => {
     actions.setSubmitting(true);
     const res = await axios.get(
-      "/get_search_results/" +
-        values.college +
-        "/" +
-        values.major +
-        "/" +
-        values.kind +
-        "/" +
-        values.page
+      "/get_search_results/" + values.course + "/" + values.page
     );
     const data = await res.data;
     setResults(data.files);
@@ -110,6 +86,47 @@ const AdvancedSearch = () => {
       count: data.files_aggregate.aggregate.totalCount,
     }));
   };
+
+  var setFieldValue1 = null;
+
+  useEffect(() => {
+    if (universities.length === 0) return;
+    const _colleges = universities.filter(
+      (x) => x.id === parseInt(selectedUniversity)
+    )[0].colleges;
+    setColleges(_colleges);
+    setSelectedM("college", _colleges[0].id);
+  }, [selectedUniversity]);
+
+  useEffect(() => {
+    if (colleges.length === 0) return;
+    if (parseInt(selectedCollege) !== 0) {
+      const _majors = colleges.filter(
+        (x) => x.id === parseInt(selectedCollege)
+      )[0].majors;
+      setMajors(_majors);
+      setFieldValue1("major", _majors[0].id);
+      setSelectedM("major", _majors[0].id);
+    } else {
+      setMajors([]);
+      setFieldValue1("major", 0);
+    }
+  }, [selectedCollege]);
+
+  useEffect(() => {
+    if (majors.length === 0) return;
+    const _courses = majors.filter((x) => x.id === parseInt(selectedMajor))[0]
+      ?.courses;
+    if (_courses) {
+      setCourses(_courses);
+      if (!_courses || _courses.length === 0) return;
+      setFieldValue1("course", _courses[0].id);
+    } else {
+      setCourses([]);
+      setFieldValue1("course", 0);
+    }
+  }, [selectedMajor]);
+
   return (
     <>
       <Formik
@@ -117,6 +134,7 @@ const AdvancedSearch = () => {
           university: 1,
           college: 1,
           major: 1,
+          course: 1,
           kind: 1,
           page: 1,
           count: 0,
@@ -124,14 +142,25 @@ const AdvancedSearch = () => {
         enableReinitialize={false}
         onSubmit={submitSearch}
       >
-        {({ values, isSubmitting, submitForm, setValues, submitCount }) => {
+        {({
+          values,
+          isSubmitting,
+          submitForm,
+          setValues,
+          submitCount,
+          setFieldValue,
+        }) => {
+          setFieldValue1 = setFieldValue;
           return (
             <Form>
-              <MyOnChangeComponent />
               <Center bg="primary.500" pt={10} pb={5} width="100%">
                 <SimpleGrid width="95%">
-                  <SimpleGrid columns={[1, 1, 2, 4]} gap={2}>
-                    <FormControl>
+                  <SimpleGrid columns={[1, 2, 2, 4]} gap={2}>
+                    <FormControl
+                      onChange={(e) => {
+                        setSelectedU(e.target.value);
+                      }}
+                    >
                       <FormLabel>الجامعة</FormLabel>
                       <Field
                         name="university"
@@ -148,7 +177,11 @@ const AdvancedSearch = () => {
                         ))}
                       </Field>
                     </FormControl>
-                    <FormControl>
+                    <FormControl
+                      onChange={(e) => {
+                        setSelectedC(e.target.value);
+                      }}
+                    >
                       <FormLabel>الكلية</FormLabel>
                       <Field
                         name="college"
@@ -166,7 +199,11 @@ const AdvancedSearch = () => {
                         ))}
                       </Field>
                     </FormControl>
-                    <FormControl>
+                    <FormControl
+                      onChange={(e) => {
+                        setSelectedM(e.target.value);
+                      }}
+                    >
                       <FormLabel>التخصص</FormLabel>
                       <Field
                         name="major"
@@ -185,7 +222,7 @@ const AdvancedSearch = () => {
                         ))}
                       </Field>
                     </FormControl>
-                    {/* <FormControl>
+                    <FormControl>
                       <FormLabel>المساق</FormLabel>
                       <Field name="course" as={Select} bg="white" fontSize="xl">
                         {courses.map((elem) => (
@@ -196,8 +233,8 @@ const AdvancedSearch = () => {
                           ></option>
                         ))}
                       </Field>
-                    </FormControl> */}
-                    <FormControl>
+                    </FormControl>
+                    {/* <FormControl>
                       <FormLabel>النوع</FormLabel>
                       <Field name="kind" as={Select} bg="white" fontSize="xl">
                         {kinds.map((elem) => (
@@ -208,7 +245,7 @@ const AdvancedSearch = () => {
                           ></option>
                         ))}
                       </Field>
-                    </FormControl>
+                    </FormControl> */}
                   </SimpleGrid>
                   <Center>
                     <Button
@@ -225,7 +262,9 @@ const AdvancedSearch = () => {
                         outline: "none",
                         border: "none",
                       }}
-                      disabled={isSubmitting}
+                      disabled={
+                        isSubmitting || !courses || courses.length === 0
+                      }
                       onClick={() => {
                         setValues((prevValues) => ({
                           ...prevValues,
@@ -268,6 +307,11 @@ const AdvancedSearch = () => {
                         submitForm();
                       }}
                       rounded={"full"}
+                      _hover={{
+                        _disabled: {
+                          bg: null,
+                        },
+                      }}
                     >
                       السابق
                     </Button>
@@ -292,6 +336,11 @@ const AdvancedSearch = () => {
                         submitForm();
                       }}
                       rounded={"full"}
+                      _hover={{
+                        _disabled: {
+                          bg: null,
+                        },
+                      }}
                     >
                       التالي
                     </Button>

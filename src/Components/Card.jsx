@@ -49,8 +49,9 @@ import {
   useColorModeValue,
 } from "@chakra-ui/react";
 import { DownloadIcon } from "@chakra-ui/icons";
+import { DownloadFile } from "./Pages/FileDetails";
 
-export const Card = ({ isDownload, link, ...props }) => {
+export const Card = ({ isDownload, link, id, token, ...props }) => {
   return (
     <Center py={6}>
       <Box
@@ -79,25 +80,29 @@ export const Card = ({ isDownload, link, ...props }) => {
               <Text fontSize="2xl" color={"gray.500"}>
                 {props.item}
               </Text>
+              <Text fontSize="2xl" color={"gray.500"}>
+                {props.otheritem}
+              </Text>
             </Stack>
           </Stack>
 
           {isDownload && (
-            <a href={link}>
-              <Button
-                w={"full"}
-                mt={8}
-                color="primary.700"
-                rounded={"md"}
-                rightIcon={<DownloadIcon />}
-                bg="primary.300"
-                fontSize="xl"
-                fontWeight="normal"
-                rounded={"full"}
-              >
-                تنزيل
-              </Button>
-            </a>
+            <Button
+              w={"full"}
+              mt={8}
+              color="primary.700"
+              rounded={"md"}
+              leftIcon={<DownloadIcon />}
+              bg="primary.300"
+              fontSize="xl"
+              fontWeight="normal"
+              rounded={"full"}
+              onClick={() => {
+                DownloadFile({ id, token, link });
+              }}
+            >
+              تنزيل
+            </Button>
           )}
         </Box>
       </Box>

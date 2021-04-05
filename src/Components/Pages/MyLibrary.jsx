@@ -20,7 +20,7 @@ const TableRow = (props) => {
     <>
       <Card
         label={props.data[0]}
-        item={props.data[1]}
+        item={props.data[1].split("\n")}
         university={props.data[2]}
         value={props.data[3]}
       ></Card>
