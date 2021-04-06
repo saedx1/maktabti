@@ -110,6 +110,13 @@ const AdvancedSearch = () => {
     } else {
       setMajors([]);
       setFieldValue1("major", 0);
+      const _courses = universities.filter(
+        (x) => x.id === parseInt(selectedUniversity)
+      )[0].courses;
+      setCourses(_courses);
+      if (_courses) {
+        setFieldValue1("course", _courses[0].id);
+      }
     }
   }, [selectedCollege]);
 
@@ -122,8 +129,18 @@ const AdvancedSearch = () => {
       if (!_courses || _courses.length === 0) return;
       setFieldValue1("course", _courses[0].id);
     } else {
-      setCourses([]);
-      setFieldValue1("course", 0);
+      if (parseInt(selectedMajor) === 0) {
+        const _courses = colleges.filter(
+          (x) => x.id === parseInt(selectedCollege)
+        )[0].courses;
+        setCourses(_courses);
+        if (_courses) {
+          setFieldValue1("course", _courses[0].id);
+        }
+      } else {
+        setCourses([]);
+        setFieldValue1("course", 0);
+      }
     }
   }, [selectedMajor]);
 

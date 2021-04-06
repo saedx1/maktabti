@@ -43,8 +43,6 @@ def upload_file():
     data["created_by"] = claims["sub"]
     data["username"] = claims["name"]
 
-    print(data)
-
     if data["college"] == "0":
         data["college"] = data["major"] = "null"
     elif data["major"] == "0":
@@ -69,7 +67,7 @@ def upload_file():
     """ % (
         data
     )
-    print(query)
+
     res = execute_graphql_query(query)
 
     if "data" not in res.keys():
@@ -143,6 +141,14 @@ def get_filter_data():
                         name
                     }
                 }
+                courses(where: {major: {_is_null: true}, _and: {college: {_is_null: false}}}) {
+                    id
+                    name
+                }
+            }
+            courses(where: {college: {_is_null: true}}) {
+                id
+                name
             }
         }
         kinds {
@@ -200,7 +206,7 @@ def get_search_results(course, page):
     # variables = {"kind": int(kind)}
 
     res = execute_graphql_query(query)
-    print(query)
+
     if "data" in res.keys():
         return res["data"]
     else:

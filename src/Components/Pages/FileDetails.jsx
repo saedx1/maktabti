@@ -10,19 +10,7 @@ import {
   Button,
   Badge,
   useColorModeValue,
-  useDisclosure,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalCloseButton,
-  ModalBody,
-  FormControl,
-  FormLabel,
-  Input,
-  ModalFooter,
   useToast,
-  Tooltip,
 } from "@chakra-ui/react";
 
 import { LoadingComponent } from "../../App";
@@ -117,7 +105,7 @@ function SocialProfileSimple({
           {courseByCourse.name} - {year}
         </Text>
         <Text textAlign={"center"} px={3} fontSize={"xl"}>
-          {courseByCourse.majorByMajor.name}
+          {courseByCourse.majorByMajor?.name}
         </Text>
 
         <Stack align={"center"} justify={"center"} direction={"column"} mt={6}>
@@ -148,7 +136,8 @@ function SocialProfileSimple({
             fontWeight={"400"}
             fontSize={"xl"}
           >
-            {courseByCourse.collegeByCollege.name} <br></br>{" "}
+            {courseByCourse.collegeByCollege?.name}
+            {courseByCourse.collegeByCollege && <br></br>}
             {courseByCourse.universityByUniversity.name}
           </Badge>
         </Stack>
