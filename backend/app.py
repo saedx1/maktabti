@@ -161,8 +161,8 @@ def get_filter_data():
     res = execute_graphql_query(query)
     if "data" in res.keys():
         return res["data"]
-    else:
-        return res, 400
+
+    return res, 400
 
 
 @APP.route("/get_search_results/<course>/<page>", methods=["GET"])
@@ -209,8 +209,8 @@ def get_search_results(course, page):
 
     if "data" in res.keys():
         return res["data"]
-    else:
-        return res, 400
+
+    return res, 400
 
 
 @APP.route("/get_stats", methods=["GET"])
@@ -312,9 +312,8 @@ def get_stats():
             "top_major": md_major,
             "top_course": md_course,
         }, 200
-    else:
 
-        return "f", 400
+    return "f", 400
 
 
 @APP.route("/set_download", methods=["POST"])
@@ -350,8 +349,8 @@ def set_download():
 
     if "data" in res.keys():
         return "s", 200
-    else:
-        return "f", 400
+
+    return "f", 400
 
 
 @APP.route("/get_details/<file_id>", methods=["GET"])
@@ -391,8 +390,8 @@ def get_details(file_id):
 
     if "data" in res.keys():
         return res["data"], 200
-    else:
-        return "f", 400
+
+    return "f", 400
 
 
 @APP.route("/report_file", methods=["POST"])
@@ -424,8 +423,8 @@ def report_file():
 
     if "data" in res.keys():
         return res["data"], 200
-    else:
-        return "f", 400
+
+    return "f", 400
 
 
 @APP.route("/search", methods=["POST"])
@@ -462,8 +461,8 @@ def search_text():
     res = execute_graphql_query(query)
     if "data" in res.keys():
         return res["data"]
-    else:
-        return res, 400
+
+    return res, 400
 
 
 def execute_graphql_query(query, variables=None):
@@ -472,8 +471,8 @@ def execute_graphql_query(query, variables=None):
     )
     if response.text is None:
         return response.text
-    else:
-        return json.loads(response.text)
+
+    return json.loads(response.text)
 
 
 @lru_cache()

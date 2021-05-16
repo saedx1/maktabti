@@ -1,4 +1,4 @@
-import { DownloadIcon, StarIcon } from "@chakra-ui/icons";
+import { DownloadIcon } from "@chakra-ui/icons";
 import {
   Box,
   Center,
@@ -9,28 +9,15 @@ import {
   Text,
   FormControl,
   IconButton,
-  Icon,
-  Grid,
-  GridItem,
-  Stack,
   Table,
 } from "@chakra-ui/react";
 import axios from "axios";
-import { Field, Form, Formik, useFormikContext } from "formik";
+import { Field, Form, Formik } from "formik";
 import { useContext, useEffect, useMemo, useState } from "react";
-import useSWR, { cache } from "swr";
+import useSWR from "swr";
 import { LoadingComponent } from "../../App";
 import { AccountContext } from "../User/Account";
-import {
-  Thead,
-  Tbody,
-  Tfoot,
-  Tr,
-  Th,
-  Td,
-  TableCaption,
-} from "@chakra-ui/react";
-import { array } from "yup/lib/locale";
+import { Tbody, Tr, Td } from "@chakra-ui/react";
 
 const AdvancedSearch = () => {
   const { getSession } = useContext(AccountContext);
@@ -61,7 +48,7 @@ const AdvancedSearch = () => {
   const [selectedUniversity, setSelectedU] = useState("1");
   const [selectedCollege, setSelectedC] = useState("1");
   const [selectedMajor, setSelectedM] = useState("1");
-  const [kinds, setKinds] = useState([]);
+  const [_, setKinds] = useState([]);
   const [results, setResults] = useState();
   const { data } = useSWR("/get_filter_data");
   useEffect(() => {
@@ -268,7 +255,6 @@ const AdvancedSearch = () => {
                     <Button
                       mt={5}
                       size="lg"
-                      rounded="md"
                       color={["primary.500"]}
                       bg={["primary.white"]}
                       _hover={{
@@ -289,7 +275,7 @@ const AdvancedSearch = () => {
                         }));
                         submitForm();
                       }}
-                      rounded={"full"}
+                      rounded="full"
                     >
                       بحث
                     </Button>

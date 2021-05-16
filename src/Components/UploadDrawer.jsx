@@ -89,7 +89,7 @@ export const UploadDrawer = ({ isOpen, onClose }) => {
     selected: false,
     touched: false,
   });
-  const [name, setName] = useState("");
+  const [_, setName] = useState("");
   const [token, setToken] = useState("");
   const [universities, setUniversities] = useState([]);
   const [colleges, setColleges] = useState([]);
@@ -141,7 +141,7 @@ export const UploadDrawer = ({ isOpen, onClose }) => {
       setMajors(m);
 
       if (
-        m.filter((elem) => values.major == elem.id).length === 0 &&
+        m.filter((elem) => values.major === elem.id).length === 0 &&
         parseInt(values.major) !== 0
       )
         setFieldValue("major", m[0].id);
@@ -184,7 +184,7 @@ export const UploadDrawer = ({ isOpen, onClose }) => {
                         onChange={(event) => {
                           setFieldValue("files", event.currentTarget.files);
                           const newFileState = {
-                            selected: event.currentTarget.files.length != 0,
+                            selected: event.currentTarget.files.length !== 0,
                             touched: true,
                           };
                           setFileState(newFileState);
