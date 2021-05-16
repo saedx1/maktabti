@@ -13,8 +13,8 @@ from flask_cors import CORS
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from functools import lru_cache
-from .security import verify_token
-from .aws_operations import backup_file_to_s3
+from security import verify_token
+from aws_operations import backup_file_to_s3
 
 APP = Flask("maktabti")
 CORS(APP)
