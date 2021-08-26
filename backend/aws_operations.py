@@ -11,4 +11,4 @@ def backup_file_to_s3(input_path, output_name):
 
 
 def upload_file(filepath, bucket, key):
-    s3.put_object(Body=filepath, Bucket=bucket, Key=str(key))
+    s3.put_object(Body=str(filepath), Bucket=bucket, Key=str(key))

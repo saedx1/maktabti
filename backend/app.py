@@ -1,35 +1,36 @@
 import json
 import base64
 import os
-import time
-import io
 import requests
 from pathlib import Path
 from pydrive.auth import GoogleAuth
 from pydrive.drive import GoogleDrive
-from flask import Flask, jsonify, request, flash, url_for
+from flask import Flask, jsonify, request, flash
 from werkzeug.utils import secure_filename
 from flask_cors import CORS
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from functools import lru_cache
 try:
-	from security import verify_token
-	from aws_operations import backup_file_to_s3
+    from security import verify_token
+    from aws_operations import backup_file_to_s3
+    from files import get_upload_dir
 except:
-	from .security import verify_token
-	from .aws_operations import backup_file_to_s3
+    from .security import verify_token
+    from .aws_operations import backup_file_to_s3
+    from .files import get_upload_dir
 
 APP = Flask("maktabti")
 CORS(APP)
 APP.config["CORS_HEADERS"] = "Content-Type"
+
 limiter = Limiter(APP, key_func=get_remote_address, default_limits=["10000 per minute"])
 
 GAUTH = GoogleAuth()
 DRIVE = GoogleDrive(GAUTH)
 
 # UPLOAD_FOLDER = "/root/maktabti-data/"
-UPLOAD_FOLDER = "/home/saedx1/projects/maktabti-data/"
+UPLOAD_FOLDER = get_upload_dir()
 ALLOWED_EXTENSIONS = set(["pdf"])
 GRAPHQL_ENDPOINT = "http://maktabti.xyz:8080/v1/graphql"
 
@@ -80,7 +81,7 @@ def upload_file():
     original_filename = Path(data["filename"])
     id_ = res["data"]["insert_files_one"]["id"]
     file_name = f"{id_}{original_filename.suffix}"
-    full_path = os.path.join(UPLOAD_FOLDER, file_name)
+    full_path = UPLOAD_FOLDER / file_name
     file = request.files["file"]
     file.save(full_path)
 
@@ -495,22 +496,3 @@ def store_id(uuid, _id):
     )
 
     res = execute_graphql_query(query)
-
-
-def has_no_empty_params(rule):
-    defaults = rule.defaults if rule.defaults is not None else ()
-    arguments = rule.arguments if rule.arguments is not None else ()
-    return len(defaults) >= len(arguments)
-
-
-@APP.route("/site_map")
-def site_map():
-    links = []
-    for rule in APP.url_map.iter_rules():
-        # Filter out rules we can't navigate to in a browser
-        # and rules that require parameters
-        if "GET" in rule.methods and has_no_empty_params(rule):
-            url = url_for(rule.endpoint, **(rule.defaults or {}))
-            links.append((url, rule.endpoint))
-
-        print(links)
