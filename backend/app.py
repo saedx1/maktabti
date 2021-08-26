@@ -7,14 +7,18 @@ import requests
 from pathlib import Path
 from pydrive.auth import GoogleAuth
 from pydrive.drive import GoogleDrive
-from flask import Flask, jsonify, request, flash
+from flask import Flask, jsonify, request, flash, url_for
 from werkzeug.utils import secure_filename
 from flask_cors import CORS
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from functools import lru_cache
-from security import verify_token
-from aws_operations import backup_file_to_s3
+try:
+	from security import verify_token
+	from aws_operations import backup_file_to_s3
+except:
+	from .security import verify_token
+	from .aws_operations import backup_file_to_s3
 
 APP = Flask("maktabti")
 CORS(APP)
@@ -29,8 +33,9 @@ UPLOAD_FOLDER = "/home/saedx1/projects/maktabti-data/"
 ALLOWED_EXTENSIONS = set(["pdf"])
 GRAPHQL_ENDPOINT = "http://maktabti.xyz:8080/v1/graphql"
 
+PREFIX="/api"
 
-@APP.route("/upload_file", methods=["POST"])
+@APP.route(f"{PREFIX}/upload_file", methods=["POST"])
 def upload_file():
     data = dict(request.form)
 
@@ -116,7 +121,7 @@ def upload_file():
     return "s", 200
 
 
-@APP.route("/get_filter_data", methods=["GET"])
+@APP.route(f"{PREFIX}/get_filter_data", methods=["GET"])
 def get_filter_data():
     store_id(
         request.headers["X-Random"],
@@ -165,7 +170,7 @@ def get_filter_data():
     return res, 400
 
 
-@APP.route("/get_search_results/<course>/<page>", methods=["GET"])
+@APP.route(f"{PREFIX}/get_search_results/<course>/<page>", methods=["GET"])
 def get_search_results(course, page):
     # where = "majorByMajor: {id: {_eq: %s}}, kindByKind: {id: {_eq: $kind}}" % major
     # if college == "0":
@@ -213,7 +218,7 @@ def get_search_results(course, page):
     return res, 400
 
 
-@APP.route("/get_stats", methods=["GET"])
+@APP.route(f"{PREFIX}/get_stats", methods=["GET"])
 def get_stats():
     query = """
         query MyQuery {
@@ -312,11 +317,11 @@ def get_stats():
             "top_major": md_major,
             "top_course": md_course,
         }, 200
-
+    print(query)
     return "f", 400
 
 
-@APP.route("/set_download", methods=["POST"])
+@APP.route(f"{PREFIX}/set_download", methods=["POST"])
 def set_download():
     data = dict(request.form)
     file_id = data["file_id"]
@@ -353,7 +358,7 @@ def set_download():
     return "f", 400
 
 
-@APP.route("/get_details/<file_id>", methods=["GET"])
+@APP.route(f"{PREFIX}/get_details/<file_id>", methods=["GET"])
 def get_details(file_id):
     query = """
     query MyQuery {
@@ -394,7 +399,7 @@ def get_details(file_id):
     return "f", 400
 
 
-@APP.route("/report_file", methods=["POST"])
+@APP.route(f"{PREFIX}/report_file", methods=["POST"])
 def report_file():
     data = dict(request.form)
     file_id = data["file_id"]
@@ -427,7 +432,7 @@ def report_file():
     return "f", 400
 
 
-@APP.route("/search", methods=["POST"])
+@APP.route(f"{PREFIX}/search", methods=["POST"])
 def search_text():
     data = dict(request.form)
     page = int(data["page"])
@@ -490,3 +495,22 @@ def store_id(uuid, _id):
     )
 
     res = execute_graphql_query(query)
+
+
+def has_no_empty_params(rule):
+    defaults = rule.defaults if rule.defaults is not None else ()
+    arguments = rule.arguments if rule.arguments is not None else ()
+    return len(defaults) >= len(arguments)
+
+
+@APP.route("/site_map")
+def site_map():
+    links = []
+    for rule in APP.url_map.iter_rules():
+        # Filter out rules we can't navigate to in a browser
+        # and rules that require parameters
+        if "GET" in rule.methods and has_no_empty_params(rule):
+            url = url_for(rule.endpoint, **(rule.defaults or {}))
+            links.append((url, rule.endpoint))
+
+        print(links)
