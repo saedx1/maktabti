@@ -13,8 +13,12 @@ from flask_cors import CORS
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from functools import lru_cache
-from security import verify_token
-from aws_operations import backup_file_to_s3
+try:
+    from security import verify_token
+    from aws_operations import backup_file_to_s3
+except ImportError:
+    from .security import verify_token
+    from .aws_operations import backup_file_to_s3
 
 APP = Flask("maktabti")
 CORS(APP)
@@ -28,6 +32,7 @@ DRIVE = GoogleDrive(GAUTH)
 UPLOAD_FOLDER = "/home/saedx1/projects/maktabti-data/"
 ALLOWED_EXTENSIONS = set(["pdf"])
 GRAPHQL_ENDPOINT = "http://maktabti.xyz:8080/v1/graphql"
+GRAPHQL_ENDPOINT = "http://localhost:8080/v1/graphql"
 
 
 @APP.route("/upload_file", methods=["POST"])
@@ -288,22 +293,37 @@ def get_stats():
             "link": md_file["link"],
             "id": md_file["id"],
         }
+        try:
+            md_major = res["data"]["top_majors"][0]
+            md_major = {
+                "name": md_major["name"],
+                "university": md_major["College"]["university"]["name"],
+                "count": md_major["count"],
+            }
+        except:
+            md_major = {
+                "name": None,
+                "university": None,
+                "count": 0,
+            }
 
-        md_major = res["data"]["top_majors"][0]
-        md_major = {
-            "name": md_major["name"],
-            "university": md_major["College"]["university"]["name"],
-            "count": md_major["count"],
-        }
 
-        md_course = res["data"]["top_courses"][0]
-        md_course = {
-            "name": md_course["name"],
-            "university": md_course["course"]["majorByMajor"]["collegeByCollege"][
-                "universityByUniversity"
-            ]["name"],
-            "count": md_course["count"],
-        }
+        try:
+            md_course = res["data"]["top_courses"][0]
+            md_course = {
+                "name": md_course["name"],
+                "university": md_course["course"]["majorByMajor"]["collegeByCollege"][
+                    "universityByUniversity"
+                ]["name"],
+                "count": md_course["count"],
+            }
+        except:
+            md_course = {
+                "name": None,
+                "university": None,
+                "count": 0,
+            }
+
         return {
             "file_count": res["data"]["files_aggregate"]["aggregate"]["count"],
             "course_count": res["data"]["courses_aggregate"]["aggregate"]["count"],
