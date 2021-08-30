@@ -1,8 +1,6 @@
 import json
 import base64
 import os
-import time
-import io
 import requests
 from pathlib import Path
 from pydrive.auth import GoogleAuth
@@ -16,26 +14,30 @@ from functools import lru_cache
 try:
     from security import verify_token
     from aws_operations import backup_file_to_s3
-except ImportError:
+    from files import get_upload_dir
+except:
     from .security import verify_token
     from .aws_operations import backup_file_to_s3
+    from .files import get_upload_dir
 
 APP = Flask("maktabti")
 CORS(APP)
 APP.config["CORS_HEADERS"] = "Content-Type"
+
 limiter = Limiter(APP, key_func=get_remote_address, default_limits=["10000 per minute"])
 
 GAUTH = GoogleAuth()
 DRIVE = GoogleDrive(GAUTH)
 
 # UPLOAD_FOLDER = "/root/maktabti-data/"
-UPLOAD_FOLDER = "/home/saedx1/projects/maktabti-data/"
+UPLOAD_FOLDER = get_upload_dir()
 ALLOWED_EXTENSIONS = set(["pdf"])
 GRAPHQL_ENDPOINT = "http://maktabti.xyz:8080/v1/graphql"
 GRAPHQL_ENDPOINT = "http://localhost:8080/v1/graphql"
 
+PREFIX="/api"
 
-@APP.route("/upload_file", methods=["POST"])
+@APP.route(f"{PREFIX}/upload_file", methods=["POST"])
 def upload_file():
     data = dict(request.form)
 
@@ -80,7 +82,7 @@ def upload_file():
     original_filename = Path(data["filename"])
     id_ = res["data"]["insert_files_one"]["id"]
     file_name = f"{id_}{original_filename.suffix}"
-    full_path = os.path.join(UPLOAD_FOLDER, file_name)
+    full_path = UPLOAD_FOLDER / file_name
     file = request.files["file"]
     file.save(full_path)
 
@@ -121,7 +123,7 @@ def upload_file():
     return "s", 200
 
 
-@APP.route("/get_filter_data", methods=["GET"])
+@APP.route(f"{PREFIX}/get_filter_data", methods=["GET"])
 def get_filter_data():
     store_id(
         request.headers["X-Random"],
@@ -170,7 +172,7 @@ def get_filter_data():
     return res, 400
 
 
-@APP.route("/get_search_results/<course>/<page>", methods=["GET"])
+@APP.route(f"{PREFIX}/get_search_results/<course>/<page>", methods=["GET"])
 def get_search_results(course, page):
     # where = "majorByMajor: {id: {_eq: %s}}, kindByKind: {id: {_eq: $kind}}" % major
     # if college == "0":
@@ -218,7 +220,7 @@ def get_search_results(course, page):
     return res, 400
 
 
-@APP.route("/get_stats", methods=["GET"])
+@APP.route(f"{PREFIX}/get_stats", methods=["GET"])
 def get_stats():
     query = """
         query MyQuery {
@@ -332,11 +334,11 @@ def get_stats():
             "top_major": md_major,
             "top_course": md_course,
         }, 200
-
+    print(query)
     return "f", 400
 
 
-@APP.route("/set_download", methods=["POST"])
+@APP.route(f"{PREFIX}/set_download", methods=["POST"])
 def set_download():
     data = dict(request.form)
     file_id = data["file_id"]
@@ -373,7 +375,7 @@ def set_download():
     return "f", 400
 
 
-@APP.route("/get_details/<file_id>", methods=["GET"])
+@APP.route(f"{PREFIX}/get_details/<file_id>", methods=["GET"])
 def get_details(file_id):
     query = """
     query MyQuery {
@@ -414,7 +416,7 @@ def get_details(file_id):
     return "f", 400
 
 
-@APP.route("/report_file", methods=["POST"])
+@APP.route(f"{PREFIX}/report_file", methods=["POST"])
 def report_file():
     data = dict(request.form)
     file_id = data["file_id"]
@@ -447,7 +449,7 @@ def report_file():
     return "f", 400
 
 
-@APP.route("/search", methods=["POST"])
+@APP.route(f"{PREFIX}/search", methods=["POST"])
 def search_text():
     data = dict(request.form)
     page = int(data["page"])
