@@ -25,5 +25,19 @@ services:
       HASURA_GRAPHQL_ENABLED_LOG_TYPES: startup, http-log, webhook-log, websocket-log, query-log
       ## uncomment next line to set an admin secret
       # HASURA_GRAPHQL_ADMIN_SECRET: myadminsecretkey
+  # flask:
+  #   image: maktabti_py:latest
+  #   depends_on: 
+  #   - "graphql-engine"
+  #   restart: always
+  #   ports:
+  #   - "3000:3000"
+  #   environment:
+  #     GRAPHQL_ENDPOINT: "http://graphql-engine:8080/v1/graphql"
+  #     AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+  #     AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+  #     AWS_DEFAULT_REGION: ${AWS_DEFAULT_REGION}
+  #     AWS_REGION: ${AWS_DEFAULT_REGION}
+
 volumes:
   db_data:

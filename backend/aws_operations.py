@@ -1,7 +1,10 @@
 from pathlib import Path
 import boto3
 
-boto3.setup_default_session(profile_name="maktabti")
+try:
+    boto3.setup_default_session(profile_name="maktabti")
+except:
+    pass
 
 s3 = boto3.client("s3")
 

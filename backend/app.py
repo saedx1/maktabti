@@ -1,12 +1,5 @@
-import json
-import base64
-import os
-import requests
 from pathlib import Path
-from pydrive.auth import GoogleAuth
-from pydrive.drive import GoogleDrive
-from flask import Flask, jsonify, request, flash
-from werkzeug.utils import secure_filename
+from flask import Flask, request
 from flask_cors import CORS
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
@@ -16,26 +9,20 @@ try:
     from security import verify_token
     from aws_operations import backup_file_to_s3, get_s3path, create_presigned_url
     from files import get_upload_dir
+    from graphql import execute_graphql_query
 except:
     from .security import verify_token
     from .aws_operations import backup_file_to_s3, get_s3path, create_presigned_url
     from .files import get_upload_dir
+    from .graphql import execute_graphql_query
 
 APP = Flask("maktabti")
 CORS(APP)
+Limiter(APP, key_func=get_remote_address, default_limits=["10000 per minute"])
 APP.config["CORS_HEADERS"] = "Content-Type"
 
-limiter = Limiter(APP, key_func=get_remote_address, default_limits=["10000 per minute"])
-
-GAUTH = GoogleAuth()
-DRIVE = GoogleDrive(GAUTH)
-
-# UPLOAD_FOLDER = "/root/maktabti-data/"
 UPLOAD_FOLDER = get_upload_dir()
 ALLOWED_EXTENSIONS = set(["pdf"])
-GRAPHQL_ENDPOINT = "http://maktabti.xyz:8080/v1/graphql"
-GRAPHQL_ENDPOINT = "http://localhost:8080/v1/graphql"
-
 PREFIX = "/api"
 
 
@@ -119,13 +106,6 @@ def upload_file():
 
 @APP.route(f"{PREFIX}/get_filter_data", methods=["GET"])
 def get_filter_data():
-    store_id(
-        request.headers["X-Random"],
-        request.headers["X-Random-2"]
-        if "X-Random-2" in request.headers
-        else get_remote_address(),
-    )
-
     query = """
     query MyQuery {
         universities {
@@ -346,7 +326,6 @@ def set_download():
         if claims is None:
             return "f", 401
         user = claims["sub"]
-        name = claims["name"]
     else:
         user = request.remote_addr
 
@@ -422,9 +401,9 @@ def report_file():
         claims = verify_token(id_token)
         if claims is None:
             return "f", 401
-        name = claims["name"]
-
-    user = request.headers["X-Random"]
+        user = claims["sub"]
+    else:
+        user = request.remote_addr
 
     query = """
     mutation MyMutation {
@@ -483,30 +462,3 @@ def search_text():
     print(res)
 
     return res, 500
-
-
-def execute_graphql_query(query, variables=None):
-    response = requests.post(
-        GRAPHQL_ENDPOINT, data=json.dumps({"query": query, "variables": variables})
-    )
-    if response.text is None:
-        return response.text
-
-    return json.loads(response.text)
-
-
-@lru_cache()
-def store_id(uuid, _id):
-    query = """
-    mutation MyMutation {
-        insert_users_one(object: {token: "%s", identifier: "%s"}, on_conflict: {update_columns: identifier, constraint: users_pkey}) {
-            identifier
-        }
-    }
-
-    """ % (
-        uuid,
-        _id,
-    )
-
-    res = execute_graphql_query(query)

@@ -501,7 +501,6 @@ const ResultRow = ({
   );
 };
 
-// This is vulnerable, this needs to be fixed
 function DownloadFile({ id, token, link, setSubmitting }) {
   const data = new FormData();
   data.append("file_id", id);

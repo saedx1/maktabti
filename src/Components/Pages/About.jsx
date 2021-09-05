@@ -27,7 +27,7 @@ const About = () => {
           color: "red",
         }}
       >
-        <a href="mailto:saed@maktabti.xyz">
+        <a href="mailto:saadmtsa@gmail.com">
           هل تود المشاركة في تطوير الموقع برمجياً؟ تواصل معنا
         </a>
       </Box>
