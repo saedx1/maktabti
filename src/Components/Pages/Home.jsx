@@ -15,7 +15,6 @@ import { SearchBox } from "../SearchBox";
 import { Card } from "../Card";
 import theme from "../../theme";
 import useSWR from "swr";
-import { useCookies } from "react-cookie";
 import { AccountContext } from "../User/Account";
 
 const StatComponent = (props) => {
@@ -34,7 +33,7 @@ const StatComponent = (props) => {
 const SearchForm = () => {
   return (
     <>
-      <SearchBox pb={10} hideadvancedbtn={false} />
+      <SearchBox pb={10} hideadvancedbtn={0} />
     </>
   );
 };

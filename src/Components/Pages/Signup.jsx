@@ -10,7 +10,7 @@ import {
   Stack,
   useToast,
 } from "@chakra-ui/react";
-import React, { useState } from "react";
+import React from "react";
 import UserPool from "../User/UserPool";
 import { Field, Form, Formik } from "formik";
 import * as Yup from "yup";
@@ -129,7 +129,6 @@ const Signup = () => {
                     <Select
                       bg="white"
                       as={Select}
-                      bg="white"
                       fontSize="xl"
                       disabled={isSubmitting}
                     >

@@ -1,8 +1,6 @@
 import axios from "axios";
 
 export async function GetFilterData() {
-  console.log("GETFILTERDATA");
-
   const res = await axios.get(`/get_filter_data`);
   return await res.data;
 }

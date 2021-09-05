@@ -11,6 +11,7 @@ from flask_cors import CORS
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from functools import lru_cache
+
 try:
     from security import verify_token
     from aws_operations import backup_file_to_s3
@@ -35,7 +36,8 @@ ALLOWED_EXTENSIONS = set(["pdf"])
 GRAPHQL_ENDPOINT = "http://maktabti.xyz:8080/v1/graphql"
 GRAPHQL_ENDPOINT = "http://localhost:8080/v1/graphql"
 
-PREFIX="/api"
+PREFIX = "/api"
+
 
 @APP.route(f"{PREFIX}/upload_file", methods=["POST"])
 def upload_file():
@@ -78,7 +80,9 @@ def upload_file():
     res = execute_graphql_query(query)
 
     if "data" not in res.keys():
-        return res, 400
+        print(res)
+        return res, 500
+
     original_filename = Path(data["filename"])
     id_ = res["data"]["insert_files_one"]["id"]
     file_name = f"{id_}{original_filename.suffix}"
@@ -118,7 +122,8 @@ def upload_file():
     res = execute_graphql_query(query)
 
     if "data" not in res.keys():
-        return res, 400
+        print(res)
+        return res, 500
 
     return "s", 200
 
@@ -169,7 +174,7 @@ def get_filter_data():
     if "data" in res.keys():
         return res["data"]
 
-    return res, 400
+    return res, 500
 
 
 @APP.route(f"{PREFIX}/get_search_results/<course>/<page>", methods=["GET"])
@@ -217,7 +222,7 @@ def get_search_results(course, page):
     if "data" in res.keys():
         return res["data"]
 
-    return res, 400
+    return res, 500
 
 
 @APP.route(f"{PREFIX}/get_stats", methods=["GET"])
@@ -286,15 +291,25 @@ def get_stats():
     res = execute_graphql_query(query)
 
     if "data" in res.keys():
-        md_file = res["data"]["files"][0]
-        md_file = {
-            "name": md_file["name"],
-            "course_name": md_file["course"]["name"],
-            "university": md_file["course"]["university"]["name"],
-            "count": md_file["downloads"]["aggregate"]["count"],
-            "link": md_file["link"],
-            "id": md_file["id"],
-        }
+        try:
+            md_file = res["data"]["files"][0]
+            md_file = {
+                "name": md_file["name"],
+                "course_name": md_file["course"]["name"],
+                "university": md_file["course"]["university"]["name"],
+                "count": md_file["downloads"]["aggregate"]["count"],
+                "link": md_file["link"],
+                "id": md_file["id"],
+            }
+        except:
+            md_file = {
+                "name": None,
+                "course_name": None,
+                "university": None,
+                "count": 0,
+                "link": None,
+                "id": None,
+            }
         try:
             md_major = res["data"]["top_majors"][0]
             md_major = {
@@ -308,7 +323,6 @@ def get_stats():
                 "university": None,
                 "count": 0,
             }
-
 
         try:
             md_course = res["data"]["top_courses"][0]
@@ -334,8 +348,8 @@ def get_stats():
             "top_major": md_major,
             "top_course": md_course,
         }, 200
-    print(query)
-    return "f", 400
+
+    return "f", 500
 
 
 @APP.route(f"{PREFIX}/set_download", methods=["POST"])
@@ -372,7 +386,7 @@ def set_download():
     if "data" in res.keys():
         return "s", 200
 
-    return "f", 400
+    return "f", 500
 
 
 @APP.route(f"{PREFIX}/get_details/<file_id>", methods=["GET"])
@@ -413,7 +427,7 @@ def get_details(file_id):
     if "data" in res.keys():
         return res["data"], 200
 
-    return "f", 400
+    return "f", 500
 
 
 @APP.route(f"{PREFIX}/report_file", methods=["POST"])
@@ -446,7 +460,7 @@ def report_file():
     if "data" in res.keys():
         return res["data"], 200
 
-    return "f", 400
+    return "f", 500
 
 
 @APP.route(f"{PREFIX}/search", methods=["POST"])
@@ -484,7 +498,9 @@ def search_text():
     if "data" in res.keys():
         return res["data"]
 
-    return res, 400
+    print(res)
+
+    return res, 500
 
 
 def execute_graphql_query(query, variables=None):

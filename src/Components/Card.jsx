@@ -91,7 +91,6 @@ export const Card = ({ isDownload, link, id, token, ...props }) => {
               w={"full"}
               mt={8}
               color="primary.700"
-              rounded={"md"}
               leftIcon={<DownloadIcon />}
               bg="primary.300"
               fontSize="xl"

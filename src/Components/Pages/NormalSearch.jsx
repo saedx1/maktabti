@@ -4,9 +4,7 @@ import { Box, Center } from "@chakra-ui/layout";
 import axios from "axios";
 import { Form, Formik } from "formik";
 import { useContext, useEffect, useState } from "react";
-import useSWR from "swr";
 import { LoadingComponent } from "../../App";
-import { SearchBox } from "../SearchBox";
 import { AccountContext } from "../User/Account";
 import { ResultTable } from "./AdvancedSearch";
 
@@ -77,7 +75,6 @@ export default function TextSearch(props) {
                   <Button
                     size="lg"
                     fontSize="xl"
-                    rounded="md"
                     textColor="white"
                     bg={["primary.700"]}
                     _hover={{

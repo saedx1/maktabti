@@ -38,7 +38,7 @@ const AdvancedSearch = () => {
           });
         })
         .catch(() => {}),
-    [false]
+    []
   );
 
   const [universities, setUniversities] = useState([]);
@@ -48,7 +48,7 @@ const AdvancedSearch = () => {
   const [selectedUniversity, setSelectedU] = useState("1");
   const [selectedCollege, setSelectedC] = useState("1");
   const [selectedMajor, setSelectedM] = useState("1");
-  const [_, setKinds] = useState([]);
+  const [, setKinds] = useState([]);
   const [results, setResults] = useState();
   const { data } = useSWR("/get_filter_data");
   useEffect(() => {
@@ -82,8 +82,8 @@ const AdvancedSearch = () => {
       (x) => x.id === parseInt(selectedUniversity)
     )[0].colleges;
     setColleges(_colleges);
-    setSelectedM("college", _colleges[0].id);
-  }, [selectedUniversity]);
+    setSelectedC(_colleges[0].id);
+  }, [universities, selectedUniversity]);
 
   useEffect(() => {
     if (colleges.length === 0) return;
@@ -93,7 +93,7 @@ const AdvancedSearch = () => {
       )[0].majors;
       setMajors(_majors);
       setFieldValue1("major", _majors[0].id);
-      setSelectedM("major", _majors[0].id);
+      setSelectedM(_majors[0].id);
     } else {
       setMajors([]);
       setFieldValue1("major", 0);
@@ -101,7 +101,7 @@ const AdvancedSearch = () => {
         (x) => x.id === parseInt(selectedUniversity)
       )[0].courses;
       setCourses(_courses);
-      if (_courses) {
+      if (_courses && _courses.length > 0) {
         setFieldValue1("course", _courses[0].id);
       }
     }
@@ -111,9 +111,8 @@ const AdvancedSearch = () => {
     if (majors.length === 0) return;
     const _courses = majors.filter((x) => x.id === parseInt(selectedMajor))[0]
       ?.courses;
-    if (_courses) {
+    if (_courses && _courses.length > 0) {
       setCourses(_courses);
-      if (!_courses || _courses.length === 0) return;
       setFieldValue1("course", _courses[0].id);
     } else {
       if (parseInt(selectedMajor) === 0) {
@@ -121,7 +120,7 @@ const AdvancedSearch = () => {
           (x) => x.id === parseInt(selectedCollege)
         )[0].courses;
         setCourses(_courses);
-        if (_courses) {
+        if (_courses && _courses.length > 0) {
           setFieldValue1("course", _courses[0].id);
         }
       } else {
@@ -449,6 +448,7 @@ const ResultRow = ({
           <IconButton
             bg="transparent"
             onClick={() => {
+              console.log(link);
               setSubmitting(true);
               DownloadFile({ id, token, setSubmitting, link });
               window.location = link;

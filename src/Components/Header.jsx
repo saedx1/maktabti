@@ -59,7 +59,7 @@ const WithAction = ({ loggedIn, logout }) => {
   const logoutToHome = useCallback(() => {
     logout();
     window.location.href = "/";
-  }, [logout, history]);
+  }, [logout]);
 
   return (
     <>

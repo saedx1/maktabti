@@ -14,7 +14,7 @@ import Pool from "../User/UserPool";
 
 function ForgotPassword() {
   const [stage, setStage] = useState(1);
-  const [email, setEmail] = useState("");
+  const [email] = useState("");
   const [code, setCode] = useState("");
   const [password1, setPassword1] = useState("");
   const [password2, setPassword2] = useState("");

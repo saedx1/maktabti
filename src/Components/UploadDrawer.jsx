@@ -89,7 +89,7 @@ export const UploadDrawer = ({ isOpen, onClose }) => {
     selected: false,
     touched: false,
   });
-  const [_, setName] = useState("");
+  const [, setName] = useState("");
   const [token, setToken] = useState("");
   const [universities, setUniversities] = useState([]);
   const [colleges, setColleges] = useState([]);

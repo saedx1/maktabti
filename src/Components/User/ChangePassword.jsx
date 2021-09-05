@@ -13,17 +13,11 @@ export const ChangePassword = () => {
     event.preventDefault();
 
     getSession().then(({ user }) => {
-      user.changePassword(
-        password,
-        newPassword,
-        (err, result) => {
-          if (err) {
-            console.error(err);
-          } else {
-            console.log(result);
-          }
+      user.changePassword(password, newPassword, (err, result) => {
+        if (err) {
+          console.error(err);
         }
-      );
+      });
     });
   };
   return (
@@ -34,9 +28,7 @@ export const ChangePassword = () => {
           placeholder="Current Password"
         ></Input>
         <Input
-          onChange={(event) =>
-            setNewPassword(event.target.value)
-          }
+          onChange={(event) => setNewPassword(event.target.value)}
           placeholder="New Password"
         ></Input>
         <Button type="submit">Submit</Button>

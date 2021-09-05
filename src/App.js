@@ -54,7 +54,7 @@ function PageComponent() {
   const { getSession, logout } = useContext(AccountContext);
   const [loggedIn, setLoggedIn] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [cookies, setCookie, removeCookie] = useCookies();
+  const [cookies, setCookie] = useCookies();
   !cookies["X-Random"] && setCookie("X-Random", uuid(), { path: "/" });
   axios.defaults.headers.common["X-Random"] = cookies["X-Random"];
   axios.defaults.headers.common["X-Random-2"] =
@@ -80,7 +80,7 @@ function PageComponent() {
         setLoading(false);
       }
     );
-  }, [getSession]);
+  }, [getSession, setCookie]);
 
   return (
     <BrowserRouter>

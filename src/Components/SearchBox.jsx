@@ -1,15 +1,14 @@
 import { Input, Box, Button } from "@chakra-ui/react";
-import { useContext, useEffect, useState } from "react";
+import { useState } from "react";
 import { Link, useHistory } from "react-router-dom";
-import { AccountContext } from "./User/Account";
 
 export const SearchBox = (props) => {
   const [query, setQuery] = useState(props.query || "");
   const history = useHistory();
   const submitSearch = () => {
     const data = { query, page: 1 };
-    console.log(history);
-    if (history.location.pathname == "/search") {
+
+    if (history.location.pathname === "/search") {
       history.replace({
         pathname: "/search",
         state: data,
@@ -42,7 +41,6 @@ export const SearchBox = (props) => {
         <Button
           size="lg"
           fontSize="xl"
-          rounded="md"
           textColor="white"
           bg={["primary.700"]}
           _hover={{
@@ -65,7 +63,6 @@ export const SearchBox = (props) => {
           <Button
             size="lg"
             fontSize="xl"
-            rounded="md"
             color={["primary.500"]}
             bg={["primary.white"]}
             _hover={{

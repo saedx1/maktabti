@@ -22,7 +22,7 @@ import { AccountContext } from "../User/Account";
 export default function FileDetails() {
   let { file_id } = useParams();
   const { data } = useSWR("/get_details/" + file_id);
-  console.log(data);
+
   return (
     <Box>
       {!data ? (
