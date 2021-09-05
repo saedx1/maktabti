@@ -329,8 +329,6 @@ def set_download():
     else:
         user = request.remote_addr
 
-    user = request.headers["X-Random"]
-
     query = """
         mutation MyMutation {
             insert_downloads_one(object: {file: %s, user: "%s"}){
