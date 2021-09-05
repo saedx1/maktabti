@@ -383,6 +383,8 @@ function FileUploader(props) {
                     `}
       </style>
 
+      <Center>اﻹمتدادات المسموحة: pdf, zip, rar</Center>
+      <Center>الحد اﻷقصى لحجم الملف: 20MB</Center>
       <FormLabel
         htmlFor="file"
         borderStyle="solid"
@@ -402,7 +404,7 @@ function FileUploader(props) {
         className="inputfile"
         as={Input}
       />
-      <div>{props.filename}</div>
+      <Center dir="ltr">{props.filename}</Center>
     </>
   );
 }

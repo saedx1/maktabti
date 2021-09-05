@@ -20,6 +20,7 @@ APP = Flask("maktabti")
 CORS(APP)
 Limiter(APP, key_func=get_remote_address, default_limits=["10000 per minute"])
 APP.config["CORS_HEADERS"] = "Content-Type"
+APP.config["MAX_CONTENT_LENGTH"] = 20 * 1024 * 1024
 
 UPLOAD_FOLDER = get_upload_dir()
 ALLOWED_EXTENSIONS = set([".pdf", ".zip", ".rar"])
