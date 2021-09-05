@@ -210,6 +210,11 @@ export function DownloadFile({ id, token, link }) {
   const data = new FormData();
   data.append("file_id", id);
   data.append("token", token);
-  axios.post("/set_download", data);
-  window.location = link;
+  data.append("link", link);
+  axios.post("/set_download", data).then((res) => {
+    console.log(res);
+    if (res.data.url) {
+      window.location = res.data.url;
+    }
+  });
 }

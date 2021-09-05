@@ -14,11 +14,11 @@ from functools import lru_cache
 
 try:
     from security import verify_token
-    from aws_operations import backup_file_to_s3
+    from aws_operations import backup_file_to_s3, get_s3path, create_presigned_url
     from files import get_upload_dir
 except:
     from .security import verify_token
-    from .aws_operations import backup_file_to_s3
+    from .aws_operations import backup_file_to_s3, get_s3path, create_presigned_url
     from .files import get_upload_dir
 
 APP = Flask("maktabti")
@@ -89,22 +89,11 @@ def upload_file():
     full_path = UPLOAD_FOLDER / file_name
     file = request.files["file"]
     file.save(full_path)
+    file.close()
 
     backup_file_to_s3(full_path, file_name)
 
-    gfile = DRIVE.CreateFile(
-        {
-            "name": file_name,
-            "title": file_name,
-            "shared": True,
-            "mimeType": "application/pdf",
-        }
-    )
-    gfile.SetContentFile(full_path)
-    gfile.Upload()
-    gfile.InsertPermission({"type": "anyone", "value": "anyone", "role": "reader"})
-
-    link = gfile["webContentLink"]
+    link = get_s3path(file_name)
 
     query = """
     mutation MyMutation {
@@ -179,14 +168,6 @@ def get_filter_data():
 
 @APP.route(f"{PREFIX}/get_search_results/<course>/<page>", methods=["GET"])
 def get_search_results(course, page):
-    # where = "majorByMajor: {id: {_eq: %s}}, kindByKind: {id: {_eq: $kind}}" % major
-    # if college == "0":
-    #     where = "college: {_is_null: true}, kindByKind: {id: {_eq: $kind}}"
-    # elif major == "0":
-    #     where = (
-    #         "college: {_eq: %s}, major: {_is_null: true}, kindByKind: {id: {_eq: $kind}}"
-    #         % college
-    #     )
     where = "course: {_eq: %s}" % course
     page = int(page)
 
@@ -358,6 +339,7 @@ def set_download():
     file_id = data["file_id"]
 
     id_token = data["token"]
+    s3path = data["link"]
 
     if id_token:
         claims = verify_token(id_token)
@@ -384,7 +366,7 @@ def set_download():
     res = execute_graphql_query(query)
 
     if "data" in res.keys():
-        return "s", 200
+        return {"url": create_presigned_url(s3path)}, 200
 
     return "f", 500
 
