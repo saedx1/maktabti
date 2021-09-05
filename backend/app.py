@@ -22,7 +22,7 @@ Limiter(APP, key_func=get_remote_address, default_limits=["10000 per minute"])
 APP.config["CORS_HEADERS"] = "Content-Type"
 
 UPLOAD_FOLDER = get_upload_dir()
-ALLOWED_EXTENSIONS = set(["pdf"])
+ALLOWED_EXTENSIONS = set([".pdf", ".zip", ".rar"])
 PREFIX = "/api"
 
 
@@ -71,8 +71,12 @@ def upload_file():
         return res, 500
 
     original_filename = Path(data["filename"])
+    extension = original_filename.suffix
+    if extension not in ALLOWED_EXTENSIONS:
+        return "f", 500
+
     id_ = res["data"]["insert_files_one"]["id"]
-    file_name = f"{id_}{original_filename.suffix}"
+    file_name = f"{id_}{extension}"
     full_path = UPLOAD_FOLDER / file_name
     file = request.files["file"]
     file.save(full_path)

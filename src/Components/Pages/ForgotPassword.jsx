@@ -14,7 +14,7 @@ import Pool from "../User/UserPool";
 
 function ForgotPassword() {
   const [stage, setStage] = useState(1);
-  const [email] = useState("");
+  const [email, setEmail] = useState("");
   const [code, setCode] = useState("");
   const [password1, setPassword1] = useState("");
   const [password2, setPassword2] = useState("");
@@ -80,8 +80,13 @@ function ForgotPassword() {
           <form onSubmit={onSubmit}>
             <Stack spacing={4}>
               <FormControl id="email">
-                <FormLabel>البريد الإلكتروني (@edu أو @edu.ps)</FormLabel>
-                <Input type="email" value={email} disabled={stage !== 1} />
+                <FormLabel>البريد الإلكتروني</FormLabel>
+                <Input
+                  type="email"
+                  value={email}
+                  disabled={stage !== 1}
+                  onChange={(event) => setEmail(event.target.value)}
+                />
               </FormControl>
               <FormControl id="code" display={stage === 1 ? "none" : ""}>
                 <FormLabel>رمز التحقق</FormLabel>
