@@ -1,7 +1,7 @@
 version: '3.6'
 services:
   postgres:
-    image: postgres:12
+    image: postgres:13.4
     restart: always
     volumes:
     - db_data:/var/lib/postgresql/data
@@ -10,7 +10,7 @@ services:
     ports:
     - "5432:5432"
   graphql-engine:
-    image: hasura/graphql-engine:v2.0.0-alpha.3
+    image: hasura/graphql-engine:v2.0.8
     ports:
     - "8080:8080"
     depends_on:
