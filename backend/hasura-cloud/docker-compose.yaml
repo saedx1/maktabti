@@ -5,8 +5,6 @@ services:
     restart: always
     volumes:
     - db_data:/var/lib/postgresql/data
-    environment:
-      POSTGRES_PASSWORD: $POSTGRESPASSWORD
     ports:
     - "5432:5432"
   graphql-engine:
@@ -17,27 +15,14 @@ services:
     - "postgres"
     restart: always
     environment:
-      HASURA_GRAPHQL_DATABASE_URL: "postgres://postgres:${POSTGRESPASSWORD}@postgres:5432/postgres"
+      HASURA_GRAPHQL_DATABASE_URL: "postgres://postgres:${PGPASSWORD}@postgres:5432/postgres"
       ## enable the console served by server
       HASURA_GRAPHQL_ENABLE_CONSOLE: "true" # set to "false" to disable console
       ## enable debugging mode. It is recommended to disable this in production
       HASURA_GRAPHQL_DEV_MODE: "true"
       HASURA_GRAPHQL_ENABLED_LOG_TYPES: startup, http-log, webhook-log, websocket-log, query-log
       ## uncomment next line to set an admin secret
-      # HASURA_GRAPHQL_ADMIN_SECRET: myadminsecretkey
-  # flask:
-  #   image: maktabti_py:latest
-  #   depends_on: 
-  #   - "graphql-engine"
-  #   restart: always
-  #   ports:
-  #   - "3000:3000"
-  #   environment:
-  #     GRAPHQL_ENDPOINT: "http://graphql-engine:8080/v1/graphql"
-  #     AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
-  #     AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
-  #     AWS_DEFAULT_REGION: ${AWS_DEFAULT_REGION}
-  #     AWS_REGION: ${AWS_DEFAULT_REGION}
+      HASURA_GRAPHQL_ADMIN_SECRET: myadminsecretkey
 
 volumes:
   db_data:

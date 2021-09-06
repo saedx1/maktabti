@@ -13,15 +13,20 @@ import {
   MenuDivider,
   useDisclosure,
   Stack,
+  FormControl,
+  Select,
 } from "@chakra-ui/react";
 import { HamburgerIcon, CloseIcon, AddIcon } from "@chakra-ui/icons";
 import { useCallback } from "react";
 import { useHistory } from "react-router-dom";
+import Cookies from "js-cookie";
 
 import Logo from "./Logo";
 import theme from "../theme";
 import { UploadDrawer } from "./UploadDrawer";
 import { HiOutlineLogin } from "react-icons/hi";
+import { Field, Form, Formik } from "formik";
+import { SwitchColors } from "../theme";
 
 const Links = [
   { text: "الرئيسية", to: "/" },
@@ -35,7 +40,7 @@ const NavLink = ({ children, ...props }) => (
     py={1}
     textStyle="nav_item"
     rounded="md"
-    _hover={{ textDecoration: "none", bg: "gray.200" }}
+    _hover={{ textDecoration: "none", bg: "primary.200" }}
     href={children.to}
     {...props}
   >
@@ -82,6 +87,7 @@ const WithAction = ({ loggedIn, logout }) => {
               {Links.map((link, i) => (
                 <NavLink key={link + "_" + i}>{link}</NavLink>
               ))}
+              <SetColors />
             </HStack>
           </HStack>
           <Flex alignItems={"center"}>
@@ -89,7 +95,7 @@ const WithAction = ({ loggedIn, logout }) => {
               textStyle="nav_item"
               color="primary.500"
               bg="primary.white"
-              mr={4}
+              mr={2}
               leftIcon={<AddIcon />}
               _focus={{
                 outline: "none",
@@ -150,11 +156,11 @@ const WithAction = ({ loggedIn, logout }) => {
               <Button
                 fontSize="2xl"
                 bg="primary.500"
-                color="white"
+                color="primary.white"
                 leftIcon={<HiOutlineLogin />}
                 _hover={{
                   textColor: "primary.500",
-                  bg: "white",
+                  bg: "primary.white",
                 }}
                 onClick={() => {
                   history.push("/login");
@@ -180,9 +186,50 @@ const WithAction = ({ loggedIn, logout }) => {
                 </NavLink>
               ))}
             </Stack>
+            <SetColors />
           </Box>
         ) : null}
       </Box>
+    </>
+  );
+};
+
+const SetColors = () => {
+  const colors = [
+    { key: "darkBlue", arabicStr: "الأزرق" },
+    { key: "orange", arabicStr: "البرتقالي" },
+    { key: "red", arabicStr: "الأحمر" },
+    { key: "blue", arabicStr: "أزرق سماوي" },
+    { key: "purple", arabicStr: "البنفسجي" },
+    { key: "yellow", arabicStr: "الأصفر" },
+  ];
+  return (
+    <>
+      <Formik
+        onC={console.log("Submit")}
+        initialValues={{ color: Cookies.get("color") }}
+      >
+        <Form>
+          <FormControl>
+            <Field
+              name="color"
+              as={Select}
+              bg="primary.white"
+              fontSize="xl"
+              onChange={(e) => {
+                SwitchColors(e.target.value);
+                window.location.reload();
+              }}
+            >
+              {colors.map((color, i) => (
+                <option key={color.key} value={color.key}>
+                  {color.arabicStr}
+                </option>
+              ))}
+            </Field>
+          </FormControl>
+        </Form>
+      </Formik>
     </>
   );
 };

@@ -7,3 +7,6 @@ setup:
 
 run:
 	FLASK_APP=app.py flask run --port 3000
+
+backup-db:
+	sh backup_db.sh &

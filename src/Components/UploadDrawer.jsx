@@ -216,7 +216,7 @@ export const UploadDrawer = ({ isOpen, onClose }) => {
                         name="name"
                         as={Input}
                         type="text"
-                        bg="white"
+                        bg="primary.white"
                         fontSize="xl"
                       ></Field>
                       {errors.name && touched.name ? (
@@ -230,7 +230,7 @@ export const UploadDrawer = ({ isOpen, onClose }) => {
                         name="course"
                         as={Input}
                         type="text"
-                        bg="white"
+                        bg="primary.white"
                         fontSize="xl"
                       ></Field>
                       {errors.course && touched.course ? (
@@ -243,7 +243,7 @@ export const UploadDrawer = ({ isOpen, onClose }) => {
                         name="year"
                         as={Input}
                         type="numeric"
-                        bg="white"
+                        bg="primary.white"
                         fontSize="xl"
                       ></Field>
                       {errors.year && touched.year ? (
@@ -252,7 +252,12 @@ export const UploadDrawer = ({ isOpen, onClose }) => {
                     </FormControl>
                     <FormControl>
                       <FormLabel fontSize="xl">النوع</FormLabel>
-                      <Field name="kind" as={Select} bg="white" fontSize="xl">
+                      <Field
+                        name="kind"
+                        as={Select}
+                        bg="primary.white"
+                        fontSize="xl"
+                      >
                         {kinds.map((elem) => (
                           <option
                             key={elem.id}
@@ -268,7 +273,7 @@ export const UploadDrawer = ({ isOpen, onClose }) => {
                       <Field
                         name="university"
                         as={Select}
-                        bg="white"
+                        bg="primary.white"
                         fontSize="xl"
                       >
                         {universities.map((elem) => (
@@ -285,7 +290,7 @@ export const UploadDrawer = ({ isOpen, onClose }) => {
                       <Field
                         name="college"
                         as={Select}
-                        bg="white"
+                        bg="primary.white"
                         fontSize="xl"
                       >
                         <option value={0}>عام</option>
@@ -303,7 +308,7 @@ export const UploadDrawer = ({ isOpen, onClose }) => {
                       <Field
                         name="major"
                         as={Select}
-                        bg="white"
+                        bg="primary.white"
                         fontSize="xl"
                         disabled={parseInt(values.college) === 0}
                       >
@@ -323,7 +328,7 @@ export const UploadDrawer = ({ isOpen, onClose }) => {
                 <DrawerFooter>
                   <Button
                     bg={"primary.400"}
-                    color={"white"}
+                    color={"primary.white"}
                     _hover={{
                       bg: "primary.500",
                     }}

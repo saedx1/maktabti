@@ -4,8 +4,7 @@ const About = () => {
   const members = [
     {
       name: "سعد السيدأحمد",
-      image:
-        "https://media-exp1.licdn.com/dms/image/C4E03AQGEhYaC5ApMcw/profile-displayphoto-shrink_800_800/0/1570109354539?e=1635984000&v=beta&t=J4w48kg_AyN3681xRwJslCbtFhofsBUL9YnsrXt3p_4",
+      image: "%PUBLIC_URL%/saed.jpeg",
       role: "مطوّر موقع مكتبتي",
     },
   ];

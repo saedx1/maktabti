@@ -56,12 +56,12 @@ export default function TextSearch(props) {
             <Form>
               <Box bg="primary.500" textAlign="center" pt={5} pb={3}>
                 <Center color="black">
-                  <Box fontSize="4xl" pb={10} textColor="white"></Box>
+                  <Box fontSize="4xl" pb={10} textColor="primary.white"></Box>
                 </Center>
                 <Box textAlign="center" mt={5} mb={3} {...props}>
                   <Input
                     placeholder="بحث..."
-                    bg="white"
+                    bg="primary.white"
                     w="50%"
                     size="lg"
                     me={2}
@@ -75,7 +75,7 @@ export default function TextSearch(props) {
                   <Button
                     size="lg"
                     fontSize="xl"
-                    textColor="white"
+                    textColor="primary.white"
                     bg={["primary.700"]}
                     _hover={{
                       bg: ["primary.400"],
@@ -115,7 +115,7 @@ export default function TextSearch(props) {
                         mt={2}
                         mb={10}
                         bg="primary.400"
-                        color="white"
+                        color="primary.white"
                         fontSize="2xl"
                         _focus={{
                           outline: "none",
@@ -135,7 +135,7 @@ export default function TextSearch(props) {
                         mt={2}
                         mb={10}
                         bg="primary.400"
-                        color="white"
+                        color="primary.white"
                         fontSize="2xl"
                         _focus={{
                           outline: "none",

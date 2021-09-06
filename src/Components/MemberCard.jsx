@@ -68,7 +68,7 @@ export default function MemberCard({ image, name, role }) {
         p={6}
         maxW={"330px"}
         w={"full"}
-        bg={useColorModeValue("white", "gray.800")}
+        bg={useColorModeValue("primary.white", "primary.800")}
         boxShadow={"2xl"}
         rounded={"lg"}
         pos={"relative"}

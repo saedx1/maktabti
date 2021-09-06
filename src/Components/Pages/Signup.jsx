@@ -67,7 +67,7 @@ const Signup = () => {
   return (
     <Flex align={"center"} justify={"center"} bg={"primary.100"}>
       <Stack width="100%" spacing={8} mx={"auto"} maxW={"lg"} py={12} px={6}>
-        <Box rounded={"lg"} bg={"white"} boxShadow={"lg"} p={8}>
+        <Box rounded={"lg"} bg={"primary.white"} boxShadow={"lg"} p={8}>
           <Formik
             initialValues={{
               name: "",
@@ -87,7 +87,7 @@ const Signup = () => {
                       name="name"
                       as={Input}
                       type="text"
-                      bg="white"
+                      bg="primary.white"
                       fontSize="xl"
                       disabled={isSubmitting}
                     ></Field>
@@ -101,7 +101,7 @@ const Signup = () => {
                       name="email"
                       as={Input}
                       type="text"
-                      bg="white"
+                      bg="primary.white"
                       fontSize="xl"
                       disabled={isSubmitting}
                     ></Field>
@@ -116,7 +116,7 @@ const Signup = () => {
                       name="password"
                       as={Input}
                       type="password"
-                      bg="white"
+                      bg="primary.white"
                       fontSize="xl"
                       disabled={isSubmitting}
                     ></Field>
@@ -127,7 +127,7 @@ const Signup = () => {
                   <FormControl>
                     <FormLabel fontSize="xl">الجامعة</FormLabel>
                     <Select
-                      bg="white"
+                      bg="primary.white"
                       as={Select}
                       fontSize="xl"
                       disabled={isSubmitting}
@@ -143,7 +143,7 @@ const Signup = () => {
                   </FormControl>
                   <Button
                     bg={"primary.400"}
-                    color={"white"}
+                    color={"primary.white"}
                     _hover={{
                       bg: "primary.500",
                     }}

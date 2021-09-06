@@ -92,7 +92,7 @@ function SocialProfileSimple({
   return (
     <Center py={6} position="relative">
       <Box
-        bg={useColorModeValue("white", "gray.900")}
+        bg={useColorModeValue("primary.white", "primary.900")}
         boxShadow={"2xl"}
         rounded={"lg"}
         p={6}
@@ -101,7 +101,7 @@ function SocialProfileSimple({
         <Heading fontSize={"xl"} mb={2}>
           {name}
         </Heading>
-        <Text fontWeight={600} color={"gray.500"} mb={4} fontSize={"xl"}>
+        <Text fontWeight={600} color={"primary.500"} mb={4} fontSize={"xl"}>
           {courseByCourse.name} - {year}
         </Text>
         <Text textAlign={"center"} px={3} fontSize={"xl"}>
@@ -112,7 +112,7 @@ function SocialProfileSimple({
           <Badge
             px={2}
             py={1}
-            bg={useColorModeValue("gray.50", "gray.800")}
+            bg={useColorModeValue("primary.50", "primary.800")}
             fontWeight={"400"}
             fontSize={"xl"}
           >
@@ -170,7 +170,7 @@ function SocialProfileSimple({
             flex={1}
             rounded={"full"}
             bg={"primary.400"}
-            color={"white"}
+            color={"primary.white"}
             _hover={{
               bg: "primary.500",
             }}

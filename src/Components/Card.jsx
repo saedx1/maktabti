@@ -57,7 +57,7 @@ export const Card = ({ isDownload, link, id, token, ...props }) => {
       <Box
         maxW={"270px"}
         w={"full"}
-        bg={useColorModeValue("white", "gray.800")}
+        bg={useColorModeValue("primary.white", "primary.800")}
         boxShadow={"2xl"}
         rounded={"md"}
         overflow={"hidden"}
@@ -71,16 +71,16 @@ export const Card = ({ isDownload, link, id, token, ...props }) => {
             <Heading fontSize={"2xl"} fontWeight={500} fontFamily={"body"}>
               {props.label}
             </Heading>
-            <Text color={"gray.500"}>{props.university}</Text>
+            <Text color={"primary.500"}>{props.university}</Text>
           </Stack>
 
           <Stack direction={"row"} justify={"center"} spacing={6}>
             <Stack spacing={0} align={"center"}>
               <Text fontWeight={600}>{props.value}</Text>
-              <Text fontSize="2xl" color={"gray.500"}>
+              <Text fontSize="2xl" color={"primary.500"}>
                 {props.item}
               </Text>
-              <Text fontSize="2xl" color={"gray.500"}>
+              <Text fontSize="2xl" color={"primary.500"}>
                 {props.otheritem}
               </Text>
             </Stack>

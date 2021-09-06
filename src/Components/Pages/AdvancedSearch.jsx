@@ -168,7 +168,7 @@ const AdvancedSearch = () => {
                       <Field
                         name="university"
                         as={Select}
-                        bg="white"
+                        bg="primary.white"
                         fontSize="xl"
                       >
                         {universities.map((elem) => (
@@ -189,7 +189,7 @@ const AdvancedSearch = () => {
                       <Field
                         name="college"
                         as={Select}
-                        bg="white"
+                        bg="primary.white"
                         fontSize="xl"
                       >
                         <option value={0}>عام</option>
@@ -211,7 +211,7 @@ const AdvancedSearch = () => {
                       <Field
                         name="major"
                         as={Select}
-                        bg="white"
+                        bg="primary.white"
                         fontSize="xl"
                         disabled={parseInt(values.college) === 0}
                       >
@@ -227,7 +227,12 @@ const AdvancedSearch = () => {
                     </FormControl>
                     <FormControl>
                       <FormLabel>المساق</FormLabel>
-                      <Field name="course" as={Select} bg="white" fontSize="xl">
+                      <Field
+                        name="course"
+                        as={Select}
+                        bg="primary.white"
+                        fontSize="xl"
+                      >
                         {courses.map((elem) => (
                           <option
                             key={elem.id}
@@ -239,7 +244,7 @@ const AdvancedSearch = () => {
                     </FormControl>
                     {/* <FormControl>
                       <FormLabel>النوع</FormLabel>
-                      <Field name="kind" as={Select} bg="white" fontSize="xl">
+                      <Field name="kind" as={Select} bg="primary.white" fontSize="xl">
                         {kinds.map((elem) => (
                           <option
                             key={elem.id}
@@ -293,7 +298,7 @@ const AdvancedSearch = () => {
                       mt={2}
                       mb={10}
                       bg="primary.400"
-                      color="white"
+                      color="primary.white"
                       fontSize="2xl"
                       _focus={{
                         outline: "none",
@@ -321,7 +326,7 @@ const AdvancedSearch = () => {
                       mt={2}
                       mb={10}
                       bg="primary.400"
-                      color="white"
+                      color="primary.white"
                       fontSize="2xl"
                       _focus={{
                         outline: "none",
@@ -369,7 +374,7 @@ export const ResultTable = ({ data, token }) => {
   return (
     <Box width={["95%", "95%", "50%"]}>
       <Table
-        bg="white"
+        bg="primary.white"
         borderColor="primary.500"
         borderWidth={2}
         fontSize={{ base: "sm", lg: "xl" }}

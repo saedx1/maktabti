@@ -63,7 +63,7 @@ function Settings() {
   return (
     <Flex align={"center"} justify={"center"} bg={"primary.100"}>
       <Stack width="100%" spacing={8} mx={"auto"} maxW={"lg"} py={12} px={6}>
-        <Box rounded={"lg"} bg={"white"} boxShadow={"lg"} p={8}>
+        <Box rounded={"lg"} bg={"primary.white"} boxShadow={"lg"} p={8}>
           <form onSubmit={onSubmit}>
             <Stack spacing={4}>
               <FormControl id="name">
@@ -133,7 +133,7 @@ function Settings() {
               <Stack spacing={10}>
                 <Button
                   bg={"primary.400"}
-                  color={"white"}
+                  color={"primary.white"}
                   _hover={{
                     bg: "primary.500",
                   }}

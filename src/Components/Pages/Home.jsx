@@ -112,7 +112,7 @@ const MainBody = () => {
         color="black"
         fontSize={{ base: "2xl", lg: "4xl" }}
         p={10}
-        textColor="white"
+        textColor="primary.white"
         textAlign="center"
       >
         مبادرة تسعى لتسهيل عملية وصول الطلاب للمواد التعليمية المستخدمة في
