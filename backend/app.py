@@ -68,7 +68,6 @@ def upload_file():
     res = execute_graphql_query(query)
 
     if "data" not in res.keys():
-        print(res)
         return res, 500
 
     original_filename = Path(data["filename"])
@@ -103,7 +102,6 @@ def upload_file():
     res = execute_graphql_query(query)
 
     if "data" not in res.keys():
-        print(res)
         return res, 500
 
     return "s", 200
@@ -432,6 +430,8 @@ def search_text():
     data = dict(request.form)
     page = int(data["page"])
     text = data["query"]
+    strings = text.split()
+
     query = """
     query MyQuery {
         search_files(args: {pattern: "%s"}, limit: 10, offset: %d) {
@@ -461,7 +461,5 @@ def search_text():
     res = execute_graphql_query(query)
     if "data" in res.keys():
         return res["data"]
-
-    print(res)
 
     return res, 500

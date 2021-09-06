@@ -61,13 +61,24 @@ function ForgotPassword() {
             });
             setStage(3);
           },
-          onFailure: () => {
-            toast({
-              title: "حصل خلل خلال تغيير كلمة المرور",
-              status: "error",
-              duration: 9000,
-              isClosable: true,
-            });
+          onFailure: (err) => {
+            console.error(err);
+            if (err.code === "InvalidPasswordException") {
+              toast({
+                title:
+                  "كلمة المرور ضعيفة، يجب أن تحتوى على أحرف كبيرة وصغيرة وأرقام وأن لا يقل طولها عن 8 رموز",
+                status: "error",
+                duration: 9000,
+                isClosable: true,
+              });
+            } else {
+              toast({
+                title: "حصل خلل خلال تغيير كلمة المرور",
+                status: "error",
+                duration: 9000,
+                isClosable: true,
+              });
+            }
           },
         });
       }
