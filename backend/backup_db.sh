@@ -1,6 +1,6 @@
-source .env
+source hasura-cloud/.env
 while true; do
-pg_dump -d postgres -h localhost -U postgres > backup.sql
-aws s3 cp backup.sql s3://maktabti-backup/database/$(date +%s).sql
+PGPASSWORD=$PGPASSWORD pg_dump -d postgres -h localhost -U postgres > backup.sql
+aws s3 cp backup.sql s3://maktabti-backups/database/$(date +%s).sql --profile maktabti
 sleep 6h
 done
