@@ -76,7 +76,9 @@ export const Card = ({ isDownload, link, id, token, ...props }) => {
 
           <Stack direction={"row"} justify={"center"} spacing={6}>
             <Stack spacing={0} align={"center"}>
-              <Text fontWeight={600}>{props.value}</Text>
+              <Text fontWeight={100} fontSize={"2xl"}>
+                {props.value}
+              </Text>
               <Text fontSize="2xl" color={"primary.500"}>
                 {props.item}
               </Text>

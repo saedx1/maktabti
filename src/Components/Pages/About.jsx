@@ -4,7 +4,7 @@ const About = () => {
   const members = [
     {
       name: "سعد السيدأحمد",
-      image: "%PUBLIC_URL%/saed.jpeg",
+      image: "saed.jpeg",
       role: "مطوّر موقع مكتبتي",
     },
   ];
