@@ -205,10 +205,7 @@ const SetColors = () => {
   ];
   return (
     <>
-      <Formik
-        onC={console.log("Submit")}
-        initialValues={{ color: Cookies.get("color") }}
-      >
+      <Formik initialValues={{ color: Cookies.get("color") }}>
         <Form>
           <FormControl>
             <Field
