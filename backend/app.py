@@ -193,9 +193,9 @@ def get_search_results(course, page):
 def get_stats():
     query = """
         query MyQuery {
-            users_aggregate {
+            downloads_aggregate {
                 aggregate {
-                    count(distinct: false, columns: identifier)
+                    count(distinct: true, columns: user)
                 }
             }
             
@@ -307,7 +307,7 @@ def get_stats():
         return {
             "file_count": res["data"]["files_aggregate"]["aggregate"]["count"],
             "course_count": res["data"]["courses_aggregate"]["aggregate"]["count"],
-            "student_count": res["data"]["users_aggregate"]["aggregate"]["count"],
+            "student_count": res["data"]["downloads_aggregate"]["aggregate"]["count"],
             "top_file": md_file,
             "top_major": md_major,
             "top_course": md_course,
