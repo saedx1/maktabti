@@ -5,8 +5,11 @@ create-env:
 setup:
 	pip install -r requirements.txt
 
-run:
+run-dev:
 	FLASK_APP=app.py flask run --port 3000
+
+run-prod:
+	uwsgi uwsgi.ini
 
 backup-db:
 	sh backup_db.sh &
