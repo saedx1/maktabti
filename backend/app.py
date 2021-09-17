@@ -45,12 +45,21 @@ def upload_file():
     elif data["major"] == "0":
         data["major"] = "null"
 
+    cid = get_course_id(data["university"], data["college"], data["major"])
+
+    data["courseStr"] = (
+        'courseByCourse: {data: {name: "%(course)s", university: %(university)s, college: %(college)s, major: %(major)s}, on_conflict: {constraint: courses_name_major_college_university_key, update_columns: major}}'
+        % data
+    )
+    if cid is not None:
+        data["courseStr"] = f"course: {cid}"
+
     query = """
     mutation MyMutation {
         insert_files_one(
             object: {
                     name: "%(name)s",
-                    courseByCourse: {data: {name: "%(course)s", university: %(university)s, college: %(college)s, major: %(major)s}, on_conflict: {constraint: courses_name_major_college_university_key, update_columns: major}},
+                    %(courseStr)s,   
                     created_by: "%(created_by)s",
                     username: "%(username)s",
                     kind: %(kind)s,
@@ -198,7 +207,6 @@ def get_stats():
                     count(distinct: true, columns: user)
                 }
             }
-            
             files_aggregate {
                 aggregate {
                     count
@@ -225,7 +233,6 @@ def get_stats():
                 }
                 id
                 link
-
             }
             top_majors(limit: 1) {
                 name
@@ -463,3 +470,25 @@ def search_text():
         return res["data"]
 
     return res, 500
+
+
+def get_course_id(unvirsity, major, college):
+    query = """
+    query MyQuery {
+        courses(where: {university: {_eq: "%s"}, major: {%s}, college: {%s}}) {
+            id
+        }
+    }
+    """ % (
+        unvirsity,
+        "_eq: {major}" if major != "null" else "_is_null: true",
+        "_eq: {college}" if college != "null" else "_is_null: true",
+    )
+
+    res = execute_graphql_query(query)
+
+    if "data" in res.keys():
+        if res["data"]["courses"]:
+            return res["data"]["courses"][0]["id"]
+
+    return None
