@@ -27,7 +27,7 @@ const About = () => {
         }}
       >
         <a href="mailto:saadmtsa@gmail.com">
-          هل تود المشاركة في تطوير الموقع برمجياً؟ تواصل معنا
+          <Text>هل تود المشاركة في تطوير الموقع برمجياً؟ تواصل معنا</Text>
         </a>
       </Box>
       <Text fontSize="xl" fontWeight={800}></Text>

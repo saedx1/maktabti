@@ -87,7 +87,7 @@ const WithAction = ({ loggedIn, logout }) => {
               {Links.map((link, i) => (
                 <NavLink key={link + "_" + i}>{link}</NavLink>
               ))}
-              <SetColors />
+              {/* <SetColors /> */}
             </HStack>
           </HStack>
           <Flex alignItems={"center"}>
@@ -186,7 +186,7 @@ const WithAction = ({ loggedIn, logout }) => {
                 </NavLink>
               ))}
             </Stack>
-            <SetColors />
+            {/* <SetColors /> */}
           </Box>
         ) : null}
       </Box>

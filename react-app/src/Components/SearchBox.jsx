@@ -25,7 +25,7 @@ export const SearchBox = (props) => {
     <Box textAlign="center" mt={5} mb={3} {...props}>
       <form onSubmit={submitSearch}>
         <Input
-          placeholder="بحث..."
+          placeholder="بحث (اسم مساق، امتحان، سلايدات، ...)"
           bg="white"
           w={{ base: "85%", lg: "50%" }}
           size="lg"

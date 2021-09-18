@@ -87,7 +87,7 @@ const availableColors = {
   },
 };
 let colors = {
-  primary: { ...availableColors.blue },
+  primary: { ...availableColors.red },
 };
 LoadCookie();
 let theme = extendTheme({
