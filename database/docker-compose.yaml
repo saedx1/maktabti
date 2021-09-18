@@ -4,9 +4,11 @@ services:
     image: postgres:13.4
     restart: always
     volumes:
-    - db_data:/var/lib/postgresql/data
+    - dbdata:/var/lib/postgresql/data
     ports:
     - "5432:5432"
+    environment:
+       POSTGRES_PASSWORD: ${PGPASSWORD}
   graphql-engine:
     image: hasura/graphql-engine:v2.0.8
     ports:
@@ -25,4 +27,4 @@ services:
       # HASURA_GRAPHQL_ADMIN_SECRET: myadminsecretkey
 
 volumes:
-  db_data:
+  dbdata:
