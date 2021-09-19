@@ -24,7 +24,7 @@ APP.config["CORS_HEADERS"] = "Content-Type"
 
 UPLOAD_FOLDER = get_upload_dir()
 # ALLOWED_EXTENSIONS = set([".pdf", ".zip", ".rar", ".ppt", ".pptx"])
-FORBIDDEN_EXTENSIONS = ["exe"]
+FORBIDDEN_EXTENSIONS = [".exe"]
 PREFIX = "/api"
 
 
