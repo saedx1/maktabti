@@ -50,7 +50,8 @@ const onSubmit = (data, actions, toast) => {
       actions.setSubmitting(false);
     } else {
       toast({
-        title: "تم التسجيل بنجاح، يرجى تفقد البريد اﻹلكتروني لتأكيد التسجيل",
+        title: "تم التسجيل بنجاح، يرجى تسجيل الدخول",
+        // title: "تم التسجيل بنجاح، يرجى تفقد البريد اﻹلكتروني لتأكيد التسجيل",
         status: "success",
         duration: 5000,
         isClosable: true,

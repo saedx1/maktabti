@@ -14,6 +14,7 @@
     "@testing-library/user-event": "^12.1.10",
     "amazon-cognito-identity-js": "^4.5.11",
     "axios": "^0.21.1",
+    "chakra-ui-autocomplete": "^1.4.3",
     "formik": "^2.2.6",
     "framer-motion": "^3.6.1",
     "history": "^4.10.1",

@@ -26,7 +26,19 @@ const About = () => {
           color: "red",
         }}
       >
-        <a href="mailto:saadmtsa@gmail.com">
+        <a href="mailto:saed@maktabti.xyz">
+          <Text>هل تود التبليغ عن مشكلة في الموقع؟ إضغط هنا</Text>
+        </a>
+      </Box>
+      <Box
+        fontSize="xl"
+        fontWeight={500}
+        _hover={{
+          color: "red",
+        }}
+        _
+      >
+        <a href="https://github.com/saedx1/maktabti">
           <Text>هل تود المشاركة في تطوير الموقع برمجياً؟ تواصل معنا</Text>
         </a>
       </Box>
