@@ -162,7 +162,7 @@ def get_filter_data():
 
 @APP.route(f"{PREFIX}/get_search_results/<course>/<page>", methods=["GET"])
 def get_search_results(course, page):
-    where = "course: {_eq: %s}" % course
+    where = "course: {_eq: %s}, hidden: {_eq: false}" % course
     page = int(page)
 
     query = """
@@ -366,7 +366,7 @@ def set_download():
 def get_details(file_id):
     query = """
     query MyQuery {
-    files(where: {id: {_eq: %s}}) {
+    files(where: {id: {_eq: %s}, hidden: {_eq: false}}) {
             id
             year
             username
@@ -445,7 +445,7 @@ def search_text():
 
     query = """
     query MyQuery {
-        search_files(args: {pattern: "%s"}, limit: 10, offset: %d) {
+        search_files(args: {pattern: "%s"}, hidden: {_eq: false}, limit: 10, offset: %d) {
             id
             name
             courseByCourse {
