@@ -330,7 +330,7 @@ def set_download():
 
     id_token = data["token"]
     s3path = data["link"]
-
+	
     if id_token:
         claims = verify_token(id_token)
         if claims is None:
@@ -338,6 +338,8 @@ def set_download():
         user = claims["sub"]
     else:
         user = request.remote_addr
+        if user == "127.0.0.1" or user == "localhost":
+                   user = request.headers.get("X-Forwarded-For")
 
     query = """
         mutation MyMutation {
