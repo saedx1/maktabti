@@ -189,7 +189,7 @@ export const UploadDrawer = ({ isOpen, onClose }) => {
                           };
                           setFileState(newFileState);
                         }}
-                        accept=".pdf,.zip,.rar"
+                        // accept=".pdf,.zip,.rar,.ppt,.pptx"
                         filename={
                           values.files.length === 0 ? "" : values.files[0].name
                         }

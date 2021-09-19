@@ -23,13 +23,19 @@ APP.config["CORS_HEADERS"] = "Content-Type"
 # APP.config["MAX_CONTENT_LENGTH"] = 20 * 1024 * 1024 # this doesn't work, it rejects requests with bodies way less then 20MB (even 1.5MB)
 
 UPLOAD_FOLDER = get_upload_dir()
-ALLOWED_EXTENSIONS = set([".pdf", ".zip", ".rar"])
+# ALLOWED_EXTENSIONS = set([".pdf", ".zip", ".rar", ".ppt", ".pptx"])
 PREFIX = "/api"
 
 
 @APP.route(f"{PREFIX}/upload_file", methods=["POST"])
 def upload_file():
+
     data = dict(request.form)
+
+    # original_filename = Path(data["filename"])
+    # extension = original_filename.suffix
+    # if extension not in ALLOWED_EXTENSIONS:
+    #     return "f", 500
 
     id_token = data["token"]
 
@@ -78,11 +84,6 @@ def upload_file():
 
     if "data" not in res.keys():
         return res, 500
-
-    original_filename = Path(data["filename"])
-    extension = original_filename.suffix
-    if extension not in ALLOWED_EXTENSIONS:
-        return "f", 500
 
     id_ = res["data"]["insert_files_one"]["id"]
     file_name = f"{id_}{extension}"
@@ -330,7 +331,7 @@ def set_download():
 
     id_token = data["token"]
     s3path = data["link"]
-	
+
     if id_token:
         claims = verify_token(id_token)
         if claims is None:
@@ -339,7 +340,7 @@ def set_download():
     else:
         user = request.remote_addr
         if user == "127.0.0.1" or user == "localhost":
-                   user = request.headers.get("X-Forwarded-For")
+            user = request.headers.get("X-Forwarded-For")
 
     query = """
         mutation MyMutation {
