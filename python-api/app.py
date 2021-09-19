@@ -209,7 +209,7 @@ def get_stats():
                     count(distinct: true, columns: user)
                 }
             }
-            files_aggregate {
+            files_aggregate(where: {hidden: {_eq: false}}) {
                 aggregate {
                     count
                 }
