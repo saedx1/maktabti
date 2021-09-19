@@ -24,6 +24,7 @@ APP.config["CORS_HEADERS"] = "Content-Type"
 
 UPLOAD_FOLDER = get_upload_dir()
 # ALLOWED_EXTENSIONS = set([".pdf", ".zip", ".rar", ".ppt", ".pptx"])
+FORBIDDEN_EXTENSIONS = ["exe"]
 PREFIX = "/api"
 
 
@@ -32,10 +33,10 @@ def upload_file():
 
     data = dict(request.form)
 
-    # original_filename = Path(data["filename"])
-    # extension = original_filename.suffix
-    # if extension not in ALLOWED_EXTENSIONS:
-    #     return "f", 500
+    original_filename = Path(data["filename"])
+    extension = original_filename.suffix
+    if extension in FORBIDDEN_EXTENSIONS:
+        return "f", 500
 
     id_token = data["token"]
 
