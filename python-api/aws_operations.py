@@ -37,9 +37,12 @@ def get_bucket_key_from_s3path(s3path):
 
 
 def create_presigned_url(s3path):
+    filename = Path(s3path).parts[-1]
+    print(filename)
     bucket, key = get_bucket_key_from_s3path(s3path)
     return s3.generate_presigned_url(
         ClientMethod="get_object",
-        Params={"Bucket": bucket, "Key": key},
+        Params={"Bucket": bucket, "Key": key, "ResponseContentDisposition": f"attachment; filename = {filename}"},
         ExpiresIn=3600,
+
     )

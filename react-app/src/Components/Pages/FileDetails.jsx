@@ -214,7 +214,12 @@ export function DownloadFile({ id, token, link }) {
   axios.post("/set_download", data).then((res) => {
     console.log(res);
     if (res.data.url) {
-      window.location = res.data.url;
+      const href = res.data.url;
+      var anchor = document.createElement("a");
+      anchor.href = href;
+      anchor.download = href;
+      document.body.appendChild(anchor);
+      anchor.click();
     }
   });
 }

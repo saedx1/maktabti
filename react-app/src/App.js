@@ -22,6 +22,7 @@ import { SWRConfig } from "swr";
 import axios from "axios";
 import { CookiesProvider, useCookies } from "react-cookie";
 import uuid from "react-uuid";
+import Stats from "./Components/Pages/Stats";
 
 axios.defaults.baseURL = process.env.REACT_APP_SERVER_URL;
 
@@ -93,10 +94,11 @@ function PageComponent() {
             <Route path="/" exact component={HomePage} />
             <Route path="/login" exact component={Login} />
             <Route path="/signup" exact component={Signup} />
+            <Route path="/stats" exact component={Stats} />
             <Route path="/about" exact component={About} />
-            {loggedIn && (
+            {/* {loggedIn && (
               <Route path="/mylibrary" exact component={MyLibrary} />
-            )}
+            )} */}
             <Route
               path="/advancedsearch"
               exact
