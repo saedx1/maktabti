@@ -15,6 +15,7 @@ import {
   FormLabel,
   useToast,
   Center,
+  Progress,
 } from "@chakra-ui/react";
 import { Formik, Form, Field, useFormikContext } from "formik";
 import axios from "axios";
@@ -37,7 +38,7 @@ const UploadFileSchema = Yup.object().shape({
     .required("يرجى ادخال سنة لهذا المحتوى"),
 });
 
-async function UploadFile({ token, data }) {
+async function UploadFile({ token, data, onUploadProgress }) {
   const finalData = new FormData();
   for (const property in data) {
     if (property === "files") {
@@ -49,11 +50,13 @@ async function UploadFile({ token, data }) {
   finalData.append("filename", data["files"][0].name);
   finalData.append("token", token);
 
-  return await axios.post("/upload_file", finalData);
+  return await axios.post("/upload_file", finalData, { onUploadProgress });
 }
 
 export const UploadDrawer = ({ isOpen, onClose }) => {
   const toast = useToast();
+
+  const [progress, setProgress] = useState(-1);
 
   const submitFile = (data, actions) => {
     if (!fileState.selected) {
@@ -61,7 +64,13 @@ export const UploadDrawer = ({ isOpen, onClose }) => {
       actions.setSubmitting(false);
       return;
     }
-    UploadFile({ token, data })
+    UploadFile({
+      token,
+      data,
+      onUploadProgress: (event) => {
+        setProgress(Math.round((100 * event.loaded) / event.total));
+      },
+    })
       .then((res) => {
         toast({
           title: "تم رفع الملف بنجاح",
@@ -71,6 +80,7 @@ export const UploadDrawer = ({ isOpen, onClose }) => {
         });
         onClose();
         setFileState({ selected: false, touched: false });
+        setProgress(-1);
         actions.resetForm();
         actions.setSubmitting(false);
       })
@@ -354,6 +364,13 @@ export const UploadDrawer = ({ isOpen, onClose }) => {
                     إلغاء
                   </Button>
                 </DrawerFooter>
+                <Progress
+                  hasStripe
+                  value={progress}
+                  mb={5}
+                  hidden={progress === -1}
+                  colorScheme="red"
+                />
               </DrawerContent>
             </DrawerOverlay>
           </Form>

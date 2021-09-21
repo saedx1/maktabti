@@ -445,7 +445,7 @@ def search_text():
 
     query = """
     query MyQuery {
-        search_files(args: {pattern: "%s"}, hidden: {_eq: false}, limit: 10, offset: %d) {
+        search_files(args: {pattern: "%s"}, where:{ hidden: {_eq: false}}, limit: 10, offset: %d) {
             id
             name
             courseByCourse {

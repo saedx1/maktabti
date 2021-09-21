@@ -1,5 +1,6 @@
 from pathlib import Path
 import boto3
+import os
 
 try:
     boto3.setup_default_session(profile_name="maktabti")
@@ -8,7 +9,9 @@ except:
 
 s3 = boto3.client("s3")
 
-maktabti_s3_bucket = "maktabti-backups"
+
+
+maktabti_s3_bucket = "maktabti-backups" if os.environ.get("FLASK_ENV", "development") == "production" else "maktabti-backups-dev"
 maktabti_s3_prefix = "data"
 
 
