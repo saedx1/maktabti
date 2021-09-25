@@ -475,6 +475,28 @@ def search_text():
 
     return res, 500
 
+@APP.route(f"{PREFIX}/get_user_stats")
+def get_user_stats():
+    # data = dict(request.form)
+    # page = int(data["page"])
+
+    query = """
+    query MyQuery {
+        top_users {
+            username
+            count
+        }
+    }
+    """
+    #  % (
+    #     (page - 1) * 10,
+    # )
+
+    res = execute_graphql_query(query)
+    if "data" in res.keys():
+        return res["data"], 200
+
+    return res, 500
 
 def get_course_id(unvirsity, college, major):
     query = """
