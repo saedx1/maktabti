@@ -52,7 +52,7 @@ def upload_file():
     elif data["major"] == "0":
         data["major"] = "null"
 
-    cid = get_course_id(data["university"], data["college"], data["major"])
+    cid = get_course_id(data["course"], data["university"], data["college"], data["major"])
     print(cid)
     data["courseStr"] = (
         'courseByCourse: {data: {name: "%(course)s", university: %(university)s, college: %(college)s, major: %(major)s}, on_conflict: {constraint: courses_name_major_college_university_key, update_columns: major}}'
