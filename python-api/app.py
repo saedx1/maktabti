@@ -498,14 +498,15 @@ def get_user_stats():
 
     return res, 500
 
-def get_course_id(unvirsity, college, major):
+def get_course_id(name, unvirsity, college, major):
     query = """
     query MyQuery {
-        courses(where: {university: {_eq: %s}, major: {%s}, college: {%s}}) {
+        courses(where: {name: {_eq: "%s"}, university: {_eq: %s}, major: {%s}, college: {%s}}) {
             id
         }
     }
     """ % (
+        name,
         unvirsity,
         f"_eq: {major}" if major != "null" else "_is_null: true",
         f"_eq: {college}" if college != "null" else "_is_null: true",
