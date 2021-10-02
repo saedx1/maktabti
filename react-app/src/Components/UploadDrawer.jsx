@@ -144,10 +144,14 @@ export const UploadDrawer = ({ isOpen, onClose }) => {
         (x) => x.id === parseInt(values.university)
       )[0].colleges;
       setColleges(c);
-
       if (colleges.length === 0 || parseInt(values.college) === 0) return;
-      const m = colleges.filter((x) => x.id === parseInt(values.college))[0]
-        .majors;
+
+      var m = colleges.filter((x) => x.id === parseInt(values.college))[0];
+      if (m !== undefined) {
+        m = m.majors;
+      } else {
+        m = c[0].majors;
+      }
       setMajors(m);
 
       if (
@@ -406,7 +410,7 @@ function FileUploader(props) {
       </style>
 
       {/* <Center>اﻹمتدادات المسموحة: pdf, zip, rar</Center> */}
-      <Center>الحد اﻷقصى لحجم الملف: 20MB</Center>
+      <Center>الحد اﻷقصى لحجم الملف: 50MB</Center>
       <FormLabel
         htmlFor="file"
         borderStyle="solid"
