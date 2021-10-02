@@ -1,3 +1,7 @@
+INSERT INTO universities
+VALUES
+(6, 'جامعة النجاح');
+
 INSERT INTO colleges (name, university) VALUES('كلية الشريعة', 6);
 INSERT INTO colleges (name, university) VALUES('كلية الهندسة وتكنولوجيا المعلومات', 6);
 INSERT INTO colleges (name, university) VALUES('كلية الاقتصاد والعلوم الإجتماعية', 6);

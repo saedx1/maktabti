@@ -3,54 +3,19 @@ VALUES
 (2, 'جامعة الخليل')
 
 
--- 
-
 INSERT INTO colleges (name, university)
 VALUES
-('كلية الشريعة', 2);
-
-INSERT INTO colleges (name, university)
-VALUES
-('كلية العلوم والتكنولوجيا', 2);
-
-INSERT INTO colleges (name, university)
-VALUES
-('كلية الزراعة', 2);
-
-INSERT INTO colleges (name, university)
-VALUES
-('كلية التمويل واﻹدارة', 2);
-
-INSERT INTO colleges (name, university)
-VALUES
-('كلية التمريض', 2);
-
-INSERT INTO colleges (name, university)
-VALUES
-('كلية التربية', 2);
-
-INSERT INTO colleges (name, university)
-VALUES
-('كلية الصيدلة والعلوم الطبية', 2);
-
-INSERT INTO colleges (name, university)
-VALUES
-('كلية الحقوق والعلوم السياسية', 2);
-
-INSERT INTO colleges (name, university)
-VALUES
-('كلية اﻵداب', 2);
-
-INSERT INTO colleges (name, university)
-VALUES
-('كلية تكنولوجيا المعلومات', 2);
-
-INSERT INTO colleges (name, university)
-VALUES
+('كلية الشريعة', 2),
+('كلية العلوم والتكنولوجيا', 2),
+('كلية الزراعة', 2),
+('كلية التمويل واﻹدارة', 2),
+('كلية التمريض', 2),
+('كلية التربية', 2),
+('كلية الصيدلة والعلوم الطبية', 2),
+('كلية الحقوق والعلوم السياسية', 2),
+('كلية اﻵداب', 2),
+('كلية تكنولوجيا المعلومات', 2),
 ('كلية الطب البشري', 2);
-
-
---
 
 INSERT INTO majors (name, college)
 VALUES
