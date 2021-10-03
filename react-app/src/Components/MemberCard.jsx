@@ -66,7 +66,7 @@ export default function MemberCard({ image, name, role }) {
       <Box
         role={"group"}
         p={6}
-        maxW={"330px"}
+        maxW={"300px"}
         w={"full"}
         bg={useColorModeValue("primary.white", "primary.800")}
         boxShadow={"2xl"}

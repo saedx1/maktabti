@@ -133,13 +133,13 @@ const WithAction = ({ loggedIn, logout }) => {
                   <Avatar size={"sm"} />
                 </MenuButton>
                 <MenuList>
-                  {/* <MenuItem
+                  <MenuItem
                     as="button"
                     onClick={() => (window.location.href = "/mylibrary")}
                     fontSize="xl"
                   >
-                    مكتبتي
-                  </MenuItem> */}
+                    ملفاتي
+                  </MenuItem>
                   <MenuItem
                     as="button"
                     onClick={() => (window.location.href = "/settings")}

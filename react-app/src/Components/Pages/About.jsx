@@ -27,7 +27,9 @@ const About = () => {
         }}
       >
         <a href="mailto:saed@maktabti.xyz">
-          <Text>هل تود التبليغ عن مشكلة في الموقع؟ إضغط هنا</Text>
+          <Text>
+            هل تود التبليغ عن مشكلة في الموقع؟ تواصل معنا على saed@maktabti.xyz
+          </Text>
         </a>
       </Box>
       <Box
@@ -39,7 +41,9 @@ const About = () => {
         _
       >
         <a href="https://github.com/saedx1/maktabti">
-          <Text>هل تود المشاركة في تطوير الموقع برمجياً؟ تواصل معنا</Text>
+          <Text>
+            هل تود المشاركة في تطوير الموقع برمجياً؟ الكود كله متاح على Github
+          </Text>
         </a>
       </Box>
       <Text fontSize="xl" fontWeight={800}></Text>

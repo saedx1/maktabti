@@ -1,56 +1,145 @@
-import { Box, SimpleGrid, Center } from "@chakra-ui/react";
+import {
+  SimpleGrid,
+  Center,
+  Box,
+  Table,
+  Tbody,
+  Tr,
+  Td,
+  Text,
+  Thead,
+} from "@chakra-ui/react";
+import axios from "axios";
+import { useContext, useEffect, useState } from "react";
 import { Card } from "../Card";
+import { AccountContext } from "../User/Account";
+
 const MyLibrary = () => {
-  const data = ["فيزياء 1", "فيرست", "هندسة حاسوب", "جامعة بوليتكنيك فلسطين"];
-  const card = <TableRow data={data}></TableRow>;
+  const headers = [
+    { name: "", width: "17%" },
+    { name: "الاسم", width: "28%" },
+    { name: "المساق ", width: "28%" },
+    { name: "الجامعة ", width: "27%" },
+  ];
+  const [data, setData] = useState({});
+  const [token, setToken] = useState("");
+
+  function GetLibrary(token) {
+    const formData = new FormData();
+    formData.append("token", token);
+    axios.post("/get_library", formData).then((res) => {
+      setData(res.data);
+    });
+  }
+
+  const { getSession } = useContext(AccountContext);
+
+  getSession().then(({ user }) => {
+    user.getSession((err, session) => {
+      if (err) {
+        console.log(err);
+      } else if (!session.isValid()) {
+        console.log("Invalid session.");
+      } else {
+        const t = session.getIdToken().getJwtToken();
+        setToken(t);
+      }
+    });
+  });
+
+  useEffect(() => {
+    if (token !== undefined && token !== "") {
+      GetLibrary(token);
+    }
+  }, [token]);
+
   return (
     <Center bg="primary.100" width="100%">
-      <SimpleGrid p={10} bg="primary.100" columns={[1, 3, 5, 6]} gap={10}>
-        <Box>{card}</Box>
-        <Box>{card}</Box>
-        <Box>{card}</Box>
-        <Box>{card}</Box>
-      </SimpleGrid>
+      <Box width={["95%", "95%", "60%"]} mt={10}>
+        <LibraryTable headers={headers} data={data} k={"files"} />
+      </Box>
     </Center>
   );
 };
 
-const TableRow = (props) => {
+const LibraryTable = ({ headers, data, k }) => {
+  return (
+    <Table
+      bg="primary.white"
+      borderColor="primary.500"
+      borderWidth={2}
+      fontSize={{ base: "sm", lg: "xl" }}
+      style={{
+        tableLayout: "fixed",
+      }}
+      mb={5}
+    >
+      <Thead bg="primary.400" textColor="black">
+        <Tr>
+          {headers.map((header) => (
+            <Td key={header.name} width={header.width}>
+              <Text noOfLines={1}> {header.name} </Text>
+            </Td>
+          ))}
+        </Tr>
+      </Thead>
+      <Tbody>
+        {data &&
+          data[k] &&
+          data[k].map((row, idx) => (
+            <StatsRow
+              idx={idx + 1}
+              id={row.id}
+              key={row.name}
+              name={row.name}
+              course={row["courseByCourse"]["name"]}
+              university={
+                row["courseByCourse"]["universityByUniversity"]["name"]
+              }
+            />
+          ))}
+      </Tbody>
+    </Table>
+  );
+};
+
+const StatsRow = ({ idx, id, name, course, university }) => {
+  return (
+    <Tr
+      textColor="primary.600"
+      _hover={{
+        cursor: "pointer",
+        bg: "primary.200",
+      }}
+      onClick={() => {
+        window.location = "/file/" + id;
+      }}
+    >
+      <Td>
+        <Text fontSize="lg">{idx}</Text>
+      </Td>
+      <Td>
+        <Text fontSize="lg">{name}</Text>
+      </Td>
+      <Td>
+        <Text fontSize="lg">{course}</Text>
+      </Td>
+      <Td>
+        <Text fontSize="lg">{university}</Text>
+      </Td>
+    </Tr>
+  );
+};
+
+const TableRow = ({ id, name, course, university }) => {
   return (
     <>
       <Card
-        label={props.data[0]}
-        item={props.data[1].split("\n")}
-        university={props.data[2]}
-        value={props.data[3]}
+        label={id}
+        item={name}
+        university={university}
+        value={course}
       ></Card>
-      {/* <Box bg={props.bg || "primary.300"} textAlign="center">
-        <Text noOfLines="1">{props.data ? props.data[0] : "اسم الملف"}</Text>
-      </Box>
-      <Box bg={props.bg || "primary.300"} textAlign="center">
-        <Text noOfLines="1">{props.data ? props.data[1] : "المساق"}</Text>
-      </Box>
-      <Box bg={props.bg || "primary.300"} textAlign="center">
-        <Text noOfLines="1">{props.data ? props.data[2] : "التخصص"}</Text>
-      </Box>
-      <Box bg={props.bg || "primary.300"} textAlign="center">
-        <Text noOfLines="1">{props.data ? props.data[3] : "الجامعة"}</Text>
-      </Box>
-      <Box bg={props.bg || "primary.300"} textAlign="center">
-        <Text noOfLines="1">{props.data ? props.data[4] : "بواسطة"}</Text>
-      </Box>
-      <Box bg={props.bg || "primary.300"} textAlign="center">
-        {props.download && (
-          <Button
-            bg="transparent"
-            leftIcon={<DownloadIcon />}
-            variant="solid"
-            fontSize="lg"
-          >
-            تنزيل
-          </Button>
-        )}
-      </Box> */}
     </>
   );
 };

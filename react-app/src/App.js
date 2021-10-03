@@ -96,9 +96,9 @@ function PageComponent() {
             <Route path="/signup" exact component={Signup} />
             <Route path="/stats" exact component={Stats} />
             <Route path="/about" exact component={About} />
-            {/* {loggedIn && (
+            {loggedIn && (
               <Route path="/mylibrary" exact component={MyLibrary} />
-            )} */}
+            )}
             <Route
               path="/advancedsearch"
               exact

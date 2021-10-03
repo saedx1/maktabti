@@ -417,6 +417,8 @@ def report_file():
         user = claims["sub"]
     else:
         user = request.remote_addr
+        if user == "127.0.0.1" or user == "localhost":
+            user = request.headers.get("X-Forwarded-For")
 
     query = """
     mutation MyMutation {
@@ -544,6 +546,38 @@ def get_universities():
         return res["data"], 200
 
     return res, 500
+
+
+@APP.route(f"{PREFIX}/get_library", methods=["POST"])
+def get_library():
+    data = dict(request.form)
+    id_token = data["token"]
+    if id_token:
+        claims = verify_token(id_token)
+        if claims is None:
+            return "f", 401
+        user = claims["sub"]
+    
+    query = """query MyQuery {
+        files(where: {created_by: {_eq: "%s"}}) {
+            id
+            name
+            courseByCourse {
+                name
+                universityByUniversity {
+                    name
+                }
+            }
+        }
+    }
+    """ % user
+
+    res = execute_graphql_query(query)
+    if "data" in res.keys():
+        return res["data"], 200
+
+    return res, 500     
+
 
 def get_course_id(name, unvirsity, college, major):
     query = """
