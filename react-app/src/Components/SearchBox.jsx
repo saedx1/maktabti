@@ -47,7 +47,7 @@ export const SearchBox = (props) => {
             bg: ["primary.400"],
           }}
           me={3}
-          ml="-4.5em"
+          ml="-4.4em"
           mb={0.5}
           _focus={{
             outline: "none",
@@ -57,7 +57,7 @@ export const SearchBox = (props) => {
           zIndex={4}
           type="submit"
         >
-          انطلق
+          بحث
         </Button>
         <Link to="/advancedsearch">
           <Button
@@ -76,7 +76,7 @@ export const SearchBox = (props) => {
             hidden={props.hideadvancedbtn}
             mt={[3, 3, 0, 0]}
           >
-            بحث متقدم
+            تصفح المحتوى
           </Button>
         </Link>
       </form>

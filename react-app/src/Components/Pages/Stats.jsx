@@ -12,28 +12,43 @@ import {
 import useSWR from "swr";
 
 const Stats = () => {
-  const { data } = useSWR("/get_user_stats");
-  const headers = [
+  const { data: data1 } = useSWR("/get_user_stats");
+  const headers1 = [
     { name: "", width: "8%" },
     { name: "الاسم", width: "67%" },
     { name: "الملفات ", width: "25%" },
   ];
 
+  const { data: data2 } = useSWR("/get_university_stats");
+  const headers2 = [
+    { name: "", width: "8%" },
+    { name: "الجامعة", width: "67%" },
+    { name: "الملفات ", width: "25%" },
+  ];
+
   return (
     <>
-      <Center fontSize="3xl" bg="primary.100" p={10}>
-        إحصائيات
+      <Center fontSize="3xl" bg="primary.100" p={5}>
+        عدد الملفات المرفوعة لكل عضو
       </Center>
       <Center>
         <Box width={["95%", "95%", "30%"]}>
-          <StatsTable headers={headers} data={data} />
+          <StatsTable headers={headers1} data={data1} k={"top_users"} />
+        </Box>
+      </Center>
+      <Center fontSize="3xl" bg="primary.100" p={5}>
+        عدد الملفات المرفوعة لكل جامعة
+      </Center>
+      <Center>
+        <Box width={["95%", "95%", "30%"]}>
+          <StatsTable headers={headers2} data={data2} k={"top_universities"} />
         </Box>
       </Center>
     </>
   );
 };
 
-const StatsTable = ({ headers, data }) => {
+const StatsTable = ({ headers, data, k }) => {
   return (
     <Table
       bg="primary.white"
@@ -56,12 +71,12 @@ const StatsTable = ({ headers, data }) => {
       </Thead>
       <Tbody>
         {data &&
-          data["top_users"] &&
-          data["top_users"].map((row, idx) => (
+          data[k] &&
+          data[k].map((row, idx) => (
             <StatsRow
-              key={row.username}
+              key={row.name}
               rank={idx + 1}
-              name={row.username}
+              name={row.name}
               count={row.count}
             />
           ))}

@@ -30,7 +30,7 @@ import { SwitchColors } from "../theme";
 
 const Links = [
   { text: "الرئيسية", to: "/" },
-  { text: "بحث متقدم", to: "/advancedsearch" },
+  { text: "المحتوى", to: "/advancedsearch" },
   { text: "إحصائيات", to: "/stats" },
   { text: "فريق العمل", to: "/about" },
 ];
