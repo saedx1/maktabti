@@ -14,6 +14,7 @@ import React from "react";
 import UserPool from "../User/UserPool";
 import { Field, Form, Formik } from "formik";
 import * as Yup from "yup";
+import useSWR from "swr";
 
 const SignupSchema = Yup.object().shape({
   name: Yup.string()
@@ -63,7 +64,7 @@ const onSubmit = (data, actions, toast) => {
 const Signup = () => {
   const toast = useToast();
 
-  const universities = [{ id: 1, name: "جامعة بوليتكنك فلسطين" }];
+  const { data } = useSWR("/get_universities");
 
   return (
     <Flex align={"center"} justify={"center"} bg={"primary.100"}>
@@ -133,13 +134,14 @@ const Signup = () => {
                       fontSize="xl"
                       disabled={isSubmitting}
                     >
-                      {universities.map((elem) => (
-                        <option
-                          key={elem.id}
-                          value={elem.id}
-                          label={elem.name}
-                        ></option>
-                      ))}
+                      {data &&
+                        data["universities"].map((elem) => (
+                          <option
+                            key={elem.id}
+                            value={elem.id}
+                            label={elem.name}
+                          ></option>
+                        ))}
                     </Select>
                   </FormControl>
                   <Button

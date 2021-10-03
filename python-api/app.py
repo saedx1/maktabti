@@ -521,6 +521,29 @@ def get_university_stats():
 
     return res, 500
 
+@APP.route(f"{PREFIX}/get_universities")
+def get_universities():
+    # data = dict(request.form)
+    # page = int(data["page"])
+
+    query = """
+    query MyQuery {
+        universities {
+            id
+            name
+        }
+    }
+    """
+    #  % (
+    #     (page - 1) * 10,
+    # )
+
+    res = execute_graphql_query(query)
+    if "data" in res.keys():
+        return res["data"], 200
+
+    return res, 500
+
 def get_course_id(name, unvirsity, college, major):
     query = """
     query MyQuery {

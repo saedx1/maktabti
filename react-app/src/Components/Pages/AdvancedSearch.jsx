@@ -82,6 +82,7 @@ const AdvancedSearch = () => {
       (x) => x.id === parseInt(selectedUniversity)
     )[0].colleges;
     setColleges(_colleges);
+    setFieldValue1("college", _colleges[0].id);
     setSelectedC(_colleges[0].id);
   }, [universities, selectedUniversity]);
 

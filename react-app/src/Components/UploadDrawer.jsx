@@ -143,6 +143,9 @@ export const UploadDrawer = ({ isOpen, onClose }) => {
       const c = universities.filter(
         (x) => x.id === parseInt(values.university)
       )[0].colleges;
+      if (colleges != c) {
+        setFieldValue("college", c[0].id);
+      }
       setColleges(c);
       if (colleges.length === 0 || parseInt(values.college) === 0) return;
 
