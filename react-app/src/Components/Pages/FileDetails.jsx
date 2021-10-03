@@ -1,5 +1,5 @@
 import React, { useContext, useState } from "react";
-import { useParams } from "react-router";
+import { Redirect, useParams } from "react-router";
 import useSWR from "swr";
 import {
   Heading,
@@ -14,10 +14,16 @@ import {
 } from "@chakra-ui/react";
 
 import { LoadingComponent } from "../../App";
-import { CopyIcon, DownloadIcon, WarningIcon } from "@chakra-ui/icons";
+import {
+  CopyIcon,
+  DeleteIcon,
+  DownloadIcon,
+  WarningIcon,
+} from "@chakra-ui/icons";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import axios from "axios";
 import { AccountContext } from "../User/Account";
+import NotFound from "./NotFound";
 
 export default function FileDetails() {
   let { file_id } = useParams();
@@ -28,7 +34,9 @@ export default function FileDetails() {
       {!data ? (
         <LoadingComponent text="جاري تحميل البيانات، الرجاء اﻹنتظار ..." />
       ) : (
-        <SocialProfileSimple {...data.files[0]} />
+        (!data["id"] && <NotFound />) || (
+          <SocialProfileSimple {...data.files[0]} />
+        )
       )}
     </Box>
   );
@@ -43,11 +51,13 @@ function SocialProfileSimple({
   created_at,
   year,
   link,
+  created_by,
 }) {
   const toast = useToast();
   const [token, setToken] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const { getSession } = useContext(AccountContext);
+  const [userID, setUserID] = useState("");
 
   getSession()
     .then(({ user }) => {
@@ -59,6 +69,7 @@ function SocialProfileSimple({
         } else {
           const t = session.getIdToken().getJwtToken();
           setToken(t);
+          setUserID(session.getIdToken()["payload"]["sub"]);
         }
       });
     })
@@ -89,6 +100,30 @@ function SocialProfileSimple({
       });
   }
 
+  function DeleteFile({ id, token }) {
+    setSubmitting(true);
+    const data = new FormData();
+    data.append("file_id", id);
+    data.append("token", token);
+    axios
+      .post("/delete_file", data)
+      .then(() => {
+        toast({
+          title: "تم الحذف بنجاح",
+          status: "success",
+          duration: 5000,
+          isClosable: true,
+        });
+      })
+      .catch(() => {
+        toast({
+          title: "حصل خلل أثناء القيام بحذف الملف",
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+        });
+      });
+  }
   return (
     <Center py={6} position="relative">
       <Box
@@ -190,7 +225,7 @@ function SocialProfileSimple({
           rounded={"full"}
           width="full"
           leftIcon={<WarningIcon />}
-          colorScheme="red"
+          colorScheme="yellow"
           variant="solid"
           mt={2}
           fontSize={"xl"}
@@ -201,7 +236,25 @@ function SocialProfileSimple({
         >
           تبليغ
         </Button>
+        {created_by === userID && (
+          <Button
+            rounded={"full"}
+            width="full"
+            leftIcon={<DeleteIcon />}
+            colorScheme="red"
+            variant="solid"
+            mt={2}
+            fontSize={"xl"}
+            onClick={() => {
+              DeleteFile({ id, token });
+            }}
+            disabled={submitting}
+          >
+            حذف
+          </Button>
+        )}
       </Box>
+      )
     </Center>
   );
 }

@@ -390,6 +390,7 @@ def get_details(file_id):
                 name
             }
             created_at
+            created_by
         }
     }
     """ % (
@@ -434,6 +435,38 @@ def report_file():
     res = execute_graphql_query(query)
 
     if "data" in res.keys():
+        return res["data"], 200
+
+    return "f", 500
+
+@APP.route(f"{PREFIX}/delete_file", methods=["POST"])
+def delete_file():
+    data = dict(request.form)
+    file_id = data["file_id"]
+    id_token = data["token"]
+
+    if id_token:
+        claims = verify_token(id_token)
+        if claims is None:
+            return "f", 401
+        user = claims["sub"]
+    else:
+        return "", 401
+
+    query = """
+    mutation MyMutation {
+        update_files(where: {id: {_eq: %s}, created_by: {_eq: "%s"}}, _set: {hidden: true}) {
+            affected_rows
+        }
+    }
+    """ % (
+        file_id,
+        user,
+    )
+
+    res = execute_graphql_query(query)
+
+    if "data" in res.keys() and res["data"]["update_files"]["affected_rows"] != 0:
         return res["data"], 200
 
     return "f", 500
