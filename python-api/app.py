@@ -4,6 +4,7 @@ from flask_cors import CORS
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from functools import lru_cache
+from flask_compress import Compress
 
 try:
     from security import verify_token
@@ -20,7 +21,7 @@ APP = Flask("maktabti")
 CORS(APP)
 Limiter(APP, key_func=get_remote_address, default_limits=["10000 per minute"])
 APP.config["CORS_HEADERS"] = "Content-Type"
-# APP.config["MAX_CONTENT_LENGTH"] = 20 * 1024 * 1024 # this doesn't work, it rejects requests with bodies way less then 20MB (even 1.5MB)
+Compress(APP)
 
 UPLOAD_FOLDER = get_upload_dir()
 # ALLOWED_EXTENSIONS = set([".pdf", ".zip", ".rar", ".ppt", ".pptx"])
