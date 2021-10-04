@@ -5,8 +5,13 @@ const About = () => {
     {
       name: "سعد السيدأحمد",
       image: "saed.jpeg",
-      role: "مطوّر موقع مكتبتي",
+      role: "مؤسس الموقع",
     },
+    // {
+    //   name: "عمرو عمرو",
+    //   image: "amro.jpg",
+    //   role: "تطوير الموقع",
+    // },
   ];
   return (
     <VStack>
@@ -26,11 +31,9 @@ const About = () => {
           color: "red",
         }}
       >
-        <a href="mailto:saed@maktabti.xyz">
-          <Text>
-            هل تود التبليغ عن مشكلة في الموقع؟ تواصل معنا على saed@maktabti.xyz
-          </Text>
-        </a>
+        <Text textAlign={"center"}>
+          هل تود التبليغ عن مشكلة في الموقع؟ تواصل معنا على saed@maktabti.xyz
+        </Text>
       </Box>
       <Box
         fontSize="xl"
@@ -41,7 +44,7 @@ const About = () => {
         _
       >
         <a href="https://github.com/saedx1/maktabti">
-          <Text>
+          <Text textAlign={"center"}>
             هل تود المشاركة في تطوير الموقع برمجياً؟ الكود كله متاح على Github
           </Text>
         </a>

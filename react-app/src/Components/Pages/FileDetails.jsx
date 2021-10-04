@@ -1,5 +1,5 @@
 import React, { useContext, useState } from "react";
-import { Redirect, useParams } from "react-router";
+import { useParams } from "react-router";
 import useSWR from "swr";
 import {
   Heading,
@@ -9,7 +9,6 @@ import {
   Stack,
   Button,
   Badge,
-  useColorModeValue,
   useToast,
 } from "@chakra-ui/react";
 
@@ -34,9 +33,7 @@ export default function FileDetails() {
       {!data ? (
         <LoadingComponent text="جاري تحميل البيانات، الرجاء اﻹنتظار ..." />
       ) : (
-        (!data["id"] && <NotFound />) || (
-          <SocialProfileSimple {...data.files[0]} />
-        )
+        <SocialProfileSimple {...data.files[0]} />
       )}
     </Box>
   );
@@ -124,10 +121,15 @@ function SocialProfileSimple({
         });
       });
   }
+
+  if (id === undefined) {
+    return <NotFound></NotFound>;
+  }
+
   return (
     <Center py={6} position="relative">
       <Box
-        bg={useColorModeValue("primary.white", "primary.900")}
+        bg={"primary.white"}
         boxShadow={"2xl"}
         rounded={"lg"}
         p={6}
@@ -147,7 +149,7 @@ function SocialProfileSimple({
           <Badge
             px={2}
             py={1}
-            bg={useColorModeValue("primary.50", "primary.800")}
+            bg={"primary.50"}
             fontWeight={"400"}
             fontSize={"xl"}
           >
@@ -254,7 +256,6 @@ function SocialProfileSimple({
           </Button>
         )}
       </Box>
-      )
     </Center>
   );
 }
