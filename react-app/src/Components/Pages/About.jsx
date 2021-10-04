@@ -7,11 +7,11 @@ const About = () => {
       image: "saed.jpeg",
       role: "مؤسس الموقع",
     },
-    // {
-    //   name: "عمرو عمرو",
-    //   image: "amro.jpg",
-    //   role: "تطوير الموقع",
-    // },
+    {
+      name: "عمرو عمرو",
+      image: "amro.jpg",
+      role: "تطوير الموقع",
+    },
   ];
   return (
     <VStack>
