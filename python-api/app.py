@@ -567,6 +567,14 @@ def get_universities():
         universities {
             id
             name
+            colleges {
+                id
+                name
+                majors {
+                    id
+                    name
+                }
+            }
         }
     }
     """

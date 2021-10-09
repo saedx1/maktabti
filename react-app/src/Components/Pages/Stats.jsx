@@ -21,8 +21,8 @@ const Stats = () => {
 
   const { data: data2 } = useSWR("/get_university_stats");
   const headers2 = [
-    { name: "", width: "8%" },
-    { name: "الجامعة", width: "67%" },
+    { name: "", width: "20%" },
+    { name: "الجامعة", width: "65%" },
     { name: "الملفات ", width: "25%" },
   ];
 

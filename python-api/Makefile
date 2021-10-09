@@ -6,7 +6,7 @@ setup:
 	pip install -r requirements.txt
 
 run-dev:
-	FLASK_ENV=development FLASK_APP=app.py flask run --port 3000
+	FLASK_ENV=development FLASK_APP=app.py python -m flask run --port 3000
 
 run-prod:
 	FLASK_ENV=production uwsgi uwsgi.ini

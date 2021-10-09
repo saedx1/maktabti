@@ -10,7 +10,7 @@ import {
   Stack,
   useToast,
 } from "@chakra-ui/react";
-import React from "react";
+import React, { useState } from "react";
 import UserPool from "../User/UserPool";
 import { Field, Form, Formik } from "formik";
 import * as Yup from "yup";
@@ -39,7 +39,12 @@ const onSubmit = (data, actions, toast) => {
       Name: "custom:university",
       Value: `${data.university}`,
     }),
+    new CognitoUserAttribute({
+      Name: "custom:major",
+      Value: `${data.major}`,
+    }),
   ];
+
   UserPool.signUp(data.email, data.password, attrs, null, (err, data) => {
     if (err) {
       toast({
@@ -66,6 +71,9 @@ const Signup = () => {
 
   const { data } = useSWR("/get_universities");
 
+  const [selectedUniversity, setSelectedUniversity] = useState(0);
+  const [selectedCollege, setSelectedCollege] = useState(0);
+
   return (
     <Flex align={"center"} justify={"center"} bg={"primary.100"}>
       <Stack width="100%" spacing={8} mx={"auto"} maxW={"lg"} py={12} px={6}>
@@ -76,11 +84,12 @@ const Signup = () => {
               email: "",
               password: "",
               university: 1,
+              major: 1,
             }}
             onSubmit={(data, actions) => onSubmit(data, actions, toast)}
             validationSchema={SignupSchema}
           >
-            {({ isSubmitting, errors, touched }) => (
+            {({ isSubmitting, errors, touched, setValues, values }) => (
               <Form>
                 <Stack spacing={4}>
                   <FormControl>
@@ -111,7 +120,6 @@ const Signup = () => {
                       <Box color="red">{errors.email}</Box>
                     ) : null}
                   </FormControl>
-
                   <FormControl>
                     <FormLabel fontSize="xl">كلمة المرور</FormLabel>
                     <Field
@@ -133,9 +141,62 @@ const Signup = () => {
                       as={Select}
                       fontSize="xl"
                       disabled={isSubmitting}
+                      onChange={(event) => {
+                        setSelectedUniversity(event.target.selectedIndex);
+                        setValues({
+                          ...values,
+                          university: parseInt(event.target.value),
+                        });
+                      }}
                     >
                       {data &&
                         data["universities"].map((elem) => (
+                          <option
+                            key={elem.id}
+                            value={elem.id}
+                            label={elem.name}
+                          ></option>
+                        ))}
+                    </Select>
+                  </FormControl>
+                  <FormControl>
+                    <FormLabel fontSize="xl">الكلية</FormLabel>
+                    <Select
+                      bg="primary.white"
+                      as={Select}
+                      fontSize="xl"
+                      disabled={isSubmitting}
+                      onChange={(event) => {
+                        setSelectedCollege(event.target.selectedIndex);
+                      }}
+                    >
+                      {data &&
+                        data["universities"][selectedUniversity][
+                          "colleges"
+                        ].map((elem) => (
+                          <option
+                            key={elem.id}
+                            value={elem.id}
+                            label={elem.name}
+                          ></option>
+                        ))}
+                    </Select>
+                  </FormControl>
+                  <FormControl>
+                    <FormLabel fontSize="xl">التخصص</FormLabel>
+                    <Select
+                      bg="primary.white"
+                      as={Select}
+                      fontSize="xl"
+                      disabled={isSubmitting}
+                      onChange={(event) => {
+                        setValues({ major: event.target.value });
+                      }}
+                    >
+                      {data &&
+                        data["universities"][selectedUniversity]["colleges"][
+                          selectedCollege
+                        ]["majors"].map((elem) => (
                           <option
                             key={elem.id}
                             value={elem.id}
