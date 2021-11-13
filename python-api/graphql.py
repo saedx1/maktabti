@@ -4,7 +4,7 @@ import requests
 
 
 GRAPHQL_ENDPOINT = os.environ.get(
-    "GRAPHQL_ENDPOINT", "http://localhost:8080/v1/graphql"
+    "GRAPHQL_ENDPOINT", "http://localhost:8899/v1/graphql"
 )
 
 

@@ -44,7 +44,14 @@ const MyLibrary = () => {
   return (
     <Center bg="primary.100" width="100%">
       <Box width={["95%", "95%", "60%"]} mt={10}>
-        <LibraryTable headers={headers} data={data} k={"files"} />
+        {data && (
+          <>
+            <Center fontSize="3xl" bg="primary.100" p={5}>
+              {query.get("user")}
+            </Center>
+            <LibraryTable headers={headers} data={data} k={"files"} />
+          </>
+        )}
       </Box>
     </Center>
   );
