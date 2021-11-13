@@ -55,11 +55,7 @@ function PageComponent() {
   const { getSession, logout } = useContext(AccountContext);
   const [loggedIn, setLoggedIn] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [cookies, setCookie] = useCookies();
-  !cookies["X-Random"] && setCookie("X-Random", uuid(), { path: "/" });
-  axios.defaults.headers.common["X-Random"] = cookies["X-Random"];
-  axios.defaults.headers.common["X-Random-2"] =
-    cookies["X-Random-2"] || "X-Random-2";
+  const [username, setUsername] = useState("");
 
   useEffect(() => {
     getSession().then(
@@ -72,8 +68,8 @@ function PageComponent() {
           } else if (!session.isValid()) {
             console.log("Invalid session.");
           } else {
-            const t = session.getIdToken().getJwtToken();
-            setCookie("X-Random-2", t, { path: "/" });
+            const t = session.getIdToken().payload.name;
+            setUsername(t);
           }
         });
       },
@@ -81,7 +77,7 @@ function PageComponent() {
         setLoading(false);
       }
     );
-  }, [getSession, setCookie]);
+  }, [getSession]);
 
   return (
     <BrowserRouter>
@@ -89,16 +85,14 @@ function PageComponent() {
         <LoadingComponent />
       ) : (
         <>
-          <Header loggedIn={loggedIn} logout={logout} />
+          <Header loggedIn={loggedIn} logout={logout} username={username} />
           <Switch>
             <Route path="/" exact component={HomePage} />
             <Route path="/login" exact component={Login} />
             <Route path="/signup" exact component={Signup} />
             <Route path="/stats" exact component={Stats} />
             <Route path="/about" exact component={About} />
-            {loggedIn && (
-              <Route path="/mylibrary" exact component={MyLibrary} />
-            )}
+            {loggedIn && <Route path={"/mylibrary"} component={MyLibrary} />}
             <Route
               path="/advancedsearch"
               exact

@@ -92,7 +92,9 @@ const StatsRow = ({ rank, name, count }) => {
         <Text fontSize="lg">{rank}</Text>
       </Td>
       <Td>
-        <Text fontSize="lg">{name}</Text>
+        <a href={"/mylibrary?user=" + name}>
+          <Text fontSize="lg">{name}</Text>
+        </a>
       </Td>
       <Td>
         <Text fontSize="lg">{count}</Text>

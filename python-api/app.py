@@ -591,19 +591,14 @@ def get_universities():
     return res, 500
 
 
-@APP.route(f"{PREFIX}/get_library", methods=["POST"])
+@APP.route(f"{PREFIX}/get_library", methods=["GET"])
 def get_library():
-    data = dict(request.form)
-    id_token = data["token"]
-    if id_token:
-        claims = verify_token(id_token)
-        if claims is None:
-            return "f", 401
-        user = claims["sub"]
+    data = request.args
+    user = data["user"]
 
     query = (
         """query MyQuery {
-        files(where: {created_by: {_eq: "%s"}}) {
+        files(where: {username: {_eq: "%s"}}) {
             id
             name
             courseByCourse {

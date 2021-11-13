@@ -10,9 +10,16 @@ import {
   Thead,
 } from "@chakra-ui/react";
 import axios from "axios";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
+import { useLocation } from "react-router";
 import { Card } from "../Card";
 import { AccountContext } from "../User/Account";
+
+function useQuery() {
+  const { search } = useLocation();
+
+  return useMemo(() => new URLSearchParams(search), [search]);
+}
 
 const MyLibrary = () => {
   const headers = [
@@ -22,36 +29,17 @@ const MyLibrary = () => {
     { name: "الجامعة ", width: "27%" },
   ];
   const [data, setData] = useState({});
-  const [token, setToken] = useState("");
+  let query = useQuery();
 
-  function GetLibrary(token) {
-    const formData = new FormData();
-    formData.append("token", token);
-    axios.post("/get_library", formData).then((res) => {
+  function GetLibrary() {
+    axios.get("/get_library?user=" + query.get("user")).then((res) => {
       setData(res.data);
     });
   }
 
-  const { getSession } = useContext(AccountContext);
-
-  getSession().then(({ user }) => {
-    user.getSession((err, session) => {
-      if (err) {
-        console.log(err);
-      } else if (!session.isValid()) {
-        console.log("Invalid session.");
-      } else {
-        const t = session.getIdToken().getJwtToken();
-        setToken(t);
-      }
-    });
-  });
-
   useEffect(() => {
-    if (token !== undefined && token !== "") {
-      GetLibrary(token);
-    }
-  }, [token]);
+    GetLibrary();
+  }, []);
 
   return (
     <Center bg="primary.100" width="100%">

@@ -49,7 +49,7 @@ const NavLink = ({ children, ...props }) => (
   </Link>
 );
 
-const WithAction = ({ loggedIn, logout }) => {
+const WithAction = ({ loggedIn, logout, username }) => {
   document.body.style.backgroundColor = theme.colors.primary["100"];
 
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -135,7 +135,9 @@ const WithAction = ({ loggedIn, logout }) => {
                 <MenuList>
                   <MenuItem
                     as="button"
-                    onClick={() => (window.location.href = "/mylibrary")}
+                    onClick={() =>
+                      (window.location.href = "/mylibrary?user=" + username)
+                    }
                     fontSize="xl"
                   >
                     ملفاتي
