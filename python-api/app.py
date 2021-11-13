@@ -53,7 +53,9 @@ def upload_file():
     elif data["major"] == "0":
         data["major"] = "null"
 
-    cid = get_course_id(data["course"], data["university"], data["college"], data["major"])
+    cid = get_course_id(
+        data["course"], data["university"], data["college"], data["major"]
+    )
     print(cid)
     data["courseStr"] = (
         'courseByCourse: {data: {name: "%(course)s", university: %(university)s, college: %(college)s, major: %(major)s}, on_conflict: {constraint: courses_name_major_college_university_key, update_columns: major}}'
@@ -250,13 +252,9 @@ def get_stats():
                 count
                 name
                 course {
-                    majorByMajor {
-                        collegeByCollege {
-                            universityByUniversity {
+                    universityByUniversity {
                                 name
                             }
-                        }
-                    }
                 }
             }
         }
@@ -302,12 +300,12 @@ def get_stats():
             md_course = res["data"]["top_courses"][0]
             md_course = {
                 "name": md_course["name"],
-                "university": md_course["course"]["majorByMajor"]["collegeByCollege"][
-                    "universityByUniversity"
-                ]["name"],
+                "university": md_course["course"]["universityByUniversity"]["name"],
                 "count": md_course["count"],
             }
-        except:
+
+        except Exception as e:
+            print(e)
             md_course = {
                 "name": None,
                 "university": None,
@@ -439,6 +437,7 @@ def report_file():
 
     return "f", 500
 
+
 @APP.route(f"{PREFIX}/delete_file", methods=["POST"])
 def delete_file():
     data = dict(request.form)
@@ -511,6 +510,7 @@ def search_text():
 
     return res, 500
 
+
 @APP.route(f"{PREFIX}/get_user_stats")
 def get_user_stats():
     # data = dict(request.form)
@@ -534,6 +534,7 @@ def get_user_stats():
 
     return res, 500
 
+
 @APP.route(f"{PREFIX}/get_university_stats")
 def get_university_stats():
     # data = dict(request.form)
@@ -556,6 +557,7 @@ def get_university_stats():
         return res["data"], 200
 
     return res, 500
+
 
 @APP.route(f"{PREFIX}/get_universities")
 def get_universities():
@@ -598,8 +600,9 @@ def get_library():
         if claims is None:
             return "f", 401
         user = claims["sub"]
-    
-    query = """query MyQuery {
+
+    query = (
+        """query MyQuery {
         files(where: {created_by: {_eq: "%s"}}) {
             id
             name
@@ -611,13 +614,15 @@ def get_library():
             }
         }
     }
-    """ % user
+    """
+        % user
+    )
 
     res = execute_graphql_query(query)
     if "data" in res.keys():
         return res["data"], 200
 
-    return res, 500     
+    return res, 500
 
 
 def get_course_id(name, unvirsity, college, major):

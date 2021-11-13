@@ -10,8 +10,11 @@ except:
 s3 = boto3.client("s3")
 
 
-
-maktabti_s3_bucket = "maktabti-backups" if os.environ.get("FLASK_ENV", "development") == "production" else "maktabti-backups-dev"
+maktabti_s3_bucket = (
+    "maktabti-backups"
+    if os.environ.get("FLASK_ENV", "development") == "production"
+    else "maktabti-backups-dev"
+)
 maktabti_s3_prefix = "data"
 
 
@@ -42,7 +45,10 @@ def create_presigned_url(s3path):
     bucket, key = get_bucket_key_from_s3path(s3path)
     return s3.generate_presigned_url(
         ClientMethod="get_object",
-        Params={"Bucket": bucket, "Key": key, "ResponseContentDisposition": f"attachment; filename = {filename}"},
+        Params={
+            "Bucket": bucket,
+            "Key": key,
+            "ResponseContentDisposition": f"attachment; filename = {filename}",
+        },
         ExpiresIn=3600,
-
     )

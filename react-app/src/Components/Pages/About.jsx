@@ -6,11 +6,19 @@ const About = () => {
       name: "سعد السيدأحمد",
       image: "saed.jpeg",
       role: "مؤسس الموقع",
+      link: "https://linkedin.com/in/saadmtsa",
     },
     {
       name: "عمرو عمرو",
       image: "amro.jpg",
       role: "تطوير الموقع",
+      link: "https://linkedin.com/in/amro-amro-07a57219b/",
+    },
+    {
+      name: "جامعتي",
+      image: "jam3ti.png",
+      role: "شريك إعلامي",
+      link: "https://play.google.com/store/apps/details?id=com.palestine.jam3atii&hl=ar&gl=US",
     },
   ];
   return (
